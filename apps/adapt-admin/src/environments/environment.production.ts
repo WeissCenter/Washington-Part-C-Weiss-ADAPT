@@ -8,7 +8,7 @@ export const environment = {
   cognitoRegion: 'us-east-1',
   cognitoDomainName: 'wac-prod-adaptadmin',
   s3PublicAssetsDomainName: 'wac-prod-adaptpublicassetsbucket',
-  clientId: '', //TODO:
+  clientId: '6013sjr30onj14vf8vcfmt7dou',
   contentRoot: 'assets/text',
   contentFileName: 'admin-content-text.json',
   appDomain: 'dcyf-wa-admin.adaptdata.org',
@@ -17,13 +17,14 @@ export const environment = {
   enforceRole: true,
   callbackUrl: 'https://dcyf-wa-admin.adaptdata.org/auth/redirect',
   Cognito: {
-    userPoolId: '', //TODO:
-    userPoolClientId: '', //TODO:
+    userPoolId: 'us-east-1_WdruM7RlQ',
+    userPoolClientId: '6013sjr30onj14vf8vcfmt7dou',
   },
   loginContent: 'assets/content-labels.json',
   pagesContent: 'assets/text/admin-content-text.json',
   organizationName: 'Department of Children, Youth, and Families (DCYF)',
   logoPath: 'assets/shared/logos/states/wa',
   logoExtension: 'png',
+  logoStyleClass: 'width-card',
   copyrightText: 'The State of Washington.',
 };
