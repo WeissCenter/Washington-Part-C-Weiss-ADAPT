@@ -24,7 +24,8 @@ import { provideServerRouting } from '@angular/ssr';
 import { serverRoutes } from './app.routes.server';
 import { ApplicationConfig, mergeApplicationConfig } from '@angular/core';
 import { provideServerRendering } from '@angular/platform-server';
-import { appConfig } from '@adapt-apps/adapt-admin/src/app/app.config';
+// import { appConfig } from '@adapt-apps/adapt-admin/src/app/app.config';
+import { appConfig } from './app.config';
 
 /**
  * Server-side configuration (Angular 19 SSR)
