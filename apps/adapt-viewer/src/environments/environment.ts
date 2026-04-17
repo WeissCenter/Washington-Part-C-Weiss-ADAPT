@@ -6,5 +6,6 @@ export const environment = {
   API_URL: 'https://u0oav6271b.execute-api.us-east-1.amazonaws.com/weiss-sandbox/',
   logoPath: 'assets/shared/logos/states/wa',
   logoExtension: 'png',
+  logoStyleClass: 'width-card',
   copyrightText: 'The State of Washington.',
 };
