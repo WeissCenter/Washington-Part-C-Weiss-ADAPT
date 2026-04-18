@@ -2,8 +2,8 @@ export const environment = {
   envLabel: 'Prod',
   contentRoot: 'assets/text/generic',
   contentFileName: 'viewer-content-text.json',
-  appDomain: 'uat-viewer.adaptdata.org',
-  API_URL: 'https://v3yun4i0nc.execute-api.us-east-1.amazonaws.com/uat/', //TODO: Update with real API URL
+  appDomain: 'dcyf-wa-viewer.adaptdata.org',
+  API_URL: 'https://43admgzs06.execute-api.us-east-1.amazonaws.com/wac-prod/',
   logoPath: 'assets/shared/logos/states/wa',
   logoExtension: 'png',
   logoStyleClass: 'width-card',
