@@ -1,16 +1,19 @@
-<nav
-  *ngIf="show"
-  [ngStyle]="{ left: menuPositionX, top: menuPositionY }"
-  class="position-fixed bg-white"
-  aria-label="Context Menu">
-  <ul class="usa-sidenav">
-    <li *ngFor="let menuItem of contextMenuItems" class="usa-sidenav__item">
-      <a
-        (keydown.enter)="menuItemClick.emit(menuItem.event)"
-        class="cursor-pointer"
-        (click)="menuItemClick.emit(menuItem.event)"
-        >{{ menuItem.menuText }}</a
-      >
-    </li>
-  </ul>
-</nav>
+@if (show) {
+  <nav
+    [ngStyle]="{ left: menuPositionX, top: menuPositionY }"
+    class="position-fixed bg-white"
+    aria-label="Context Menu">
+    <ul class="usa-sidenav">
+      @for (menuItem of contextMenuItems; track menuItem.event) {
+        <li class="usa-sidenav__item">
+          <a
+            (keydown.enter)="menuItemClick.emit(menuItem.event)"
+            class="cursor-pointer"
+            (click)="menuItemClick.emit(menuItem.event)"
+            >{{ menuItem.menuText }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+  }

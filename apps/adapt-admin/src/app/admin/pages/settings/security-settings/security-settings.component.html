@@ -1,78 +1,74 @@
-<ng-container *ngIf="content.getAdminContentSignal()() as ctn">
-  <section *ngIf="ctn.pages[8] as page"  class="security-settings-container grid-container gap-4 display-flex flex-column">
-    <section
-      aria-label="Security Settings Heading"
-      role="region"
-      class="data-sources-settings-banner width-full display-flex gap-2 flex-column">
-      <div class="usa-prose">
-        <h1 class="margin-0" i18n>{{page.title}}</h1>
-        <p class="margin-bottom-0 measure-4" i18n>
+@if (content.getAdminContentSignal()(); as ctn) {
+  @if (ctn.pages[8]; as page) {
+    <section  class="security-settings-container grid-container gap-4 display-flex flex-column">
+      <section
+        aria-label="Security Settings Heading"
+        role="region"
+        class="data-sources-settings-banner width-full display-flex gap-2 flex-column">
+        <div class="usa-prose">
+          <h1 class="margin-0" i18n>{{page.title}}</h1>
+          <p class="margin-bottom-0 measure-4" i18n>
           {{page.description}}
         </p>
-      </div>
-    </section>
-  
-    <section class="security-settings-options display-flex flex-column gap-2">
-      <div
-        class="security-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
-        <div class="security-settings-option-wrapper display-flex flex-justify gap-05">
-          <div class="security-settings-option-information display-flex flex-column gap-2">
-            <h2 class="margin-0 font-xl text-no-underline">{{page.sections![0].header}}</h2>
-            <p class="text-black usa-prose measure-4 text-no-underline">{{page.sections![0].description}}</p>
-          </div>
-  
-          <div class="security-settings-option-controls">
-            <button (click)="editTimeout = !editTimeout" class="usa-button usa-button--outline">
-              {{ editTimeout ? page.actions!['close_button'] : page.actions!['edit_button'] }}
-            </button>
-          </div>
         </div>
-  
-        <div *ngIf="editTimeout" class="security-settings-option-edit border-top-2px padding-top-2 border-base-light">
-          <form
-            (ngSubmit)="onSave()"
-            [formGroup]="timeOutForm"
-            class="security-settings-logo-form display-flex flex-column gap-2">
-            <lib-adapt-text-input
-              [label]="page.sections![0].questions![0].label"
-              [hint]="page.sections![0].questions![0].comment"
-              formControlName="idleMinutes"
-              type="number">
-              <p required class="usa-prose">{{page.sections![0].questions![0].validation_messages!['required']}}</p>
-            </lib-adapt-text-input>
-  
-            <lib-adapt-text-input
-            [label]="page.sections![0].questions![1].label"
-            [hint]="page.sections![0].questions![1].comment"
-              formControlName="warningMinutes"
-              type="number">
-              <p required class="usa-prose">{{page.sections![0].questions![1].validation_messages!['required']}}</p>
-            </lib-adapt-text-input>
-  
-            <lib-adapt-text-input
-            [label]="page.sections![0].questions![2].label"
-            [hint]="page.sections![0].questions![2].comment"
-              formControlName="timeoutMinutes"
-              type="number">
-              <p required class="usa-prose">{{page.sections![0].questions![2].validation_messages!['required']}}</p>
-            </lib-adapt-text-input>
-  
-            <div
-              *ngIf="timeOutForm?.invalid && (timeOutForm?.dirty || timeOutForm?.touched)"
-              class="form-errors text-emergency">
-              <ng-container *ngIf="timeOutForm?.errors?.['timeout'] as error">
-                {{ error }}
-              </ng-container>
+      </section>
+      <section class="security-settings-options display-flex flex-column gap-2">
+        <div
+          class="security-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
+          <div class="security-settings-option-wrapper display-flex flex-justify gap-05">
+            <div class="security-settings-option-information display-flex flex-column gap-2">
+              <h2 class="margin-0 font-xl text-no-underline">{{page.sections![0].header}}</h2>
+              <p class="text-black usa-prose measure-4 text-no-underline">{{page.sections![0].description}}</p>
             </div>
-  
-            <button class="usa-button flex-align-self-start">Save</button>
-          </form>
+            <div class="security-settings-option-controls">
+              <button (click)="editTimeout = !editTimeout" class="usa-button usa-button--outline">
+                {{ editTimeout ? page.actions!['close_button'] : page.actions!['edit_button'] }}
+              </button>
+            </div>
+          </div>
+          @if (editTimeout) {
+            <div class="security-settings-option-edit border-top-2px padding-top-2 border-base-light">
+              <form
+                (ngSubmit)="onSave()"
+                [formGroup]="timeOutForm"
+                class="security-settings-logo-form display-flex flex-column gap-2">
+                <lib-adapt-text-input
+                  [label]="page.sections![0].questions![0].label"
+                  [hint]="page.sections![0].questions![0].comment"
+                  formControlName="idleMinutes"
+                  type="number">
+                  <p required class="usa-prose">{{page.sections![0].questions![0].validation_messages!['required']}}</p>
+                </lib-adapt-text-input>
+                <lib-adapt-text-input
+                  [label]="page.sections![0].questions![1].label"
+                  [hint]="page.sections![0].questions![1].comment"
+                  formControlName="warningMinutes"
+                  type="number">
+                  <p required class="usa-prose">{{page.sections![0].questions![1].validation_messages!['required']}}</p>
+                </lib-adapt-text-input>
+                <lib-adapt-text-input
+                  [label]="page.sections![0].questions![2].label"
+                  [hint]="page.sections![0].questions![2].comment"
+                  formControlName="timeoutMinutes"
+                  type="number">
+                  <p required class="usa-prose">{{page.sections![0].questions![2].validation_messages!['required']}}</p>
+                </lib-adapt-text-input>
+                @if (timeOutForm.invalid && (timeOutForm.dirty || timeOutForm.touched)) {
+                  <div
+                    class="form-errors text-emergency">
+                    @if (timeOutForm.errors?.['timeout']; as error) {
+                      {{ error }}
+                    }
+                  </div>
+                }
+                <button class="usa-button flex-align-self-start">Save</button>
+              </form>
+            </div>
+          }
         </div>
-      </div>
+      </section>
     </section>
-  </section>
-  
-
-</ng-container>
+  }
+}
 
 

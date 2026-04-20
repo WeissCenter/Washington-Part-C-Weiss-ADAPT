@@ -1,36 +1,60 @@
-<ng-container [ngSwitch]="level">
-  <ng-container *ngIf="formGroup && controlName">
-    <ng-container [formGroup]="formGroup">
-      <h1 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h1'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h1>
-      <h2 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h2'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h2>
-      <h3 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h3'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h3>
-      <h4 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h4'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h4>
-      <h5 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h5'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h5>
-      <h6 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass" *ngSwitchCase="'h6'">
-        <ng-container [ngTemplateOutlet]="content"></ng-container>
-      </h6>
-    </ng-container>
+@if (formGroup && controlName) {
+  <ng-container [formGroup]="formGroup">
+    @switch (level) {
+      @case ('h1') {
+        <h1 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h1>
+      }
+      @case ('h2') {
+        <h2 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h2>
+      }
+      @case ('h3') {
+        <h3 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h3>
+      }
+      @case ('h4') {
+        <h4 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h4>
+      }
+      @case ('h5') {
+        <h5 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h5>
+      }
+      @case ('h6') {
+        <h6 [id]="id" [formControlName]="controlName" [libAdaptEditable]="editable" [ngClass]="ngClass">
+          <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </h6>
+      }
+    }
   </ng-container>
-
-  <ng-container *ngIf="!formGroup || !controlName">
-    <h1 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h1'"><ng-container [ngTemplateOutlet]="content"></ng-container></h1>
-    <h2 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h2'"><ng-container [ngTemplateOutlet]="content"></ng-container></h2>
-    <h3 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h3'"><ng-container [ngTemplateOutlet]="content"></ng-container></h3>
-    <h4 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h4'"><ng-container [ngTemplateOutlet]="content"></ng-container></h4>
-    <h5 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h5'"><ng-container [ngTemplateOutlet]="content"></ng-container></h5>
-    <h6 [id]="id" [ngClass]="ngClass" *ngSwitchCase="'h6'"><ng-container [ngTemplateOutlet]="content"></ng-container></h6>
-  </ng-container>
-</ng-container>
+} @else {
+  @switch (level) {
+    @case ('h1') {
+      <h1 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h1>
+    }
+    @case ('h2') {
+      <h2 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h2>
+    }
+    @case ('h3') {
+      <h3 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h3>
+    }
+    @case ('h4') {
+      <h4 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h4>
+    }
+    @case ('h5') {
+      <h5 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h5>
+    }
+    @case ('h6') {
+      <h6 [id]="id" [ngClass]="ngClass"><ng-container [ngTemplateOutlet]="content"></ng-container></h6>
+    }
+  }
+}
 
 <ng-template #content>
   <ng-content></ng-content>

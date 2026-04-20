@@ -46,8 +46,8 @@ export class OptOutModalComponent {
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
-  onKeydownHandler(event: KeyboardEvent) {
+  @HostListener('document:keydown.escape')
+  onKeydownHandler() {
     this.close();
   }
 }

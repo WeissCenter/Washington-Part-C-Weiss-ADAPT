@@ -1,29 +1,30 @@
-<section *ngIf="content.getPageContentSignal('user-management')() as ctn" class="data-sources-settings-container grid-container gap-4 display-flex flex-column">
-  <section
-    aria-label="Data Source Settings Heading"
-    role="region"
-    class="data-sources-settings-banner width-full display-flex gap-2 flex-column">
-    <div class="usa-prose">
-      <h1 class="margin-0" i18n>{{ctn.title}}</h1>
-      <p class="margin-bottom-0 measure-4" i18n>
+@if (content.getPageContentSignal('user-management')(); as ctn) {
+  <section class="data-sources-settings-container grid-container gap-4 display-flex flex-column">
+    <section
+      aria-label="Data Source Settings Heading"
+      role="region"
+      class="data-sources-settings-banner width-full display-flex gap-2 flex-column">
+      <div class="usa-prose">
+        <h1 class="margin-0" i18n>{{ctn.title}}</h1>
+        <p class="margin-bottom-0 measure-4" i18n>
         {{ctn.description}}
       </p>
-    </div>
-  </section>
-
-  <adapt-list-view
-    [altIcon]="false"
-    recentSortField="attributes.given_name"
-    sortDirection="asc"
-    sortIcon="fa-sort-alpha"
-    [dataList]="$users"
-    [confirm]="confirmEdit"
-    [confirmModal]="userEditConfirmModal"
+      </div>
+    </section>
+    <adapt-list-view
+      [altIcon]="false"
+      recentSortField="attributes.given_name"
+      sortDirection="asc"
+      sortIcon="fa-sort-alpha"
+      [dataList]="$users"
+      [confirm]="confirmEdit"
+      [confirmModal]="userEditConfirmModal"
     currentList="users"></adapt-list-view>
-</section>
+  </section>
+}
 
 <lib-adapt-confirm-modal
   (confirm)="confirmEdit.next(true)"
   (cancel)="confirmEdit.next(false)"
   heading="Please Confirm"
-  body="Are you sure you want to edit this user?"></lib-adapt-confirm-modal>
+body="Are you sure you want to edit this user?"></lib-adapt-confirm-modal>

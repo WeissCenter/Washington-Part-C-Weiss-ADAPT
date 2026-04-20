@@ -8,7 +8,8 @@
 aside {
   width: 50vw;
   max-width: var(--usa-spacing-card-lg);
-  > section {
+
+  >section {
     box-shadow: inset -1px 0px 0px 0px rgba(0, 0, 0, 0.1);
   }
 
@@ -21,8 +22,8 @@ aside {
     --usa-button-icon-size: var(--usa-font-size-lg);
   }
 
-  a > i,
-  li > button.site-nav > i {
+  a>i,
+  li>button.site-nav>i {
     font-size: var(--usa-font-size-lg);
   }
 
@@ -31,19 +32,24 @@ aside {
     max-width: calc(var(--usa-spacing-15) - var(--usa-spacing-2));
     overflow-y: scroll;
 
-    > section {
+    >section {
       gap: var(--usa-spacing-1px);
     }
 
     button,
     a.site-nav {
+      --usa-focus-offset: var(--usa-spacing-05);
       --usa-button-font-size: var(--usa-font-size-3xs);
       flex-direction: column;
       gap: var(--usa-spacing-1);
       border: none;
       padding: var(--usa-spacing-1) var(--usa-spacing-05) var(--usa-spacing-05);
 
-      > i {
+      &:focus {
+        border-radius: 0;
+      }
+
+      >i {
         font-size: var(--usa-font-size-lg);
       }
     }
@@ -60,7 +66,7 @@ aside {
   .site-nav {
     font-size: var(--usa-button-font-size);
     text-decoration: none;
-    border-radius: var(--usa-border-radius-lg);
+    border-radius: var(--usa-border-radius-sm);
     color: var(--usa-primary);
     cursor: pointer;
     display: flex;
@@ -107,6 +113,7 @@ a.site-nav {
   :host {
     z-index: 101;
   }
+
   aside {
     max-width: 100vw;
     position: sticky;
@@ -122,6 +129,7 @@ a.site-nav {
       max-width: 90vw;
       min-width: 90vw;
       position: fixed;
+
       #expand-menu-button {
         align-self: flex-end;
         width: auto;
@@ -129,15 +137,17 @@ a.site-nav {
         gap: var(--usa-spacing-1);
         font-size: var(--usa-font-size-md);
         outline-offset: 0;
+
         i {
           transform: rotate(180deg);
         }
       }
 
-      > section {
+      >section {
         position: relative;
         z-index: 2;
       }
+
       &:before {
         content: '';
         display: block;
@@ -149,13 +159,14 @@ a.site-nav {
         right: 0;
         z-index: 1;
       }
+
       .site-nav {
         font-size: var(--usa-font-size-md);
       }
     }
 
     &.collapsed {
-      > section {
+      >section {
         flex-direction: row-reverse;
         padding: var(--usa-spacing-05) var(--usa-spacing-2);
         align-items: center;
@@ -163,7 +174,7 @@ a.site-nav {
         gap: var(--usa-spacing-2);
       }
 
-      .sidebar-header > div {
+      .sidebar-header>div {
         padding: 0;
       }
 
@@ -173,6 +184,7 @@ a.site-nav {
         padding: 0;
         font-size: var(--usa-font-size-md);
         outline-offset: 0;
+
         i {
           display: none;
         }

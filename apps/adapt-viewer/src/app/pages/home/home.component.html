@@ -1,55 +1,56 @@
 @if (ready()) {
-<!--<adapt-session-reload-banner></adapt-session-reload-banner>-->
-<branding-header></branding-header>
-<!-- <div class="padding-y-3 padding-x-5 width-full display-flex gap-2 flex-column">
-<lib-data-rep-comparison-trigger #comparisonTrigger [content]="comparisonContent.triggerButtonLabel"
+  <!--<adapt-session-reload-banner></adapt-session-reload-banner>-->
+  <branding-header></branding-header>
+  <!-- <div class="padding-y-3 padding-x-5 width-full display-flex gap-2 flex-column">
+  <lib-data-rep-comparison-trigger #comparisonTrigger [content]="comparisonContent.triggerButtonLabel"
   [controlPanel]="comparisonControls"></lib-data-rep-comparison-trigger>
-<lib-data-rep-comparison-controls (comparisonSubmit)="onComparisonSelection($event)"
-  [comparisonOptions]="comparisonOptions" [content]="comparisonContent" [trigger]="comparisonTrigger.buttonElement"
+  <lib-data-rep-comparison-controls (comparisonSubmit)="onComparisonSelection($event)"
+    [comparisonOptions]="comparisonOptions" [content]="comparisonContent" [trigger]="comparisonTrigger.buttonElement"
   #comparisonControls></lib-data-rep-comparison-controls>
-<ng-container *ngIf="comparisonMode && comparisonControls.isOpen">
-  <lib-data-rep-comparison [comparisonItem1Raw]="comparisonSelection.comparison1?.data?? []" [comparisonItem1Label]="comparisonSelection.comparison1?.label?? ''" [comparisonItem2Label]="comparisonSelection.comparison2?.label?? ''" [comparisonItem2Raw]="comparisonSelection.comparison2?.data?? []" [content]="comparisonContent"></lib-data-rep-comparison>
-</ng-container>
+  <ng-container *ngIf="comparisonMode && comparisonControls.isOpen">
+    <lib-data-rep-comparison [comparisonItem1Raw]="comparisonSelection.comparison1?.data?? []" [comparisonItem1Label]="comparisonSelection.comparison1?.label?? ''" [comparisonItem2Label]="comparisonSelection.comparison2?.label?? ''" [comparisonItem2Raw]="comparisonSelection.comparison2?.data?? []" [content]="comparisonContent"></lib-data-rep-comparison>
+  </ng-container>
 </div> -->
 
 
 <!-- <ng-container *ngIf="!comparisonMode || !comparisonControls.isOpen"> -->
 
-  <section *ngIf="$content()" aria-label="Recent activities and common actions" class="padding-top-3 tablet:padding-top-5">
+@if ($content()) {
+  <section aria-label="Recent activities and common actions" class="padding-top-3 tablet:padding-top-5">
     <div class="grid-container padding-x-0 tablet:padding-x-5">
       <div class="display-flex margin-top-4 width-full padding-x-2 tablet:padding-x-0 flex-column">
         <div class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg">
           <div class="usa-prose">
             <!-- What can you do here? -->
-            <h2>{{$content().pages.home?.headingCard?.heading}}</h2>
-            <p>{{$content().pages.home?.headingCard?.body}}</p>
+            <h2 class="margin-0">{{$content().pages.home?.headingCard?.heading}}</h2>
+            <p [innerHTML]="$content().pages.home?.headingCard?.body"></p>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <section *ngIf="$content()" [attr.aria-label]="$content().shared.frequentlyAskedQuestions.title"
+}
+@if ($content()) {
+  <section [attr.aria-label]="$content().shared.frequentlyAskedQuestions.title"
     class="padding-y-4 desktop:padding-y-6">
     <div class="grid-container padding-x-0 tablet:padding-x-5">
       <div class="display-flex width-full padding-x-2 tablet:padding-x-0 flex-column">
-
         <div class="usa-prose">
-          <h2>{{ $content().shared?.frequentlyAskedQuestions?.title }}</h2>
-          <p>{{ $content().shared?.frequentlyAskedQuestions?.description + ' ' +
-            $content().shared?.frequentlyAskedQuestions?.footNote}}</p>
+          <h2 class="margin-0">{{ $content().shared?.frequentlyAskedQuestions?.title }}</h2>
+          <p class="measure-4">{{ $content().shared?.frequentlyAskedQuestions?.description + ' ' +
+          $content().shared?.frequentlyAskedQuestions?.footNote}}</p>
         </div>
-
-
         <div class="questions-layout gap-2 accessibility-layout display-flex padding-x-0 margin-top-4">
-          <article *ngFor="let q of $selFreqAskedQuestions() | fieldLengthSort : 'answer'"
-            class="bg-white grid-col-6 padding-2 desktop:padding-3 gap-2 border-2px display-flex flex-column border-base-lighter tablet:radius-lg">
-            <div class="usa-prose">
-              <h3>{{ q.question }}</h3>
-              <p>{{ q.answer }}</p>
-            </div>
-            <lib-adapt-tag status="active">{{ q.categoryName }}</lib-adapt-tag>
-          </article>
-
+          @for (q of $selFreqAskedQuestions() | fieldLengthSort : 'answer'; track q.question) {
+            <article
+              class="bg-white grid-col-6 padding-2 desktop:padding-3 gap-2 border-2px display-flex flex-column border-base-lighter tablet:radius-lg">
+              <div class="usa-prose">
+                <h3>{{ q.question }}</h3>
+                <p>{{ q.answer }}</p>
+              </div>
+              <lib-adapt-tag status="active">{{ q.categoryName }}</lib-adapt-tag>
+            </article>
+          }
         </div>
         <div class="home-faqs-view-more margin-top-2">
           <a [routerLink]="['resources']" [queryParams]="{'navigation': 'frequently-asked-questions'}"
@@ -61,20 +62,58 @@
       </div>
     </div>
   </section>
+}
 
-  <section aria-label="Latest Reports">
-    <div class="grid-container padding-x-2 display-flex flex-column gap-2 tablet:padding-x-5">
-      <ng-container *ngIf="$content()?.pages?.home?.latestReports as reportContent">
-        <div class="display-flex usa-prose flex-column flex-align-start accessibility-layout gap-2">
-          <h2 class="margin-0">{{ reportContent.title }}</h2>
-          <p class="measure-4">
-            {{ reportContent.description }}
-          </p>
+<section aria-label="Latest Reports">
+  <div class="grid-container padding-x-2 display-flex flex-column gap-2 tablet:padding-x-5">
+    @if ($content()?.pages?.home?.latestReports; as reportContent) {
+      <div class="display-flex usa-prose flex-column flex-align-start accessibility-layout">
+        <h2 class="margin-0">{{ reportContent.title }}</h2>
+        <p class="measure-4">
+          {{ reportContent.description }}
+        </p>
+      </div>
+      <!--  *ngFor="let report of reports$ | async" -->
+      @if (reportsLoadedComplete) {
+        <div class="home-reports-list display-flex flex-column gap-1">
+          @for (report of listOfAllReports; track report.reportID) {
+            <lib-adapt-expandable-list-item [expandable]="false">
+              @if (report) {
+                <div visible-content class="display-flex gap-105 flex-column">
+                  <lib-adapt-h-element [ngClass]="'usa-prose margin-0'" level="h3">
+                    <a class="text-primary hover:primary-dark text-semibold text-no-underline cursor-pointer display-inline-flex width-auto"
+                    [routerLink]="['reports', report.slug]">{{ report.template.title }}</a>
+                  </lib-adapt-h-element>
+                  <p class="text-normal font-sm line-height-5 text-ink">{{ report.template.description }}</p>
+                  <p class="text-normal font-sm line-height-4 text-ink">
+                    <time [attr.datetime]="report?.published | date : 'yyyy-MM-dd'">
+                      {{ report.published | date }}
+                    </time>
+                  </p>
+                </div>
+              }
+              <!--
+              <div action-content class="display-flex gap-2">
+                <button   [routerLink]="['reports', report.slug]" class="usa-button">
+                  <i class="fal fa-eye" role="img" aria-hidden="true"></i> {{ reportContent.viewButton }}
+                </button>
+                <button class="usa-button usa-button--outline">
+                  <i class="fal fa-share" aria-hidden="true"></i> {{ reportContent.shareButton }}
+                </button>
+                <button class="usa-button usa-button--outline">
+                  <i class="fal fa-table" role="img" aria-hidden="true"></i>{{ reportContent.dataButton }}
+                </button>
+              </div> -->
+            </lib-adapt-expandable-list-item>
+          }
         </div>
         <!--  *ngFor="let report of reports$ | async" -->
-        <div *ngIf="reportsLoadedComplete" class="home-reports-list display-flex flex-column gap-1">
-          <lib-adapt-expandable-list-item [expandable]="false" *ngFor="let report of listOfAllReports">
-            <div *ngIf="report" visible-content class="display-flex flex-column">
+        @if (reportsLoadedComplete) {
+        <div class="home-reports-list display-flex flex-column gap-1">
+          @for (report of listOfAllReports; track report.slug) {
+          <lib-adapt-expandable-list-item [expandable]="false">
+            @if (report) {
+            <div visible-content class="display-flex flex-column">
               <lib-adapt-h-element [ngClass]="'usa-prose margin-0'" level="h3">
                 <a class="text-primary hover:primary-dark text-semibold text-underline display-inline-flex width-auto"
                   [routerLink]="['reports', report.slug]">{{ report.template.title }}</a>
@@ -88,6 +127,7 @@
                 </time>
               </p>
             </div>
+            }
             <!--
           <div action-content class="display-flex gap-2">
             <button   [routerLink]="['reports', report.slug]" class="usa-button">
@@ -101,14 +141,18 @@
             </button>
           </div> -->
           </lib-adapt-expandable-list-item>
+          }
         </div>
+        }
 
         <div class="home-reports-view-more">
           <a [routerLink]="['reports']" class="usa-button usa-button--outline">
             <i aria-hidden="true" class="fal fa-folder" role="img" alt=""></i>{{ reportContent.button_text }}
           </a>
         </div>
-      </ng-container>
+      <!-- </ng-container> -->
+    }
+  }
     </div>
   </section>
 }

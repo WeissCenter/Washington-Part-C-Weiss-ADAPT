@@ -4,6 +4,10 @@
   background-color: var(--usa-black) !important;
 }
 
+.data-table {
+  --usa-focus-offset: 0;
+}
+
 .header-row > * {
   color: var(--usa-white) !important;
   background-color: var(--usa-black) !important;

@@ -1,6 +1,7 @@
 name: Weiss ADAPT Admin Deploy
 run-name: ${{ github.actor }} pushed an update for env ${{ github.ref_name }}
 on:
+  workflow_dispatch: 
   push:
     paths:
       - 'apps/adapt-admin/**'

@@ -64,6 +64,8 @@ import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/a
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
 import { TemplateService } from '@adapt-apps/adapt-admin/src/app/services/template.service';
 import { ValidationService } from '../services/validation.service';
+import { DataCollectionTemplateService } from '../services/data-collection-template.service';
+import { ReportTemplateService } from '../services/report-template.service';
 
 @NgModule({
   declarations: [
@@ -140,6 +142,8 @@ import { ValidationService } from '../services/validation.service';
     AdaptDataViewService,
     AdaptReportService,
     TemplateService,
+    DataCollectionTemplateService,
+    ReportTemplateService,
     ValidationService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -1,29 +1,30 @@
-<ng-container *ngIf="content">
-  
+@if (content) {
   <!-- <div class="report-header width-full display-flex usa-prose flex-column">
-        <h2 i18n>Quick Summary</h2>
-        <p class="margin-bottom-0 usa-prose measure-4">Here's a simplified summary about the data represented in this report:</p>
-    </div> -->
-  <section
-    class="report-quick-summary bg-white margin-top-2 padding-3 gap-2 border-2px display-flex flex-column flex-1 border-base-lighter radius-lg">
-    <h2 class="usa-prose margin-0">{{cmsContent.header}}</h2>
-    <div *ngIf="content['heading']" class="report-quick-summary-heading padding-top-2">
+  <h2 i18n>Quick Summary</h2>
+  <p class="margin-bottom-0 usa-prose measure-4">Here's a simplified summary about the data represented in this report:</p>
+</div> -->
+<section
+  class="report-quick-summary bg-white margin-top-2 padding-3 gap-2 border-2px display-flex flex-column flex-1 border-base-lighter radius-lg">
+  <h2 class="usa-prose margin-0">{{cmsContent.header}}</h2>
+  @if (content['heading']) {
+    <div class="report-quick-summary-heading padding-top-2">
       <div class="report-quick-summary-heading-text usa-prose grid-row">
         <h3 class="text-normal margin-0 grid-col-10">{{ content['heading'] }}</h3>
       </div>
     </div>
-
-    <div class="report-quick-summary-sections accessibility-layout grid-row grid-gap-4">
-      <div class="grid-col-12 tablet:grid-col-6 padding-y-2 usa-prose" *ngFor="let section of content['sections']">
+  }
+  <div class="report-quick-summary-sections accessibility-layout grid-row grid-gap-4">
+    @for (section of content['sections']; track $index) {
+      <div class="grid-col-12 tablet:grid-col-6 padding-y-2 usa-prose">
         <p>
-
-          <ng-container *ngIf="section.title?.length">
+          @if (section.title?.length) {
             <strong>{{ section.title }}</strong
-              >: 
-          </ng-container>
-          {{ section.body }}
-        </p>
-      </div>
+              >:
+            }
+            {{ section.body }}
+          </p>
+        </div>
+      }
     </div>
   </section>
-</ng-container>
+}

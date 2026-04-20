@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>adapt-admin</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="assets/shared/favicon.png" />
-    <style type="text/css">
-      .skip-to [role='menu'] {
-        min-width: var(--usa-spacing-mobile);
-      }
-    </style>
-    <!--    <link href="./assets/fontawesome/css/all.min.css" rel="stylesheet" />-->
-  </head>
 
-  <body class="usa-typography height-viewport">
-    <adapt-root></adapt-root>
-    <script>
-      const skipToButtonLabel = 'Skip to a section';
-      const skipToFontFamily = 'var(--usa-font-body)';
-      const skipToFontSize = 'var(--usa-font-size-2xs)';
-      const skipToButtonBackgroundColor = 'var(--usa-color-global-black)';
-      const skipToMenuTextColor = 'var(--usa-color-global-white)';
-      const skipToFocusBorderColor = 'var(--usa-color-mint-vivid-10) !important';
-      const skipToMenuBackgroundColor = 'var(--usa-color-global-black)';
-      const skipToMenuitemFocusBackgroundColor = 'var(--usa-color-mint-vivid-10)';
-      const skipToMenuitemFocusTextColor = 'var(--usa-color-global-black)';
-      var SkipToConfig = {
-        settings: {
-          skipTo: {
-            attachElement: 'body',
-            landmarks:
-              '[role=alert],[role=main],main,[role=banner],header,nav,[role=navigation],section,[role=region],[role=search],aside,[role=complementary],footer,[role=contentinfo]',
-            headings: 'h1, h2, h3',
-            attachElement: 'body',
-            containerRole: 'navigation',
-            fontFamily: skipToFontFamily,
-            fontSize: skipToFontSize,
-            buttonLabel: skipToButtonLabel,
-            menuTextColor: skipToMenuTextColor,
-            buttonBackgroundColor: skipToButtonBackgroundColor,
-            menuitemFocusTextColor: skipToMenuitemFocusTextColor,
-            focusBorderColor: skipToFocusBorderColor,
-            menuBackgroundColor: skipToMenuBackgroundColor,
-            menuitemFocusBackgroundColor: skipToMenuitemFocusBackgroundColor,
-            menuitemFocusTextColor: skipToMenuitemFocusTextColor,
-            displayOption: 'popup',
-            positionLeft: '0',
-            accesskey: '0',
-          },
+<head>
+  <meta charset="utf-8" />
+  <title>adapt-admin</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="assets/shared/favicon.png" />
+  <style type="text/css">
+    .skip-to [role='menu'] {
+      min-width: var(--usa-spacing-mobile);
+    }
+
+    .skip-to button:focus {
+      border-width: 0 var(--usa-spacing-05) var(--usa-spacing-05) var(--usa-spacing-05) !important;
+    }
+  </style>
+  <!--    <link href="./assets/fontawesome/css/all.min.css" rel="stylesheet" />-->
+</head>
+
+<body class="usa-typography height-viewport">
+  <adapt-root></adapt-root>
+  <script>
+   const skipToButtonLabel = 'Skip to a section';
+    const skipToFontFamily = 'var(--usa-font-body)';
+    const skipToFontSize = 'var(--usa-font-size-2xs)';
+    const skipToButtonBackgroundColor = 'var(--usa-color-global-black)';
+    const skipToMenuTextColor = 'var(--usa-color-global-white)';
+    const skipToFocusBorderColor = 'var(--usa-color-magenta-vivid-50) !important';
+    const skipToMenuBackgroundColor = 'var(--usa-color-global-black)';
+    const skipToMenuitemFocusBackgroundColor = 'var(--usa-color-global-white)';
+    const skipToMenuitemFocusTextColor = 'var(--usa-color-global-black)';
+    var SkipToConfig = {
+      settings: {
+        skipTo: {
+          attachElement: 'body',
+          landmarks:
+            '[role=alert],[role=main],main,[role=banner],header,nav,[role=navigation],section,[role=region],[role=search],aside,[role=complementary],footer,[role=contentinfo]',
+          headings: 'h1, h2, h3',
+          attachElement: 'body',
+          containerRole: 'navigation',
+          fontFamily: skipToFontFamily,
+          fontSize: skipToFontSize,
+          buttonLabel: skipToButtonLabel,
+          menuTextColor: skipToMenuTextColor,
+          buttonBackgroundColor: skipToButtonBackgroundColor,
+          menuitemFocusTextColor: skipToMenuitemFocusTextColor,
+          focusBorderColor: skipToFocusBorderColor,
+          menuBackgroundColor: skipToMenuBackgroundColor,
+          menuitemFocusBackgroundColor: skipToMenuitemFocusBackgroundColor,
+          menuitemFocusTextColor: skipToMenuitemFocusTextColor,
+          displayOption: 'popup',
+          positionLeft: '0',
+          accesskey: '0',
         },
-      };
-    </script>
+      },
+    };
+  </script>
 
-    <script src="https://paypal.github.io/skipto/downloads/js/skipto.min.js"></script>
-  </body>
+  <script src="https://paypal.github.io/skipto/downloads/js/skipto.min.js"></script>
+</body>
+
 </html>

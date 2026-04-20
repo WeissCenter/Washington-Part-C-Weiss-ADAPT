@@ -1,39 +1,39 @@
-<nav class="usa-breadcrumb" [attr.aria-label]="breadcrumbsLabel | async" *ngIf="showBreadcrumb">
-  <ol class="usa-breadcrumb__list display-flex flex-align-center">
-    <ng-container *ngIf="breadcrumbs | async as crumbs">
-      <ng-container *ngIf="crumbs.length < 5; else escape">
-        <ng-container *ngFor="let crumb of breadcrumbs | async; let isLast = last">
-          <li *ngIf="!isLast; else notLink" class="usa-breadcrumb__list-item display-flex flex-align-center">
-            <a
-              [routerLink]="crumb.link"
-              [queryParamsHandling]="'replace'"
-              [queryParams]="crumb.queryParams"
-              class="usa-breadcrumb__link display-flex flex-align-center flex-align-center"
-              ><span>{{ crumb.label }}</span></a
-            >
-          </li>
-
-          <ng-template #notLink>
-            <li class="usa-breadcrumb__list-item display-flex flex-align-center usa-current" aria-current="page">
-              <span>{{ crumb.label }}</span>
+@if (showBreadcrumb) {
+  <nav class="usa-breadcrumb" [attr.aria-label]="breadcrumbsLabel | async">
+    <ol class="usa-breadcrumb__list display-flex flex-align-center">
+      @if (breadcrumbs | async; as crumbs) {
+        @if (crumbs.length < 5) {
+          @for (crumb of breadcrumbs | async; track crumb.link; let isLast = $last) {
+            @if (!isLast) {
+              <li class="usa-breadcrumb__list-item display-flex flex-align-center">
+                <a
+                  [routerLink]="crumb.link"
+                  [queryParamsHandling]="'replace'"
+                  [queryParams]="crumb.queryParams"
+                  class="usa-breadcrumb__link display-flex flex-align-center flex-align-center"
+                  ><span>{{ crumb.label }}</span></a
+                  >
+                </li>
+              } @else {
+                <li class="usa-breadcrumb__list-item display-flex flex-align-center usa-current" aria-current="page">
+                  <span>{{ crumb.label }}</span>
+                </li>
+              }
+            }
+          } @else {
+            <li class="usa-breadcrumb__list-item">
+              <a
+                [routerLink]="crumbs[0].link"
+                [queryParams]="crumbs[0].queryParams"
+                class="usa-breadcrumb__link display-flex flex-align-center">
+                <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" alt="">
+                  <use xlink:href="/assets/sprite.svg#navigate_before"></use>
+                </svg>
+                {{ crumbs[0].label }}
+              </a>
             </li>
-          </ng-template>
-        </ng-container>
-      </ng-container>
-
-      <ng-template #escape>
-        <li class="usa-breadcrumb__list-item">
-          <a
-            [routerLink]="crumbs[0].link"
-            [queryParams]="crumbs[0].queryParams"
-            class="usa-breadcrumb__link display-flex flex-align-center">
-            <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" alt="">
-              <use xlink:href="/assets/sprite.svg#navigate_before"></use>
-            </svg>
-            {{ crumbs[0].label }}
-          </a>
-        </li>
-      </ng-template>
-    </ng-container>
-  </ol>
-</nav>
+          }
+        }
+      </ol>
+    </nav>
+  }

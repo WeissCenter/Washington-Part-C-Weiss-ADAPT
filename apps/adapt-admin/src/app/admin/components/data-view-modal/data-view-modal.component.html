@@ -1,640 +1,759 @@
 <!--@let pageContent = $pageContentSignal();-->
 <!--@let pageSections = $pageSectionsSignal();-->
-<adapt-full-page-modal *ngIf="pageSections">
-  @let typOptions = $any(typeOptions | async);
+@if (pageSections) {
+  <adapt-full-page-modal>
+    @let typOptions = $any(typeOptions());
+    @let ryOptions = $any(reportingYearOptions | async);
 
-  <div class="display-flex flex-justify" header>
-    <!-- Step 1: Define data -->
-    <h1 class="margin-0" *ngIf="mode !== PageMode.VIEW;else viewHeader">{{ pageSections[currentStep].title }}</h1>
-    <ng-template #viewHeader>
-      <h1 class="margin-0">Data view summary</h1>
-    </ng-template>
+    <div class="display-flex flex-justify" header>
+      <!-- Step 1: Define data -->
+      @if (mode !== PageMode.VIEW) {
+        <h1 class="margin-0">{{ pageSections[currentStep].title }}</h1>
+      } @else {
+        <h1 class="margin-0">Data view summary</h1>
+      }
 
-    <div class="data-view-edit-header-controls display-flex gap-2 flex-align-center">
-      <button (click)="internalClose()"
-        class="save-and-close usa-button text-white flex-align-center border-2px border-white hover:text-white shadow-none usa-button--outline">
-        Close <i class="fas fa-times"></i>
-      </button>
+      <div class="data-view-edit-header-controls display-flex gap-2 flex-align-center">
+        <button (click)="internalClose()"
+          class="save-and-close usa-button text-white flex-align-center border-2px border-white hover:text-white shadow-none usa-button--outline">
+          Close <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div *ngIf="pageSections" class="grid-container-tablet-lg margin-bottom-2 padding-top-2" body>
-    <ng-container *ngIf="mode !== PageMode.VIEW; else view">
-      <adapt-steps-indicator [(step)]="currentStep" #stepsIndicator>
-        <!-- Define -->
-        <adapt-steps-indicator-step name="{{ pageSections[0].name }}">
-          <div  class="define-step-body display-flex flex-column gap-6">
-            <div class="define-step-header">
-              <!-- Getting started with your data. -->
-              <h2>{{ pageSections[0].header }}</h2>
-              <p>{{ pageSections[0].description }}</p>
-            </div>
+    <div class="grid-container-tablet-lg margin-bottom-2 padding-top-2" body>
+      @if (mode !== PageMode.VIEW) {
+        <adapt-steps-indicator [(step)]="currentStep" #stepsIndicator>
+          <!-- Define -->
+          <adapt-steps-indicator-step name="{{ pageSections[0].name }}">
+            <div  class="define-step-body display-flex flex-column gap-6">
+              <div class="define-step-header">
+                <!-- Getting started with your data. -->
+                <h2>{{ pageSections[0].header }}</h2>
+                <p>{{ pageSections[0].description }}</p>
+              </div>
 
-            <div class="define-step-form">
-              <!-- What data do you want to load? -->
-              <form class="display-flex flex-column gap-2" [formGroup]="baseDataViewForm">
-                <!-- "What data do you want to load? -->
-                <lib-adapt-combo-box *ngIf="mode === PageMode.CREATE" formControlName="type"
-                  placeholder="Select a data collection" [comboBoxStyle]="{ 'max-width': '100%' }"
-                  label="{{ pageSections[0].questions![0].label }}" comboID="type" [items]="typOptions"
-                  itemAccessor="value" itemLabel="label">
-                  <ng-container errors>
-                    <div *ngIf="type?.invalid && (type?.dirty || type?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="type?.errors?.['required']" i18n>Data Type is required.</div>
-                    </div>
-                  </ng-container>
-                </lib-adapt-combo-box>
-
-                <!-- "What data do you want to load? -->
-                <div *ngIf="mode !== PageMode.CREATE" class="edit-mode-preview display-flex gap-2 flex-column">
-                  <label>{{ pageSections[0].questions![0].label }}</label>
-                  <strong>{{ type.value | valueLabel : typOptions }}</strong>
-                </div>
-
-                <!-- For what reporting year? For what fiscal year? -->
-                <ng-container [formGroup]="typeFields" *ngIf="currentTemplate">
-                  <ng-container *ngFor="let field of currentTemplate.fields">
-                    <ng-container *ngIf="mode === PageMode.CREATE; else viewOnly">
-                      <ng-container [ngSwitch]="field.type">
-                        <lib-adapt-combo-box [formControlName]="field.id" [comboBoxStyle]="{ 'max-width': '100%' }"
-                          [label]="field.label" [items]="field.options" itemAccessor="value" [comboID]="field.id"
-                          itemLabel="label">
-                          <ng-container errors>
-                            <ng-container *ngIf="typeFields.get(field.id) as formField">
-                              <div *ngIf="formField?.invalid && (formField?.dirty || formField?.touched)"
-                                class="form-errors margin-top-1 text-emergency">
-                                <div *ngIf="formField?.errors?.['required']" i18n>{{ field.label }} is required.</div>
-                              </div>
-                            </ng-container>
-                          </ng-container>
-                        </lib-adapt-combo-box>
+              <div class="define-step-form">
+                <!-- What data do you want to load? -->
+                <form class="display-flex flex-column gap-2" [formGroup]="baseDataViewForm">
+                  <!-- "What data do you want to load? -->
+                  @if (mode === PageMode.CREATE) {
+                    <lib-adapt-combo-box formControlName="type"
+                      placeholder="Select a data collection" [comboBoxStyle]="{ 'max-width': '100%' }"
+                      label="{{ pageSections[0].questions![0].label }}" comboID="type" [items]="typOptions"
+                      itemAccessor="value" itemLabel="label">
+                      <ng-container errors>
+                        @if (type.invalid && (type.dirty || type.touched)) {
+                          <div class="form-errors margin-top-1 text-emergency">
+                            @if (type.errors?.['required']) {
+                              <div i18n>Data Type is required.</div>
+                            }
+                          </div>
+                        }
                       </ng-container>
-                    </ng-container>
+                    </lib-adapt-combo-box>
 
-                    <!-- EDIT mode: For what reporting year? For what fiscal year? -->
-                    <ng-template #viewOnly>
-                      <div class="view-only-preview display-flex gap-2 flex-column">
-                        <label>{{ field.label }}</label>
-                        <!-- {{ typeFields.get(field.id)?.value }} -->
-                       <strong>{{getFieldValue(field)}} </strong>
-                      </div>
-                    </ng-template>
-                  </ng-container>
-                </ng-container>
+                    <lib-adapt-combo-box formControlName="reportingYear"
+                      placeholder="Select a data collection" [comboBoxStyle]="{ 'max-width': '100%' }"
+                      label="For what fiscal year?" comboID="reportingYear" [items]="ryOptions"
+                      itemAccessor="value" itemLabel="label">
+                      <ng-container errors>
+                        @if (reportingYear.invalid && (reportingYear.dirty || reportingYear.touched)) {
+                          <div class="form-errors margin-top-1 text-emergency">
+                            @if (reportingYear.errors?.['required']) {
+                              <div i18n>Reporting Year is required.</div>
+                            }
+                          </div>
+                        }
+                      </ng-container>
+                    </lib-adapt-combo-box>
+                  }
 
-                <!-- Where is the data coming from? -->
-                <lib-adapt-combo-box *ngIf="mode === PageMode.CREATE" formControlName="source"
-                  [comboBoxStyle]="{ 'max-width': '100%' }" comboID="source"
-                  label="{{ pageSections[0].questions![1].label }}" [items]="pageSections[0].questions![1].options"
-                  itemAccessor="value" itemLabel="label"></lib-adapt-combo-box>
-
-                <!-- Where is the data coming from? -->
-                <div *ngIf="mode !== PageMode.CREATE" class="edit-mode-preview display-flex gap-2 flex-column">
-                  <label>{{ pageSections[0].questions![1].label }}</label>
-                  <strong>{{ source.value | valueLabel : sourceOptions }}</strong>
-                </div>
-
-
-                @let ds = dataSources | async;
-
-                <ng-container *ngIf="mode === PageMode.CREATE">
-
-                <lib-adapt-combo-box *ngIf="source.value === 'database'"  formControlName="database"
-                  [comboBoxStyle]="{ 'max-width': '100%' }" comboID="database"
-                  label="{{ pageSections[0].questions![2].label ? pageSections[0].questions![2].label : 'Which Database?'}}"
-                  [items]="ds" itemAccessor="dataSourceID" itemLabel="name">
-                  <ng-container errors>
-                    <div *ngIf="database?.invalid && (database?.dirty || database?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="database?.errors?.['required']" i18n>{{
-                        pageSections[0].questions![2].validation_messages!['required'] ?
-                        pageSections[0].questions![2].validation_messages!['required'] : 'Database is required.' }}
-                      </div>
+                  <!-- "What data do you want to load? -->
+                  @if (mode !== PageMode.CREATE) {
+                    <div class="edit-mode-preview display-flex gap-2 flex-column">
+                      <label>{{ pageSections[0].questions![0].label }}</label>
+                      <strong>{{ type.value | valueLabel : typOptions }}</strong>
                     </div>
-                  </ng-container>
-                </lib-adapt-combo-box>
-
-              </ng-container>
-
-              <ng-container *ngIf="mode === PageMode.EDIT && source.value === 'database'">
-                <label>{{ pageSections[0].questions![2].label ? pageSections[0].questions![2].label : 'Which Database?' }}</label>
-                <strong>{{ database.value | valueLabel : $any(ds) : 'dataSourceID' : 'name'  }}</strong>
-
-              </ng-container>
-
-                <div *ngIf="duplicate" class="usa-summary-box margin-bottom-4" role="region"
-                  aria-labelledby="duplicate-data-collection-header">
-                  <div class="usa-summary-box__body">
-                    <strong class="usa-summary-box__heading" id="duplicate-data-collection-header">
-                      <!-- This data collection already exists. -->
-                      {{ pageSections[0].messages!['warning'].message }}
-                    </strong>
-                    <div class="usa-summary-box__text display-flex flex-column gap-1">
-                      <!-- Please check the collection -->
-                      <p class="usa-prose">
-                        {{ pageSections[0].messages!['warning'].details }}
-                        <button (click)="openDuplicatePreview()" aria-label="Duplicate collection preview"
-                          class="usa-button usa-button--unstyled">
-                          "{{ duplicate.name }}"
-                        </button>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </adapt-steps-indicator-step>
-
-        <!-- Step 2: Load -->
-        <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
-          <div class="load-step-body display-flex flex-column gap-2">
-            <div class="load-step-header">
-              <!-- Load data -->
-              <h2>{{ pageSections[1].header }}</h2>
-              <!-- {{ currentTemplate?.step2Description }} -->
-              <p class="usa-prose">{{ pageSections[1].description }}</p>
-            </div>
-
-            <div class="load-step-upload-elements">
-              <h3>{{ currentTemplate?.name }} comes from {{ currentTemplate?.files?.length }} separate files:</h3>
-
-              <form [formGroup]="baseDataViewForm">
-                <div formArrayName="files" class="load-step-upload-accordians display-flex flex-column gap-2">
-                  <ng-container *ngFor="let file of currentTemplate?.files; let i = index">
-                    <ng-container *ngIf="files.controls[i] as fileControl">
-                      <lib-adapt-accordion [ngStyle]="{
-                          'background-color':
-                            fileControlStates[i] === FileControlState.VALID ? 'var(--usa-success-light)' : ''
-                        }" [ngClass]="{
-                          'bg-secondary-lighter':
-                            (currentDataView?.dataViewType === 'collection' &&
-                              mode !== PageMode.CREATE &&
-                              fileControlStates[i] === FileControlState.EMPTY) ||
-                            (fileControl.invalid && fileControl?.dirty),
-                          'text-black': true,
-                          'bg-primary-lighter':
-                            fileControlStates[i] === FileControlState.UPLOADING ||
-                            fileControlStates[i] === FileControlState.VALIDATION
-                        }" *ngIf="showFileAccordion(i)" [header]="file.name">
-                        <div aria-live="polite"
-                          *ngIf="fileControl.invalid && fileControl?.dirty"
-                          class="file-accordion-errors display-flex gap-2 bg-secondary-lighter padding-2">
-                          <div class="errors-icon">
-                            <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
-                          </div>
-
-                          <div class="errors-body" *ngIf="fileControl.errors as fileErrors">
-                              <!-- Something went wrong. -->
-                              <strong>{{ pageSections[1].messages!['error'].message }}</strong>
-
-                              <ng-container *ngIf="fileErrors?.['validateFiles'] as validationErrors">
-                                <ul class="usa-list">
-                                  <li *ngFor="let error of validationErrors">
-                                    {{ error.message }}
-                                  </li>
-                                </ul>
-                                <!-- Please review the file and re-upload. -->
-                                <p>{{ pageSections[1].messages!['error'].details }}</p>
-                              </ng-container>
-                              <ng-container *ngIf="fileErrors?.['apiError'] as apiError">
-                                  <p>The system has encountered an error: {{ apiError }}</p>
-                              </ng-container>
-
-                              <ng-container *ngIf="fileErrors?.['required'] && source.value !== 'database'">
-                                <!-- This file is required for upload. -->
-                                <p>{{ pageSections[1].messages!['required'].message }} </p>
-                              </ng-container>
-                          </div>
-                        </div>
-
-                        <div aria-live="polite" *ngIf="
-                            mode !== PageMode.CREATE &&
-                            !fileControl.touched &&
-                            fileControlStates[i] === FileControlState.EMPTY  && source.value !== 'database'
-                          " class="file-accordion-errors display-flex gap-2 bg-secondary-lighter padding-2">
-                          <div class="errors-icon">
-                            <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
-                          </div>
-                          <div class="errors-body">
-                            <strong>Missing Data.</strong>
-
-                            <p>This file is required for upload.</p>
-                          </div>
-                        </div>
-
-                        <div aria-live="polite" *ngIf="fileControlStates[i] === FileControlState.VALID"
-                          class="file-accordion-success display-flex gap-2 padding-2">
-                          <div class="success-icon">
-                            <i class="fal text-green font-xl fa-thumbs-up"></i>
-                          </div>
-
-                          <div class="success-body">
-                            <!-- File uploaded successfully. -->
-                            <strong>{{ pageSections[1].messages!['success'].message }}</strong>
-                            <p>{{ pageSections[1].messages!['success'].details }}
-                              <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">
-                                Preview
-                              </button>
-                            </p>
-                          </div>
-                        </div>
-
-                        <div class="file-accordion-wrapper display-flex flex-column gap-2">
-                          <p class="file-description usa-prose">
-                            {{ file.description }}
-                          </p>
-
-                          <div
-                            *ngIf="mode !== PageMode.CREATE && fileControlStates[i] === FileControlState.VALID && !fileControl.dirty"
-                            class="edit-mode-file-information bg-white border-1px padding-1 display-flex flex-column gap-2">
-                            <h4 class="margin-0">Uploaded File:</h4>
-
-                            <p><strong>File Name:</strong> {{ files.controls[i].value?.name }}</p>
-                          </div>
-
-                          <!-- Select corresponding file to upload or drag-and-drop the file over the area below. -->
-                          <adapt-file-input *ngIf="source.value === 'collection'"
-                            [accept]="file.acceptedFileFormats.fieldAccept" [formControlName]="i"
-                            label="{{pageSections![1].instructions}}" [hint]="file.acceptedFileFormats.fileInputHint">
-                          </adapt-file-input>
-
-
-
-                          <ng-container *ngIf="source.value === 'database'">
-                            <button (click)="showPreview(i)" class="usa-button usa-button--outline">
-                              Preview Data
-                            </button>
-                          </ng-container>
-
-                          <div *ngIf="
-                              fileControlStates[i] === FileControlState.UPLOADING ||
-                              fileControlStates[i] === FileControlState.UPLOAD_PREP ||
-                              fileControlStates[i] === FileControlState.VALIDATION
-                            " class="file-upload-progress">
-                            <div class="usa-summary-box" *ngIf="fileControl.valid" role="region"
-                              [attr.aria-labelledby]="'summary-box-key-information' + '-' + i">
-                              <div class="usa-summary-box__body" aria-live="polite">
-                                <ng-container [ngSwitch]="fileControlStates[i]">
-                                  <ng-container *ngSwitchCase="FileControlState.UPLOADING">
-                                    <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
-                                      Uploading file
-                                    </strong>
-                                    <div class="usa-summary-box__text display-flex flex-column gap-1">
-                                      <p aria-live="polite">Progress status: {{ fileUploadPercentage[i] }}%</p>
-                                      <p>Please don't close this window while the upload processes.</p>
-                                    </div>
-                                  </ng-container>
-
-                                  <ng-container *ngSwitchCase="FileControlState.UPLOAD_PREP">
-                                    <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
-                                      Getting ready to upload.
-                                    </strong>
-                                    <div class="usa-summary-box__text display-flex flex-column gap-1">
-                                      <p>Please don't close this window while the upload gets ready.</p>
-                                    </div>
-                                  </ng-container>
-
-                                  <ng-container *ngSwitchCase="FileControlState.VALIDATION">
-                                    <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
-                                      Validating File
-                                    </strong>
-                                    <div class="usa-summary-box__text display-flex flex-column gap-1">
-                                      <p>
-                                        Please don't close this window while your file is validated against the
-                                        collection's criteria.
-                                      </p>
-                                    </div>
-                                  </ng-container>
+                  }
+                  
+                  <!-- For what reporting year? For what fiscal year? -->
+                  @if (currentTemplate) {
+                    <ng-container [formGroup]="typeFields">
+                      @for (field of currentTemplate.fields; track field.id) {
+                        @if (mode === PageMode.CREATE) {
+                          @switch (field.type) {
+                            @default {
+                              <lib-adapt-combo-box [formControlName]="field.id" [comboBoxStyle]="{ 'max-width': '100%' }"
+                                [label]="field.label" [items]="field.options" itemAccessor="value" [comboID]="field.id"
+                                itemLabel="label">
+                                <ng-container errors>
+                                  @if (typeFields.get(field.id); as formField) {
+                                    @if (formField.invalid && (formField.dirty || formField.touched)) {
+                                      <div class="form-errors margin-top-1 text-emergency">
+                                        @if (formField.errors?.['required']) {
+                                          <div i18n>{{ field.label }} is required.</div>
+                                        }
+                                      </div>
+                                    }
+                                  }
                                 </ng-container>
-                              </div>
+                              </lib-adapt-combo-box>
+                            }
+                          }
+                        } @else {
+                          <!-- EDIT mode: For what reporting year? For what fiscal year? -->
+                          <div class="view-only-preview display-flex gap-2 flex-column">
+                            <label>{{ field.label }}</label>
+                            <!-- {{ typeFields.get(field.id)?.value }} -->
+                            <strong>{{getFieldValue(field)}} </strong>
+                          </div>
+                        }
+                      }
+                    </ng-container>
+                  }
+
+                  <!-- Where is the data coming from? -->
+                  @if (mode === PageMode.CREATE) {
+                    <lib-adapt-combo-box formControlName="source"
+                      [comboBoxStyle]="{ 'max-width': '100%' }" comboID="source"
+                      label="{{ pageSections[0].questions![1].label }}" [items]="pageSections[0].questions![1].options"
+                      itemAccessor="value" itemLabel="label"></lib-adapt-combo-box>
+                  }
+
+                  <!-- Where is the data coming from? -->
+                  @if (mode !== PageMode.CREATE) {
+                    <div class="edit-mode-preview display-flex gap-2 flex-column">
+                      <label>{{ pageSections[0].questions![1].label }}</label>
+                      <strong>{{ source.value | valueLabel : sourceOptions }}</strong>
+                    </div>
+                  }
+
+
+                  @let ds = dataSources | async;
+
+                  @if (mode === PageMode.CREATE) {
+
+                    @if (source.value === 'database') {
+                      <lib-adapt-combo-box formControlName="database"
+                        [comboBoxStyle]="{ 'max-width': '100%' }" comboID="database"
+                        label="{{ pageSections[0].questions![2].label ? pageSections[0].questions![2].label : 'Which Database?'}}"
+                        [items]="ds" itemAccessor="dataSourceID" itemLabel="name">
+                        <ng-container errors>
+                          @if (database.invalid && (database.dirty || database.touched)) {
+                            <div class="form-errors margin-top-1 text-emergency">
+                              @if (database.errors?.['required']) {
+                                <div i18n>{{
+                                  pageSections[0].questions![2].validation_messages!['required'] ?
+                                  pageSections[0].questions![2].validation_messages!['required'] : 'Database is required.' }}
+                                </div>
+                              }
                             </div>
-                          </div>
+                          }
+                        </ng-container>
+                      </lib-adapt-combo-box>
+                    }
 
-                          <div *ngIf="source.value === 'collection' && fileControlStates[i] === FileControlState.VALID"
-                            class="preview-button display-flex">
-                            <button (click)="showPreview(i)" class="usa-button width-full usa-button--outline">
-                              Preview Data
+                  }
+
+                  @if (mode === PageMode.EDIT && source.value === 'database') {
+                    <label>{{ pageSections[0].questions![2].label ? pageSections[0].questions![2].label : 'Which Database?' }}</label>
+                    <strong>{{ database.value | valueLabel : $any(ds) : 'dataSourceID' : 'name'  }}</strong>
+
+                  }
+
+                  @if (duplicate) {
+                    <div class="usa-summary-box margin-bottom-4" role="region"
+                      aria-labelledby="duplicate-data-collection-header">
+                      <div class="usa-summary-box__body">
+                        <strong class="usa-summary-box__heading" id="duplicate-data-collection-header">
+                          <!-- This data collection already exists. -->
+                          {{ pageSections[0].messages!['warning'].message }}
+                        </strong>
+                        <div class="usa-summary-box__text display-flex flex-column gap-1">
+                          <!-- Please check the collection -->
+                          <p class="usa-prose">
+                            {{ pageSections[0].messages!['warning'].details }}
+                            <button (click)="openDuplicatePreview()" aria-label="Duplicate collection preview"
+                              class="usa-button usa-button--unstyled">
+                              "{{ duplicate.name }}"
                             </button>
-                          </div>
+                          </p>
                         </div>
-                      </lib-adapt-accordion>
-                    </ng-container>
-                  </ng-container>
-                </div>
-              </form>
-            </div>
-          </div>
-        </adapt-steps-indicator-step>
-
-        <!-- Step 3: Review -->
-        <adapt-steps-indicator-step name="{{ pageSections[2].name }}">
-          <div class="review-header">
-            <h2>{{ pageSections[2].header }}</h2>
-            <!-- {{ currentTemplate?.step3Description }} -->
-            <p>{{ pageSections[2].description }} </p>
-          </div>
-
-          <div class="review-body margin-top-4 padding-3 border-2px border-base-lighter radius-lg bg-white">
-            <h3 class="margin-0">Summary:</h3>
-
-            <ul class="usa-list display-flex flex-column gap-1">
-              <li>
-                <span>{{ getDetailLabel(pageSections[2].questions, 'dataView') || 'Data view'
-                  }}</span>
-                <ul class="usa-list" *ngIf="opened">
-                  <li>
-                    <strong>{{ type.value | valueLabel : typOptions }}</strong>
-                  </li>
-                </ul>
-              </li>
-
-              <!-- Review summary question:  pageSections[2].question: Fiscal Year-->
-              <li *ngFor="let field of currentTemplate?.fields">
-                  <span>{{ getDetailLabel(pageSections[2].questions, field.id) }}</span>
-                <ul class="usa-list">
-                  <li>
-                    <!-- {{ this.typeFields.get(field.id)?.value }} -->
-                    <strong>{{ getFieldValue(field) }}</strong>
-                  </li>
-                </ul>
-              </li>
-
-              <li>
-                <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoad') || 'Data load method' }}</span>
-                <ul class="usa-list">
-                  <li>
-                    <ng-container [ngSwitch]="this.source.value">
-                      <strong *ngSwitchCase="'collection'">File upload</strong>
-                      <strong *ngSwitchCase="'database'">Database Connection</strong>
-                    </ng-container>
-                  </li>
-                </ul>
-              </li>
-
-
-              <li *ngIf="source.value === 'collection'">
-                <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoadStatus') || 'Expected data and load status' }}</span>
-                <ul class="usa-list">
-                  <li *ngFor="let data of this.currentTemplate?.files; let i = index">
-                    <ng-container *ngIf="files.controls?.[i] as fileControl">
-
-                      {{ data.name }}:
-
-                      <ng-container *ngIf="fileControl.valid">
-                        <strong>{{ fileControl.value?.name }}</strong> -
-                      </ng-container>
-
-                      <button (click)="showPreview(i)" *ngIf="fileControlStates[i] === FileControlState.VALID"
-                        class="usa-button usa-button--unstyled">
-                        Preview data file
-                      </button>
-
-                      <span *ngIf="fileControlStates[i] === FileControlState.EMPTY">Missing Data</span>
-                    </ng-container>
-                  </li>
-                </ul>
-              </li>
-
-              <li  *ngIf="source.value === 'database'">
-
-                <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoadStatus') || 'Expected data and load status' }}</span>
-                <ul class="usa-list">
-                  <li class="margin-0 load-status-li maxw-full" *ngFor="let data of this.currentTemplate?.files; let i = index">
-                    {{ data.name }}:
-                    <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">Preview data</button>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-
-            <ng-container *ngIf="mode !== PageMode.CREATE">
-              <adapt-impact-analysis headingLevel="h4" type="DataView" [dataViews]="dataViews" [reports]="reports"
-                [id]="$any(currentDataView?.dataViewID)"></adapt-impact-analysis>
-            </ng-container>
-          </div>
-        </adapt-steps-indicator-step>
-
-        <!-- Step 4: Save -->
-        <adapt-steps-indicator-step name="{{ pageSections[3].name }}">
-          <h2>{{ pageSections[3].header }}</h2>
-          <!-- {{ currentTemplate?.step4Description }} -->
-          <p>{{ pageSections[3].description }}</p>
-
-          <form [formGroup]="baseDataViewForm" class="display-flex flex-column gap-2 margin-top-4">
-            <div class="data-view-creation-field display-flex gap-1 flex-column">
-              <label for="name">{{ pageSections[3].questions![0].label ? pageSections[3].questions![0].label : 'Name this data view: ' }}<span class="text-emergency">(Required)</span></label>
-              <span class="field-hint text-base">{{ pageSections[3].questions![0].placeholder ?
-                pageSections[3].questions![0].placeholder : 'Create a friendly and unique name.' }}</span>
-
-              <input class="usa-input maxw-full" id="name" type="text" formControlName="name" />
-
-              <div role="alert" *ngIf="name?.invalid && (name?.dirty || name?.touched)"
-                class="form-errors margin-top-1 text-emergency">
-                <div *ngIf="name?.errors?.['required']" i18n>{{
-                  pageSections[3].questions![0].validation_messages!['required'] ?
-                  pageSections[3].questions![0].validation_messages!['required'] : 'Data View name is required.' }}
-                </div>
-
-                <div *ngIf="name?.errors?.['uniqueName']" i18n>{{
-                  pageSections[3].questions![0].validation_messages!['unique'] ?
-                  pageSections[3].questions![0].validation_messages!['unique'] : 'Data View name must be unique.' }}
-                </div>
+                      </div>
+                    </div>
+                  }
+                </form>
               </div>
             </div>
+          </adapt-steps-indicator-step>
 
-            <!-- <div *ngIf="mode === PageMode.VIEW" class="edit-mode-preview display-flex gap-2 flex-column">
-            <label>Name this data collection: </label>
-            <span class="field-hint text-base">Create a friendly and unique name. </span>
+          <!-- Step 2: Load -->
+          <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
+            <div class="load-step-body display-flex flex-column gap-2">
+              <div class="load-step-header">
+                <!-- Load data -->
+                <h2>{{ pageSections[1].header }}</h2>
+                <!-- {{ currentTemplate?.step2Description }} -->
+                <p class="usa-prose">{{ pageSections[1].description }}</p>
+              </div>
 
-            <p tabindex="0" class="bg-white padding-1 border-1px">{{ name.value }}</p>
-          </div> -->
+              <div class="load-step-upload-elements">
+                <h3>{{ currentTemplate?.name }} comes from {{ currentTemplate?.files?.length }} separate files:</h3>
 
-            <div class="data-view-creation-field display-flex gap-1 flex-column">
-              <label for="describe">{{ pageSections[3].questions![1].validation_messages!['required'] ?
-                pageSections[3].questions![1].validation_messages!['required'] : 'Add a description: ' }} <span
-                  class="text-emergency">(Required)</span></label>
-              <span class="field-hint text-base">{{ pageSections[3].questions![1].placeholder ?
-                pageSections[3].questions![1].placeholder : 'Good descriptions help with search results.' }} </span>
-              <textarea class="usa-textarea maxw-full" id="describe" type="text"
-                formControlName="description"></textarea>
+                <form [formGroup]="baseDataViewForm">
+                  <div formArrayName="files" class="load-step-upload-accordians display-flex flex-column gap-2">
+                    @for (file of currentTemplate?.files; track $index; let i = $index) {
+                      @if (files.controls[i]; as fileControl) {
+                        @if (showFileAccordion(i)) {
+                          <lib-adapt-accordion [ngStyle]="{
+                              'background-color':
+                                fileControlStates[i] === FileControlState.VALID ? 'var(--usa-success-light)' : ''
+                            }" [ngClass]="{
+                              'bg-secondary-lighter':
+                                (currentDataView?.dataViewType === 'collection' &&
+                                  mode !== PageMode.CREATE &&
+                                  fileControlStates[i] === FileControlState.EMPTY) ||
+                                (fileControl.invalid && fileControl.dirty),
+                              'text-black': true,
+                              'bg-primary-lighter':
+                                fileControlStates[i] === FileControlState.UPLOADING ||
+                                fileControlStates[i] === FileControlState.VALIDATION
+                            }" [header]="file.name">
+                            @if (fileControl.invalid && fileControl.dirty) {
+                              <div aria-live="polite"
+                                class="file-accordion-errors display-flex gap-2 bg-secondary-lighter padding-2">
+                                <div class="errors-icon">
+                                  <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
+                                </div>
 
-              <div role="alert" *ngIf="description?.invalid && (description?.dirty || description?.touched)"
-                class="form-errors margin-top-1 text-emergency">
-                <div *ngIf="description?.errors?.['required']" i18n>{{
-                  pageSections[3].questions![1].validation_messages!['required'] ?
-                  pageSections[3].questions![1].validation_messages!['required'] : 'Description is required.' }}</div>
+                                @if (fileControl.errors; as fileErrors) {
+                                  <div class="errors-body">
+                                      <!-- Something went wrong. -->
+                                      <strong>{{ pageSections[1].messages!['error'].message }}</strong>
+
+                                      @if (fileErrors?.['validateFiles']; as validationErrors) {
+                                        <ul class="usa-list">
+                                          @for (error of validationErrors; track $index) {
+                                            <li>
+                                              {{ error.message }}
+                                            </li>
+                                          }
+                                        </ul>
+                                        <!-- Please review the file and re-upload. -->
+                                        <p>{{ pageSections[1].messages!['error'].details }}</p>
+                                      }
+                                      @if (fileErrors?.['apiError']; as apiError) {
+                                          <p>The system has encountered an error: {{ apiError }}</p>
+                                      }
+
+                                      @if (fileErrors?.['required'] && source.value !== 'database') {
+                                        <!-- This file is required for upload. -->
+                                        <p>{{ pageSections[1].messages!['required'].message }} </p>
+                                      }
+                                  </div>
+                                }
+                              </div>
+                            }
+
+                            @if (mode !== PageMode.CREATE &&
+                                !fileControl.touched &&
+                                fileControlStates[i] === FileControlState.EMPTY && source.value !== 'database') {
+                              <div aria-live="polite" class="file-accordion-errors display-flex gap-2 bg-secondary-lighter padding-2">
+                                <div class="errors-icon">
+                                  <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
+                                </div>
+                                <div class="errors-body">
+                                  <strong>Missing Data.</strong>
+
+                                  <p>This file is required for upload.</p>
+                                </div>
+                              </div>
+                            }
+
+                            @if (fileControlStates[i] === FileControlState.VALID) {
+                              <div aria-live="polite"
+                                class="file-accordion-success display-flex gap-2 padding-2">
+                                <div class="success-icon">
+                                  <i class="fal text-green font-xl fa-thumbs-up"></i>
+                                </div>
+
+                                <div class="success-body">
+                                  <!-- File uploaded successfully. -->
+                                  <strong>{{ pageSections[1].messages!['success'].message }}</strong>
+                                  <p>{{ pageSections[1].messages!['success'].details }}
+                                    <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">
+                                      Preview
+                                    </button>
+                                  </p>
+                                </div>
+                              </div>
+                            }
+
+                            <div class="file-accordion-wrapper display-flex flex-column gap-2">
+                              <p class="file-description usa-prose">
+                                {{ file.description }}
+                              </p>
+
+                              @if (mode !== PageMode.CREATE && fileControlStates[i] === FileControlState.VALID && !fileControl.dirty) {
+                                <div
+                                  class="edit-mode-file-information bg-white border-1px padding-1 display-flex flex-column gap-2">
+                                  <h4 class="margin-0">Uploaded File:</h4>
+
+                                  <p><strong>File Name:</strong> {{ files.controls[i].value?.name }}</p>
+                                </div>
+                              }
+
+                              <!-- Select corresponding file to upload or drag-and-drop the file over the area below. -->
+                              @if (source.value === 'collection') {
+                                <adapt-file-input
+                                  [accept]="file.acceptedFileFormats.fieldAccept" [formControlName]="i"
+                                  label="{{pageSections![1].instructions}}" [hint]="file.acceptedFileFormats.fileInputHint">
+                                </adapt-file-input>
+                              }
+
+
+
+                              @if (source.value === 'database') {
+                                <button (click)="showPreview(i)" class="usa-button usa-button--outline">
+                                  Preview Data
+                                </button>
+                              }
+
+                              @if (fileControlStates[i] === FileControlState.UPLOADING ||
+                                  fileControlStates[i] === FileControlState.UPLOAD_PREP ||
+                                  fileControlStates[i] === FileControlState.VALIDATION) {
+                                <div class="file-upload-progress">
+                                  @if (fileControl.valid) {
+                                    <div class="usa-summary-box" role="region"
+                                      [attr.aria-labelledby]="'summary-box-key-information' + '-' + i">
+                                      <div class="usa-summary-box__body" aria-live="polite">
+                                        @switch (fileControlStates[i]) {
+                                          @case (FileControlState.UPLOADING) {
+                                            <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
+                                              Uploading file
+                                            </strong>
+                                            <div class="usa-summary-box__text display-flex flex-column gap-1">
+                                              <p aria-live="polite">Progress status: {{ fileUploadPercentage[i] }}%</p>
+                                              <p>Please don't close this window while the upload processes.</p>
+                                            </div>
+                                          }
+                                          @case (FileControlState.UPLOAD_PREP) {
+                                            <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
+                                              Getting ready to upload.
+                                            </strong>
+                                            <div class="usa-summary-box__text display-flex flex-column gap-1">
+                                              <p>Please don't close this window while the upload gets ready.</p>
+                                            </div>
+                                          }
+                                          @case (FileControlState.VALIDATION) {
+                                            <strong class="usa-summary-box__heading" id="summary-box-key-information-{{ i }}">
+                                              Validating File
+                                            </strong>
+                                            <div class="usa-summary-box__text display-flex flex-column gap-1">
+                                              <p>
+                                                Please don't close this window while your file is validated against the
+                                                collection's criteria.
+                                              </p>
+                                            </div>
+                                          }
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              }
+
+                              @if (source.value === 'collection' && fileControlStates[i] === FileControlState.VALID) {
+                                <div class="preview-button display-flex">
+                                  <button (click)="showPreview(i)" class="usa-button width-full usa-button--outline">
+                                    Preview Data
+                                  </button>
+                                </div>
+                              }
+                            </div>
+                          </lib-adapt-accordion>
+                        }
+                      }
+                    }
+                  </div>
+                </form>
               </div>
             </div>
+          </adapt-steps-indicator-step>
 
-            <!-- <div *ngIf="mode === PageMode.VIEW" class="edit-mode-preview display-flex gap-2 flex-column">
-            <label>Add a description:</label>
-            <span class="field-hint text-base">Good descriptions help with search results. </span>
+          <!-- Step 3: Review -->
+          <adapt-steps-indicator-step name="{{ pageSections[2].name }}">
+            <div class="review-header">
+              <h2>{{ pageSections[2].header }}</h2>
+              <!-- {{ currentTemplate?.step3Description }} -->
+              <p>{{ pageSections[2].description }} </p>
+            </div>
 
-            <p tabindex="0" class="bg-white padding-1 border-1px">{{ description.value }}</p>
-          </div> -->
-          </form>
-        </adapt-steps-indicator-step>
-      </adapt-steps-indicator>
-    </ng-container>
+            <div class="review-body margin-top-4 padding-3 border-2px border-base-lighter radius-lg bg-white">
+              <h3 class="margin-0">Summary:</h3>
 
-    <ng-template #view>
-      <div class="view-mode-container height-full bg-white">
-        <div class="view-mode-body display-flex padding-3 flex-column gap-2">
-          <section
-            class="view-data-source-heading padding-1 bg-base-lightest border-2px border-base display-flex flex-column gap-1">
-            <h2 class="margin-0">{{ currentDataView?.name }}</h2>
-            <p class="usa-prose">{{ currentDataView?.description }}</p>
-            <p class="usa-prose">
-              Author: <span>{{ currentDataView?.author }}</span>
-            </p>
-
-            <p class="usa-prose">
-              Last updated: {{ currentDataView?.updated | date : 'MM/dd/YYYY' }} at
-              {{ currentDataView?.updated | date : 'HH:MM:SS a' }}
-            </p>
-          </section>
-
-          <section class="view-data-source-details">
-            <h2 class="margin-0">Data view details</h2>
-
-            <ul class="usa-list display-flex flex-column gap-1">
-              <li>
-                Data view
-                <ul class="usa-list">
-                  <li>
-                    <strong>{{ type.value | valueLabel : typOptions }}</strong>
-                  </li>
-                </ul>
-              </li>
-              <ng-container *ngIf="currentTemplate && currentTemplate.fields">
+              <ul class="usa-list display-flex flex-column gap-1">
                 <li>
-                 Fiscal Year
+                  <span>{{ getDetailLabel(pageSections[2].questions, 'dataView') || 'Data view'
+                    }}</span>
+                  @if (opened) {
+                    <ul class="usa-list">
+                      <li>
+                        <strong>{{ type.value | valueLabel : typOptions }}</strong>
+                      </li>
+                    </ul>
+                  }
+                </li>
+
+                <!-- Review summary question:  pageSections[2].question: Fiscal Year-->
+                <li>
+                  <span>Fiscal Year</span>
                   <ul class="usa-list">
-                    <li><strong>{{ getFieldOptionLabelForField('reportingYear', reportingYear) }} </strong></li>
-                    <!-- <li *ngFor="let field of currentTemplate?.fields">
-                      {{ field.shortLabel }}
-                      <ul class="usa-list">
-                        <li>
-                          <strong>{{ typeFields.get(field.id)?.value }}</strong>
-                        </li>
-                      </ul>
-                    </li> -->
+                    <li>
+                      <!-- {{ this.typeFields.get(field.id)?.value }} -->
+                      <strong>{{ `${(+(reportingYear.value) - 1)}-${reportingYear.value}`}}</strong>
+                    </li>
                   </ul>
                 </li>
-              </ng-container>
-              <li>
-                <span>Data load method</span>
-                <ul class="usa-list">
+                @for (field of currentTemplate?.fields; track field.id) {
                   <li>
-                    <ng-container [ngSwitch]="source.value">
-                      <strong *ngSwitchCase="'collection'">File upload</strong>
-                      <strong *ngSwitchCase="'database'">Database Connection</strong>
-                    </ng-container>
+                      <span>{{ getDetailLabel(pageSections[2].questions, field.id) }}</span>
+                    <ul class="usa-list">
+                      <li>
+                        <!-- {{ this.typeFields.get(field.id)?.value }} -->
+                        <strong>{{ getFieldValue(field) }}</strong>
+                      </li>
+                    </ul>
                   </li>
-                </ul>
-              </li>
+                }
 
-              <li *ngIf="source.value === 'collection'">
-                <span>Expected data and load status</span>
-                <ul class="usa-list">
-                  <li *ngFor="let data of this.currentTemplate?.files; let i = index">
-                    <ng-container *ngIf="files.controls?.[i] as fileControl">
+                <li>
+                  <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoad') || 'Data load method' }}</span>
+                  <ul class="usa-list">
+                    <li>
+                      @switch (this.source.value) {
+                        @case ('collection') {
+                          <strong>File upload</strong>
+                        }
+                        @case ('database') {
+                          <strong>Database Connection</strong>
+                        }
+                      }
+                    </li>
+                  </ul>
+                </li>
 
-                      <span>{{ data.name }} </span>
 
-                      <ng-container *ngIf="fileControlStates[i] === FileControlState.VALID">
-                        <strong> : {{ fileControl.value?.name }}</strong> -
-                      </ng-container>
+                @if (source.value === 'collection') {
+                  <li>
+                    <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoadStatus') || 'Expected data and load status' }}</span>
+                    <ul class="usa-list">
+                      @for (data of this.currentTemplate?.files; track $index; let i = $index) {
+                        <li>
+                          @if (files.controls[i]; as fileControl) {
 
-                      <button (click)="showPreview(i)" *ngIf="fileControlStates[i] === FileControlState.VALID"
-                        class="usa-button usa-button--unstyled">
-                        Preview data file
-                      </button>
+                            {{ data.name }}:
 
-                      <span *ngIf="fileControlStates[i] === FileControlState.EMPTY">Missing Data</span>
-                    </ng-container>
+                            @if (fileControl.valid) {
+                              <strong>{{ fileControl.value?.name }}</strong> -
+                            }
+
+                            @if (fileControlStates[i] === FileControlState.VALID) {
+                              <button (click)="showPreview(i)"
+                                class="usa-button usa-button--unstyled">
+                                Preview data file
+                              </button>
+                            }
+
+                            @if (fileControlStates[i] === FileControlState.EMPTY) {
+                              <span>Missing Data</span>
+                            }
+                          }
+                        </li>
+                      }
+                    </ul>
                   </li>
-                </ul>
-              </li>
+                }
 
-              <li *ngIf="source.value === 'database'">
-                <span>Expected data and load status</span>
-                <ul class="usa-list">
-                  <li *ngFor="let data of this.currentTemplate?.files; let i = index">
+                @if (source.value === 'database') {
+                  <li>
 
-                    {{ data.name }}:
-                    <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">Preview data</button>
+                    <span>{{ getDetailLabel(pageSections[2].questions, 'dataLoadStatus') || 'Expected data and load status' }}</span>
+                    <ul class="usa-list">
+                      @for (data of this.currentTemplate?.files; track $index; let i = $index) {
+                        <li class="margin-0 load-status-li maxw-full">
+                          {{ data.name }}:
+                          <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">Preview data</button>
+                        </li>
+                      }
+                    </ul>
                   </li>
-                </ul>
-              </li>
-            </ul>
-          </section>
+                }
+              </ul>
 
-          <adapt-impact-analysis type="DataView" [dataViews]="dataViews" [reports]="reports"
-            [id]="$any(currentDataView!.dataViewID)"></adapt-impact-analysis>
+              @if (mode !== PageMode.CREATE) {
+                <adapt-impact-analysis headingLevel="h4" type="DataView" [dataViews]="dataViews" [reports]="reports"
+                  [id]="$any(currentDataView?.dataViewID)"></adapt-impact-analysis>
+              }
+            </div>
+          </adapt-steps-indicator-step>
+
+          <!-- Step 4: Save -->
+          <adapt-steps-indicator-step name="{{ pageSections[3].name }}">
+            <h2>{{ pageSections[3].header }}</h2>
+            <!-- {{ currentTemplate?.step4Description }} -->
+            <p>{{ pageSections[3].description }}</p>
+
+            <form [formGroup]="baseDataViewForm" class="display-flex flex-column gap-2 margin-top-4">
+              <div class="data-view-creation-field display-flex gap-1 flex-column">
+                <label for="name">{{ pageSections[3].questions![0].label ? pageSections[3].questions![0].label : 'Name this data view: ' }}<span class="text-emergency">(Required)</span></label>
+                <span class="field-hint text-base">{{ pageSections[3].questions![0].placeholder ?
+                  pageSections[3].questions![0].placeholder : 'Create a friendly and unique name.' }}</span>
+
+                <input class="usa-input maxw-full" id="name" type="text" formControlName="name" />
+
+                @if (name.invalid && (name.dirty || name.touched)) {
+                  <div role="alert"
+                    class="form-errors margin-top-1 text-emergency">
+                    @if (name.errors?.['required']) {
+                      <div i18n>{{
+                        pageSections[3].questions![0].validation_messages!['required'] ?
+                        pageSections[3].questions![0].validation_messages!['required'] : 'Data View name is required.' }}
+                      </div>
+                    }
+
+                    @if (name.errors?.['uniqueName']) {
+                      <div i18n>{{
+                        pageSections[3].questions![0].validation_messages!['unique'] ?
+                        pageSections[3].questions![0].validation_messages!['unique'] : 'Data View name must be unique.' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- <div *ngIf="mode === PageMode.VIEW" class="edit-mode-preview display-flex gap-2 flex-column">
+              <label>Name this data collection: </label>
+              <span class="field-hint text-base">Create a friendly and unique name. </span>
+
+              <p tabindex="0" class="bg-white padding-1 border-1px">{{ name.value }}</p>
+            </div> -->
+
+              <div class="data-view-creation-field display-flex gap-1 flex-column">
+                <label for="describe">{{ pageSections[3].questions![1].validation_messages!['required'] ?
+                  pageSections[3].questions![1].validation_messages!['required'] : 'Add a description: ' }} <span
+                    class="text-emergency">(Required)</span></label>
+                <span class="field-hint text-base">{{ pageSections[3].questions![1].placeholder ?
+                  pageSections[3].questions![1].placeholder : 'Good descriptions help with search results.' }} </span>
+                <textarea class="usa-textarea maxw-full" id="describe" type="text"
+                  formControlName="description"></textarea>
+
+                @if (description.invalid && (description.dirty || description.touched)) {
+                  <div role="alert"
+                    class="form-errors margin-top-1 text-emergency">
+                    @if (description.errors?.['required']) {
+                      <div i18n>{{
+                        pageSections[3].questions![1].validation_messages!['required'] ?
+                        pageSections[3].questions![1].validation_messages!['required'] : 'Description is required.' }}</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- <div *ngIf="mode === PageMode.VIEW" class="edit-mode-preview display-flex gap-2 flex-column">
+              <label>Add a description:</label>
+              <span class="field-hint text-base">Good descriptions help with search results. </span>
+
+              <p tabindex="0" class="bg-white padding-1 border-1px">{{ description.value }}</p>
+            </div> -->
+            </form>
+          </adapt-steps-indicator-step>
+        </adapt-steps-indicator>
+      } @else {
+        <div class="view-mode-container height-full bg-white">
+          <div class="view-mode-body display-flex padding-3 flex-column gap-2">
+            <section
+              class="view-data-source-heading padding-1 bg-base-lightest border-2px border-base display-flex flex-column gap-1">
+              <h2 class="margin-0">{{ currentDataView?.name }}</h2>
+              <p class="usa-prose">{{ currentDataView?.description }}</p>
+              <p class="usa-prose">
+                Author: <span>{{ currentDataView?.author }}</span>
+              </p>
+
+              <p class="usa-prose">
+                Last updated: {{ currentDataView?.updated | date : 'MM/dd/yyyy' }} at
+                {{ currentDataView?.updated | date : 'HH:mm:ss a' }}
+              </p>
+            </section>
+
+            <section class="view-data-source-details">
+              <h2 class="margin-0">Data view details</h2>
+
+              <ul class="usa-list display-flex flex-column gap-1">
+                <li>
+                  Data view
+                  <ul class="usa-list">
+                    <li>
+                      <strong>{{ type.value | valueLabel : typOptions }}</strong>
+                    </li>
+                  </ul>
+                </li>
+                @if (currentTemplate && currentTemplate.fields) {
+                  <li>
+                    Fiscal Year
+                    <ul class="usa-list">
+                      <li><strong>{{ getFieldOptionLabelForField('reportingYear', reportingYear) }} </strong></li>
+                      <!-- <li *ngFor="let field of currentTemplate?.fields">
+                        {{ field.shortLabel }}
+                        <ul class="usa-list">
+                          <li>
+                            <strong>{{ typeFields.get(field.id)?.value }}</strong>
+                          </li>
+                        </ul>
+                      </li> -->
+                    </ul>
+                  </li>
+                }
+                <li>
+                  <span>Data load method</span>
+                  <ul class="usa-list">
+                    <li>
+                      @switch (source.value) {
+                        @case ('collection') {
+                          <strong>File upload</strong>
+                        }
+                        @case ('database') {
+                          <strong>Database Connection</strong>
+                        }
+                      }
+                    </li>
+                  </ul>
+                </li>
+
+                @if (source.value === 'collection') {
+                  <li>
+                    <span>Expected data and load status</span>
+                    <ul class="usa-list">
+                      @for (data of this.currentTemplate?.files; track $index; let i = $index) {
+                        <li>
+                          @if (files.controls[i]; as fileControl) {
+
+                            <span>{{ data.name }} </span>
+
+                            @if (fileControlStates[i] === FileControlState.VALID) {
+                              <strong> : {{ fileControl.value?.name }}</strong> -
+                            }
+
+                            @if (fileControlStates[i] === FileControlState.VALID) {
+                              <button (click)="showPreview(i)"
+                                class="usa-button usa-button--unstyled">
+                                Preview data file
+                              </button>
+                            }
+
+                            @if (fileControlStates[i] === FileControlState.EMPTY) {
+                              <span>Missing Data</span>
+                            }
+                          }
+                        </li>
+                      }
+                    </ul>
+                  </li>
+                }
+
+                @if (source.value === 'database') {
+                  <li>
+                    <span>Expected data and load status</span>
+                    <ul class="usa-list">
+                      @for (data of this.currentTemplate?.files; track $index; let i = $index) {
+                        <li>
+
+                          {{ data.name }}:
+                          <button (click)="showPreview(i)" class="usa-button usa-button--unstyled">Preview data</button>
+                        </li>
+                      }
+                    </ul>
+                  </li>
+                }
+              </ul>
+            </section>
+
+            <adapt-impact-analysis type="DataView" [dataViews]="dataViews" [reports]="reports"
+              [id]="$any(currentDataView!.dataViewID)"></adapt-impact-analysis>
+          </div>
         </div>
+      }
+    </div>
+
+    @if (pageContent) {
+      <div class="grid-container display-flex flex-justify-center gap-2" footer>
+        @if (mode !== PageMode.VIEW) {
+          @if (currentStep > 0) {
+            <button (click)="previous()" class="usa-button">{{pageContent.actions!['back_button'] ?
+              pageContent.actions!['back_button']: 'Back'}}</button>
+          }
+          @if (stepsIndicator && currentStep + 1 < stepsIndicator.length) {
+            <button (click)="next()" class="usa-button">
+              {{pageContent.actions!['next_button'] ? pageContent.actions!['next_button']: 'Next: '}} {{
+               stepsIndicator.getStepName(currentStep + 1) }}
+            </button>
+          }
+
+          @if (currentStep >= 3) {
+            <button (click)="doSave(currentStep >= 3, mode === PageMode.CREATE, true)"
+              class="usa-button">
+              {{pageContent.actions!['save_button'] ? pageContent.actions!['save_button']: 'Save'}}
+            </button>
+          }
+
+          <button (click)="confirmCloseModal.open()"
+            class="usa-button usa-button--unstyled">{{pageContent.actions!['cancel_button'] ?
+            pageContent.actions!['cancel_button']: 'Cancel'}}</button>
+        } @else {
+          <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" class="usa-button"
+            (click)="mode = PageMode.EDIT">
+            Edit
+          </button>
+        }
       </div>
-    </ng-template>
-  </div>
+    }
+  </adapt-full-page-modal>
+}
 
-  <div *ngIf="pageContent" class="grid-container display-flex flex-justify-center gap-2" footer>
-    <ng-container *ngIf="mode !== PageMode.VIEW; else footerViewMode">
-      <button (click)="previous()" *ngIf="currentStep > 0" class="usa-button">{{pageContent.actions!['back_button'] ?
-        pageContent.actions!['back_button']: 'Back'}}</button>
-      <button (click)="next()" *ngIf="stepsIndicator && currentStep + 1 < stepsIndicator.length" class="usa-button">
-        {{pageContent.actions!['next_button'] ? pageContent.actions!['next_button']: 'Next: '}} {{
-         stepsIndicator.getStepName(currentStep + 1) }}
-      </button>
+@if (pageSections) {
+  <lib-adapt-modal #previewModal [hideClose]="true">
+    <div class="preview-modal-heading display-flex flex-justify">
+      <div class="preview-modal-heading-body text-left display-flex flex-column gap-2">
+        <h1 class="margin-0">{{ pageSections[1].sub_sections![0].title ? pageSections[1].sub_sections![0].title : 'Data
+          preview'}}</h1>
 
-      <button (click)="doSave(currentStep >= 3, mode === PageMode.CREATE, true)"
-        *ngIf="currentStep >= 3" class="usa-button">
-        {{pageContent.actions!['save_button'] ? pageContent.actions!['save_button']: 'Save'}}
-      </button>
+        <strong class="">{{currentTemplate?.files?.[currentPreviewIndex]?.name}}</strong>
+      </div>
 
-      <button (click)="confirmCloseModal.open()"
-        class="usa-button usa-button--unstyled">{{pageContent.actions!['cancel_button'] ?
-        pageContent.actions!['cancel_button']: 'Cancel'}}</button>
-    </ng-container>
-
-    <ng-template #footerViewMode>
-      <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" class="usa-button"
-        (click)="mode = PageMode.EDIT">
-        Edit
-      </button>
-    </ng-template>
-  </div>
-</adapt-full-page-modal>
-
-<lib-adapt-modal *ngIf="pageSections" #previewModal [hideClose]="true">
-  <div class="preview-modal-heading display-flex flex-justify">
-    <div class="preview-modal-heading-body text-left display-flex flex-column gap-2">
-      <h1 class="margin-0">{{ pageSections[1].sub_sections![0].title ? pageSections[1].sub_sections![0].title : 'Data
-        preview'}}</h1>
-
-      <strong class="">{{currentTemplate?.files?.[currentPreviewIndex]?.name}}</strong>
+      <div class="preview-modal-heading-controls">
+        <button (click)="previewModal.close()" class="usa-button">
+          {{ pageSections[1].sub_sections![0].actions!['close_button'] ?
+          pageSections[1].sub_sections![0].actions!['close_button'] : 'Close Preview'}}</button>
+      </div>
     </div>
 
-    <div class="preview-modal-heading-controls">
-      <button (click)="previewModal.close()" class="usa-button">
-        {{ pageSections[1].sub_sections![0].actions!['close_button'] ?
-        pageSections[1].sub_sections![0].actions!['close_button'] : 'Close Preview'}}</button>
-    </div>
-  </div>
+    @if (currentPreview | loading : 'Data view preview has loaded' | async; as previewData) {
+      <div class="preview-modal-table">
+        @if (previewData.value) {
+          <adapt-table [data]="previewData.value?.[currentPreviewIndex].records"
+            caption="{{ pageSections[1].sub_sections![0].description}}"
+            [headers]="source.value === 'database' ? [] : this.currentTemplate?.files?.[currentPreviewIndex]?.previewHeaders || []"></adapt-table>
+        }
 
-  <div *ngIf="currentPreview | loading : 'Data view preview has loaded' | async as previewData"
-    class="preview-modal-table">
-    <adapt-table *ngIf="previewData.value" [data]="previewData.value?.[currentPreviewIndex].records"
-      caption="{{ pageSections[1].sub_sections![0].description}}"
-      [headers]="source.value === 'database' ? [] : this.currentTemplate?.files?.[currentPreviewIndex]?.previewHeaders || []"></adapt-table>
-
-    <ng-template [ngIf]="previewData.loading">
-      <p class="usa-prose padding-4" i18n>{{ pageSections[1].messages!['please_wait'].message ?
-        pageSections[1].messages!['please_wait'].message : 'Retrieving Data, please wait a moment'}}</p>
-    </ng-template>
-  </div>
-</lib-adapt-modal>
+        @if (previewData.loading) {
+          <p class="usa-prose padding-4" i18n>{{ pageSections[1].messages!['please_wait'].message ?
+            pageSections[1].messages!['please_wait'].message : 'Retrieving Data, please wait a moment'}}</p>
+        }
+      </div>
+    }
+  </lib-adapt-modal>
+}
 
 <lib-adapt-modal closeText="Close" heading="Please provide a reason." #confirmModal>
   <div class="confirm-modal-body width-tablet-lg display-flex flex-column gap-2 padding-1">
@@ -646,24 +765,34 @@
           [comboBoxStyle]="{ 'max-width': '60%' }" label="Reason:" [items]="refreshReasonOptions" itemAccessor="value"
           itemLabel="label">
           <ng-container errors>
-            <div *ngIf="reason?.invalid && (reason?.dirty || reason?.touched)"
-              class="form-errors margin-top-1 text-emergency">
-              <div *ngIf="reason?.errors?.['required']" i18n>Edit reason is required.</div>
-            </div>
+            @if (reason.invalid && (reason.dirty || reason.touched)) {
+              <div class="form-errors margin-top-1 text-emergency">
+                @if (reason.errors?.['required']) {
+                  <div i18n>Edit reason is required.</div>
+                }
+              </div>
+            }
           </ng-container>
         </lib-adapt-combo-box>
       </div>
 
       <div class="confirm-modal-field">
         <label for="justificationBox">Additional comment:
-          <span *ngIf="justification.hasValidator(Validators.required)" class="text-emergency">(Required)</span></label>
+          @if (justification.hasValidator(Validators.required)) {
+            <span class="text-emergency">(Required)</span>
+          }
+        </label>
         <textarea formControlName="justification" id="justificationBox" rows="10"
           class="usa-textarea width-full"></textarea>
 
-        <div role="alert" *ngIf="justification?.invalid && (justification?.dirty || justification?.touched)"
-          class="form-errors margin-top-1 text-emergency">
-          <div *ngIf="justification?.errors?.['required']" i18n>Edit justification is required.</div>
-        </div>
+        @if (justification.invalid && (justification.dirty || justification.touched)) {
+          <div role="alert"
+            class="form-errors margin-top-1 text-emergency">
+            @if (justification.errors?.['required']) {
+              <div i18n>Edit justification is required.</div>
+            }
+          </div>
+        }
       </div>
     </form>
 
@@ -691,23 +820,29 @@
           </ul>
         </li>
 
-        <li *ngFor="let field of duplicateTemplate?.fields; let i = index">
-          <span>{{ field.shortLabel }}</span>
-          <ul class="usa-list">
-            <li>
-              <strong>{{duplicate?.data?.fields?.[i]?.value}}</strong>
-            </li>
-          </ul>
-        </li>
+        @for (field of duplicateTemplate?.fields; track field.id; let i = $index) {
+          <li>
+            <span>{{ field.shortLabel }}</span>
+            <ul class="usa-list">
+              <li>
+                <strong>{{duplicate?.data?.fields?.[i]?.value}}</strong>
+              </li>
+            </ul>
+          </li>
+        }
 
         <li>
           <span>Data load method</span>
           <ul class="usa-list">
             <li>
-              <ng-container [ngSwitch]="duplicate?.dataViewType">
-                <strong *ngSwitchCase="'collection'">File upload</strong>
-                <strong *ngSwitchCase="'database'">Database Connection</strong>
-              </ng-container>
+              @switch (duplicate?.dataViewType) {
+                @case ('collection') {
+                  <strong>File upload</strong>
+                }
+                @case ('database') {
+                  <strong>Database Connection</strong>
+                }
+              }
             </li>
           </ul>
         </li>
@@ -715,20 +850,24 @@
         <li>
           <span>Expected data</span>
           <ul class="usa-list">
-            <li *ngFor="let data of duplicateTemplate?.files">
-              {{ data?.name }}
-            </li>
+            @for (data of duplicateTemplate?.files; track $index) {
+              <li>
+                {{ data?.name }}
+              </li>
+            }
           </ul>
         </li>
 
         <li>
           <span>File upload status</span>
           <ul class="usa-list">
-            <li *ngFor="let data of duplicateTemplate?.files; let i = index">
-              <ng-container *ngIf="duplicate?.data?.files?.[i] as file">
-                {{ data.id }}: <strong>{{ file.location }}</strong>
-              </ng-container>
-            </li>
+            @for (data of duplicateTemplate?.files; track $index; let i = $index) {
+              <li>
+                @if (duplicate?.data?.files?.[i]; as file) {
+                  {{ data.id }}: <strong>{{ file.location }}</strong>
+                }
+              </li>
+            }
           </ul>
         </li>
       </ul>

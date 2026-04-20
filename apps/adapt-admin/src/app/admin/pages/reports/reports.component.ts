@@ -136,7 +136,7 @@ export class ReportsComponent implements OnInit, AfterViewChecked, OnDestroy, Af
       // Update component state based on params if needed
       // TODO: conditional views for filtered state and active search, etc.
 
-      const navigation = this.router.getCurrentNavigation();
+      const navigation = this.router.currentNavigation();
 
       this.logger.debug('navigation: ', navigation);
 

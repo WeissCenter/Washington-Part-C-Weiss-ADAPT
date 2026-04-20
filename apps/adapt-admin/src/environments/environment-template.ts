@@ -25,5 +25,6 @@ export const environment = {
   organizationName: 'User Organization',
   logoPath: 'assets/shared/logos/generic',
   logoExtension: 'svg',
+  logoStyleClass: 'width-card',
   copyrightText: 'AEM Corporation.',
 };

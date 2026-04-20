@@ -1,6 +1,10 @@
-<div class="report-heading-block display-flex flex-column gap-1" *ngIf="content">
-  <lib-adapt-h-element ngClass="margin-0" [level]="content.level">
-    {{ content.text }}
-  </lib-adapt-h-element>
-  <p *ngIf="content?.body?.length" class="usa-prose">{{ content.body }}</p>
-</div>
+@if (content) {
+  <div class="report-heading-block display-flex flex-column gap-1">
+    <lib-adapt-h-element ngClass="margin-0" [level]="content.level">
+      {{ content.text }}
+    </lib-adapt-h-element>
+    @if (content?.body?.length) {
+      <p class="usa-prose">{{ content.body }}</p>
+    }
+  </div>
+}

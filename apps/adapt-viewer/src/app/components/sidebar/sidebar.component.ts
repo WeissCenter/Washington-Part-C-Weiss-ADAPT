@@ -1,11 +1,11 @@
-import { afterNextRender, AfterViewInit, Component, computed, effect, ElementRef, HostBinding, Inject, Injector, Input, PLATFORM_ID, ViewChild } from '@angular/core';
+import { afterNextRender, AfterViewInit, Component, computed, effect, ElementRef, HostBinding, Inject, Injector, Input, PLATFORM_ID, ViewChild, DOCUMENT } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { focusElement, ModalComponent, SettingsService } from '@adapt/adapt-shared-component-lib';
 import { environment } from '../../../environments/environment';
 
-import { DOCUMENT } from '@angular/common';
+
 import { WeissAccessibilityCenterService } from 'weiss-accessibility-center';
 import { LanguageService } from '@adapt/adapt-shared-component-lib';
 import { ViewerPagesContentService } from '../../services/content/viewer-pages-content.service';

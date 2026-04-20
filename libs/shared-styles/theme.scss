@@ -114,8 +114,8 @@ router-outlet {
 }
 
 .loading-wrapper[aria-busy='false'] {
-    display: none;
-  }
+  display: none;
+}
 
 /* HTML: <div class="loader"></div> */
 .loader {
@@ -153,4 +153,8 @@ html[data-weiss-accessibility-theme="high-contrast"] {
 
   --adapt-logo-secondary: var(--high-contrast-foreground) !important;
   --adapt-logo-primary: var(--high-contrast-foreground) !important;
+}
+
+button.usa-button--unstyled {
+  --usa-button-outline-offset: 0;
 }

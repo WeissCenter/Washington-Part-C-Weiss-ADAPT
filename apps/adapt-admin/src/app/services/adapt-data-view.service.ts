@@ -35,6 +35,10 @@ export class AdaptDataViewService implements OnDestroy {
       });
   }
 
+  private sortDataViewsByCreated(dataViews: DataViewModel[]): DataViewModel[] {
+    return [...dataViews].sort((a, b) => b.created - a.created);
+  }
+
   public loadDataViewList() {
     this.logger.debug('Inside AdaptDataViewService service loadDataViewList');
 
@@ -48,10 +52,12 @@ export class AdaptDataViewService implements OnDestroy {
         this.loadingDataViews = false;  // done loading views
         if (response.success && response.data){
 
-          this._dataViews.next(response.data);
+          const sortedDataViews = this.sortDataViewsByCreated(response.data);
+
+          this._dataViews.next(sortedDataViews);
 
           // Start the interval, calling pollDataViewsInProgress every 2 second (delayTime).
-          this.startPollingDataViewStatuses(response.data);
+          this.startPollingDataViewStatuses(sortedDataViews);
         }
         else {
           this.logger.error('ERROR: Unable to loadDataViewList');
@@ -220,7 +226,7 @@ export class AdaptDataViewService implements OnDestroy {
         dataView.status = updatedDataView.status;
 
         // notify all listeners of the new updated status
-        this._dataViews.next(dataViewList);
+        this._dataViews.next(this.sortDataViewsByCreated(dataViewList));
 
         // If the status is still processing or requested we want to let dady know that we need to keep on polling
         if (dataView.status === DATA_VIEW_STATUS.PROCESSING || dataView.status === DATA_VIEW_STATUS.REQUESTED){
@@ -257,11 +263,11 @@ export class AdaptDataViewService implements OnDestroy {
     // Next, filter out the newly added data view just for in case we have a duplicate
     const modifiedList = currentDataViewList.filter((view) => view.dataViewID !== newDataView.dataViewID);
 
-    // add to the beginning of the list
-    modifiedList.unshift(newDataView);
+    // add the newest data view into the canonical creation-sorted list
+    modifiedList.push(newDataView);
 
     // notify the UI that we have a newly updated report
-    this._dataViews.next(modifiedList);
+    this._dataViews.next(this.sortDataViewsByCreated(modifiedList));
 
     /*
     const currValue = ((await firstValueFrom(this._dataViews)) || []).filter(

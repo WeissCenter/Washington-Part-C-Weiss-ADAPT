@@ -51,7 +51,6 @@
           "libs/shared-styles/variables/_generated.scss",
           "libs/shared-styles/theme.scss",
           "apps/adapt-admin/src/styles.scss",
-
           "node_modules/@angular/cdk/_index.scss",
           "node_modules/@angular/cdk/a11y-prebuilt.css",
           "node_modules/weiss-accessibility-center/dist/assets/index.scss"
@@ -140,7 +139,8 @@
           "buildTarget": "adapt-admin:build:local"
         }
       },
-      "defaultConfiguration": "local"
+      "defaultConfiguration": "local",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -161,7 +161,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/adapt-admin/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "tsConfig": "apps/adapt-admin/tsconfig.spec.json"
       },
       "configurations": {
         "ci": {

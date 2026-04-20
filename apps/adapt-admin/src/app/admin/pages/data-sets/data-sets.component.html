@@ -8,205 +8,205 @@
     <h3 class="font-sans-lg margin-0">Data Sources</h3>
 
     <ul class="usa-list margin-0 margin-bottom-1">
-      <li *ngFor="let source of selectedDataSet?.dataSources">
-        <a class="cursor-pointer" [routerLink]="['/admin', 'data', source.dataSource]">{{ source.dataSource }}</a>
-      </li>
+      @for (source of selectedDataSet?.dataSources; track source.dataSource) {
+        <li>
+          <a class="cursor-pointer" [routerLink]="['/admin', 'data', source.dataSource]">{{ source.dataSource }}</a>
+        </li>
+      }
     </ul>
   </div>
 
   <div class="data-summary-modal-info-body padding-1">
     <h3 class="font-sans-2xl margin-0" i18n>Personnel</h3>
 
-    <p class="usa-prose margin-0" *ngIf="selectedDataSet?.lastPull">
-      Last pulled by
-      <strong>{{ selectedDataSet?.pulledBy || 'Unknown' }}</strong> on
-      <strong
-        >{{ selectedDataSet?.lastPull | date : 'MM/dd/YYYY' }} at
-        {{ selectedDataSet?.lastPull | date : 'HH:MM:SS a' }}</strong
-      >
-    </p>
+    @if (selectedDataSet?.lastPull) {
+      <p class="usa-prose margin-0">
+        Last pulled by
+        <strong>{{ selectedDataSet?.pulledBy || 'Unknown' }}</strong> on
+        <strong
+          >{{ selectedDataSet?.lastPull | date : 'MM/dd/yyyy' }} at
+          {{ selectedDataSet?.lastPull | date : 'HH:mm:ss a' }}</strong
+          >
+        </p>
+      }
 
-    <p class="usa-prose margin-0" *ngIf="!selectedDataSet?.lastPull">Data has not been pulled yet</p>
+      @if (!selectedDataSet?.lastPull) {
+        <p class="usa-prose margin-0">Data has not been pulled yet</p>
+      }
 
-    <ng-container *ngIf="selectedDataSet?.lastPull">
-      <ng-container *ngIf="selectedDataSetData | loading | async as template; else noTemplate">
-        <ng-container *ngIf="template.value as template">
-          <div class="data-summary-modal-info-metadata grid-row margin-top-1">
-            <div *ngFor="let infoField of template.infoFields" class="grid-col-6">
-              <strong>{{ infoField.label }}</strong>
-              <p class="margin-0">{{ infoField.value }}</p>
+      @if (selectedDataSet?.lastPull) {
+        @if (selectedDataSetData | loading | async; as template) {
+          @if (template.value; as template) {
+            <div class="data-summary-modal-info-metadata grid-row margin-top-1">
+              @for (infoField of template.infoFields; track infoField.label) {
+                <div class="grid-col-6">
+                  <strong>{{ infoField.label }}</strong>
+                  <p class="margin-0">{{ infoField.value }}</p>
+                </div>
+              }
+              @if (selectedDataSetParentSource | async; as dataSource) {
+                <div class="grid-col-6">
+                  <strong i18n>File Type</strong>
+                  <p class="margin-0">{{ dataSource.sourceType }}</p>
+                </div>
+                <div class="grid-col-6">
+                  <strong i18n>Data Source</strong>
+                  <p class="margin-0">{{ dataSource?.name }}</p>
+                </div>
+              }
             </div>
-
-            <ng-container *ngIf="selectedDataSetParentSource | async as dataSource">
-              <div class="grid-col-6">
-                <strong i18n>File Type</strong>
-                <p class="margin-0">{{ dataSource.sourceType }}</p>
-              </div>
-              <div class="grid-col-6">
-                <strong i18n>Data Source</strong>
-                <p class="margin-0">{{ dataSource?.name }}</p>
-              </div>
-            </ng-container>
-          </div>
-
-          <div class="data-summary-modal-info-totals">
-            <p i18n><strong>1234</strong> total records</p>
-
-            <span i18n>Data summary totals</span>
-
-            <div class="data-summary-modal-info-totals-accordions">
-              <div
-                *ngFor="let summary of template.dataSummary"
-                class="data-summary-modal-info-totals-accordion margin-top-1">
-                <lib-adapt-accordion [header]="summary.label">
-                  <div *ngFor="let section of summary.sections" class="totals-section">
-                    <p>
-                      <strong>{{ section.label }}</strong
-                      >: {{ section.value }}
-                    </p>
-
-                    <ul class="usa-list margin-top-1">
-                      <li *ngFor="let subsection of section.sections">
-                        <strong>{{ subsection.label }}</strong
-                        >: {{ subsection.value }}
-                      </li>
-                    </ul>
+            <div class="data-summary-modal-info-totals">
+              <p i18n><strong>1234</strong> total records</p>
+              <span i18n>Data summary totals</span>
+              <div class="data-summary-modal-info-totals-accordions">
+                @for (summary of template.dataSummary; track summary.label) {
+                  <div
+                    class="data-summary-modal-info-totals-accordion margin-top-1">
+                    <lib-adapt-accordion [header]="summary.label">
+                      @for (section of summary.sections; track section.label) {
+                        <div class="totals-section">
+                          <p>
+                            <strong>{{ section.label }}</strong
+                              >: {{ section.value }}
+                            </p>
+                            <ul class="usa-list margin-top-1">
+                              @for (subsection of section.sections; track subsection.label) {
+                                <li>
+                                  <strong>{{ subsection.label }}</strong
+                                    >: {{ subsection.value }}
+                                  </li>
+                                }
+                              </ul>
+                            </div>
+                          }
+                        </lib-adapt-accordion>
+                      </div>
+                    }
                   </div>
-                </lib-adapt-accordion>
+                </div>
+              }
+              @if (template.loading) {
+                <p class="usa-prose" i18n>Generating Summary...</p>
+              }
+            } @else {
+              <div class="data-summary-modal-info-metadata grid-row margin-top-1">
+                @if (selectedDataSetDataTotalRows | async; as rows) {
+                  <div class="grid-col">
+                    <strong i18n>Total Rows:</strong>
+                    <p class="margin-0">{{ rows }}</p>
+                  </div>
+                }
               </div>
-            </div>
+            }
+          }
+
+          <div class="data-summaray-modal-info-controls display-flex flex-justify-end margin-top-1">
+            <button
+              class="usa-button"
+              (click)="startDataPull(selectedDataSet)"
+              (keydown.enter)="startDataPull(selectedDataSet)">
+              Save Data
+            </button>
           </div>
-        </ng-container>
-
-        <ng-template [ngIf]="template.loading">
-          <p class="usa-prose" i18n>Generating Summary...</p>
-        </ng-template>
-      </ng-container>
-
-      <ng-template #noTemplate>
-        <div class="data-summary-modal-info-metadata grid-row margin-top-1">
-          <ng-container *ngIf="selectedDataSetDataTotalRows | async as rows">
-            <div class="grid-col">
-              <strong i18n>Total Rows:</strong>
-              <p class="margin-0">{{ rows }}</p>
-            </div>
-          </ng-container>
         </div>
-      </ng-template>
-    </ng-container>
+      </lib-adapt-modal>
 
-    <div class="data-summaray-modal-info-controls display-flex flex-justify-end margin-top-1">
-      <button
-        class="usa-button"
-        (click)="startDataPull(selectedDataSet)"
-        (keydown.enter)="startDataPull(selectedDataSet)">
-        Save Data
-      </button>
-    </div>
-  </div>
-</lib-adapt-modal>
-
-<section *ngIf="!outlet.isActivated" class="data-sets-container grid-container gap-4 display-flex flex-column">
-  <section
-    role="region"
-    aria-label="Data View Heading"
-    class="data-sets-banner width-full display-flex gap-1 flex-column">
-    <h1 class="margin-0" i18n>Data views</h1>
-    <p class="margin-bottom-0 usa-prose measure-4" i18n>
+      @if (!outlet.isActivated) {
+        <section class="data-sets-container grid-container gap-4 display-flex flex-column">
+          <section
+            role="region"
+            aria-label="Data View Heading"
+            class="data-sets-banner width-full display-flex gap-1 flex-column">
+            <h1 class="margin-0" i18n>Data views</h1>
+            <p class="margin-bottom-0 usa-prose measure-4" i18n>
       Collect, organize, and manage data related to the Individuals with Disabilities Education Act (IDEA). Ensure
       accuracy, consistency, and confidentiality.
     </p>
-  </section>
-
-  <!-- <section role="region" aria-label="Data Sets Controls" class="data-sets-controls padding-3 display-flex margin-top-3">
-
-        <button routerLink="." class="usa-button usa-button--unstyled font-sans-lg" i18n>All Data Sets</button>
-
-            <button routerLink="." [queryParams]="{year: item.year}" [queryParamsHandling]="'merge'"  *ngFor="let item of years | async" class="usa-button margin-left-3 font-sans-lg usa-button--unstyled">
-                {{item.year}}
-                <span *ngIf="item.count > 1" class="usa-tag  radius-pill">{{item.count}}</span>
-            </button>
-
-
-            <button class="usa-button margin-left-3 font-sans-lg usa-button--unstyled" i18n>Recycle Bin</button>
-
-            <input type="text" class="usa-input margin-left-auto width-card-lg" [(ngModel)]="this.query" (input)="search($any($event.target).value)" placeholder="Find">
-
-     </section> -->
-
-  <section
-    role="region"
-    aria-label="Data Views Table"
-    class="data-sets-table display-flex flex-column gap-1 width-full">
-    <div
-      class="data-management-table-header display-flex flex-column tablet:flex-row flex-justify flex-align-start tablet:flex-align-center width-full margin-bottom-3 gap-2">
-      <span
-        *ngIf="dataList | async | paginate : page : pageSize as items"
-        class="font-family-body font-xs"
-        #recordsDisplay
-        aria-live="polite"
-        >Showing
-        <select class="usa-select margin-x-1 width-auto display-inline" name="options" id="options">
-          <option value>{{ pageSize }}</option>
-        </select>
-        of {{ items.length }} items</span
-      >
-
-      <div class="display-flex gap-2 flex-align-center">
-        <!-- <button
-          [disabled]="!role.hasPermission(Permission.WRITE)"
-          routerLink="new-data-view"
-          class="usa-button width-auto align-self-start"
-          i18n>
-          Create Data View
-        </button> -->
-      </div>
-    </div>
-
-    <ng-container *ngIf="dataList | loading | async as dataListLoaded">
-      <ng-template [ngIf]="dataListLoaded.loading">
-        <p aria-live="polite" class="usa-prose" i18n>Retrieving Data Views</p>
-      </ng-template>
-
-      <ng-container *ngIf="dataListLoaded.value">
-        <lib-adapt-expandable-list-item *ngFor="let item of dataListLoaded.value | paginate : page : pageSize">
-          <div visible-content>
-            <h3 class="usa-prose margin-0">
-              <a
-                class="margin-bottom-1 text-primary hover:primary-dark text-semibold text-underline display-inline-flex width-auto"
-                (click)="showDataSummary(item)"
-                >{{ item.name }}</a
-              >
-            </h3>
-            <p class="text-normal font-md margin-bottom-1 text-ink">
-              {{ item.description || 'No description provided' }}
-            </p>
-            <div class="display-flex flex-column width-full gap-1">
-              <p class="text-normal font-sm text-ink" *ngIf="item.dataPullStatus">
-                <span>Last Updated: {{ item.lastPull | date : 'MM/dd/yyyy' }}, </span>
-                <span>Created By: {{ item.author }}</span>
-              </p>
-              <div class="display-flex flex-wrap gap-1">
-                <span class="usa-tag bg-base-lightest text-ink">
-                  {{ item.dataPullStatus ?? 'Not pulled yet' | titlecase }}
-                </span>
-              </div>
+          </section>
+          <!-- <section role="region" aria-label="Data Sets Controls" class="data-sets-controls padding-3 display-flex margin-top-3">
+          <button routerLink="." class="usa-button usa-button--unstyled font-sans-lg" i18n>All Data Sets</button>
+          <button routerLink="." [queryParams]="{year: item.year}" [queryParamsHandling]="'merge'"  *ngFor="let item of years | async" class="usa-button margin-left-3 font-sans-lg usa-button--unstyled">
+            {{item.year}}
+            <span *ngIf="item.count > 1" class="usa-tag  radius-pill">{{item.count}}</span>
+          </button>
+          <button class="usa-button margin-left-3 font-sans-lg usa-button--unstyled" i18n>Recycle Bin</button>
+          <input type="text" class="usa-input margin-left-auto width-card-lg" [(ngModel)]="this.query" (input)="search($any($event.target).value)" placeholder="Find">
+        </section> -->
+        <section
+          role="region"
+          aria-label="Data Views Table"
+          class="data-sets-table display-flex flex-column gap-1 width-full">
+          <div
+            class="data-management-table-header display-flex flex-column tablet:flex-row flex-justify flex-align-start tablet:flex-align-center width-full margin-bottom-3 gap-2">
+            @if (dataList | async | paginate : page : pageSize; as items) {
+              <span
+                class="font-family-body font-xs"
+                #recordsDisplay
+                aria-live="polite"
+                >Showing
+                <select class="usa-select margin-x-1 width-auto display-inline" name="options" id="options">
+                  <option value>{{ pageSize }}</option>
+                </select>
+                of {{ items.length }} items</span
+                >
+              }
+              <div class="display-flex gap-2 flex-align-center">
+                <!-- <button
+                [disabled]="!role.hasPermission(Permission.WRITE)"
+                routerLink="new-data-view"
+                class="usa-button width-auto align-self-start"
+                i18n>
+                Create Data View
+              </button> -->
             </div>
           </div>
-          <div action-content>
-            <div class="display-flex gap-1 flex-wrap width-full">
-              <button type="button" class="usa-button" (click)="showDataSummary(item)">View</button>
-              <button type="button" class="usa-button usa-button--outline shadow-none">Publish</button>
-              <button type="button" class="usa-button usa-button--outline shadow-none">Share</button>
-              <button type="button" class="usa-button usa-button--outline shadow-none text-red">Remove</button>
-            </div>
-          </div>
-        </lib-adapt-expandable-list-item>
-      </ng-container>
-    </ng-container>
+          @if (dataList | loading | async; as dataListLoaded) {
+            @if (dataListLoaded.loading) {
+              <p aria-live="polite" class="usa-prose" i18n>Retrieving Data Views</p>
+            }
+            @if (dataListLoaded.value) {
+              @for (item of dataListLoaded.value | paginate : page : pageSize; track item.dataSetID) {
+                <lib-adapt-expandable-list-item>
+                  <div visible-content>
+                    <h3 class="usa-prose margin-0">
+                      <a
+                        class="margin-bottom-1 text-primary hover:primary-dark text-semibold text-underline display-inline-flex width-auto"
+                        (click)="showDataSummary(item)"
+                        >{{ item.name }}</a
+                        >
+                      </h3>
+                      <p class="text-normal font-md margin-bottom-1 text-ink">
+                        {{ item.description || 'No description provided' }}
+                      </p>
+                      <div class="display-flex flex-column width-full gap-1">
+                        @if (item.dataPullStatus) {
+                          <p class="text-normal font-sm text-ink">
+                            <span>Last Updated: {{ item.lastPull | date : 'MM/dd/yyyy' }}, </span>
+                            <span>Created By: {{ item.author }}</span>
+                          </p>
+                        }
+                        <div class="display-flex flex-wrap gap-1">
+                          <span class="usa-tag bg-base-lightest text-ink">
+                            {{ item.dataPullStatus ?? 'Not pulled yet' | titlecase }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div action-content>
+                      <div class="display-flex gap-1 flex-wrap width-full">
+                        <button type="button" class="usa-button" (click)="showDataSummary(item)">View</button>
+                        <button type="button" class="usa-button usa-button--outline shadow-none">Publish</button>
+                        <button type="button" class="usa-button usa-button--outline shadow-none">Share</button>
+                        <button type="button" class="usa-button usa-button--outline shadow-none text-red">Remove</button>
+                      </div>
+                    </div>
+                  </lib-adapt-expandable-list-item>
+                }
+              }
+            }
+            <lib-adapt-pagination [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
+          </section>
+        </section>
+      }
 
-    <lib-adapt-pagination [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
-  </section>
-</section>
-
-<router-outlet #outlet="outlet"></router-outlet>
+      <router-outlet #outlet="outlet"></router-outlet>
