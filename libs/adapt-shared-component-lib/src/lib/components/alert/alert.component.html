@@ -1,12 +1,13 @@
-<div
-  *ngIf="alerts$ | async as alert"
-  class="usa-alert usa-alert--{{ alert.type }} position-fixed pin-right top-2 z-top"
-  role="alert"
-  aria-live="assertive">
-  <div class="usa-alert__body">
-    <p class="usa-alert__heading">{{ alert.title }}</p>
-    <p class="usa-alert__text">
-      {{ alert.body }}
-    </p>
+@if (alerts$ | async; as alert) {
+  <div
+    class="usa-alert usa-alert--{{ alert.type }} position-fixed pin-right top-2 z-top"
+    role="alert"
+    aria-live="assertive">
+    <div class="usa-alert__body">
+      <p class="usa-alert__heading">{{ alert.title }}</p>
+      <p class="usa-alert__text">
+        {{ alert.body }}
+      </p>
+    </div>
   </div>
-</div>
+}

@@ -22,6 +22,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    require('uswds');
+    require('@uswds/uswds');
   }
 }

@@ -1,17 +1,17 @@
-import { afterNextRender, afterRender, AfterViewInit, Component, computed, effect, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { afterEveryRender, Component, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { GlossaryService, LibModule } from '@adapt/adapt-shared-component-lib';
 import { AppModule } from './app.module';
 import { ViewerPagesContentService } from './services/content/viewer-pages-content.service';
 import { AdaptDataService } from './services/adapt-data.service';
 import { map } from 'rxjs';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { LanguageService } from '@adapt/adapt-shared-component-lib';
 import { A11yModule } from "@angular/cdk/a11y";
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, LibModule, AppModule, A11yModule],
+  imports: [RouterModule, LibModule, AppModule, A11yModule],
   providers: [DecimalPipe],
   selector: 'adapt-viewer-root',
   templateUrl: './app.component.html',
@@ -34,8 +34,8 @@ export class AppComponent {
      private data: AdaptDataService, 
     public language: LanguageService) {
     //this.content.loadContent();
-    afterRender(() => {
-      require('uswds');
+    afterEveryRender(() => {
+      require('@uswds/uswds');
     })
   }
 

@@ -1,43 +1,43 @@
 <footer
   class="usa-footer usa-footer--slim flex-column tablet:flex-row bg-white display-flex flex-justify-center flex-align-end gap-6 margin-top-5 padding-x-2 padding-y-6">
   <div class="display-flex flex-justify-center gap-1 flex-column">
-    <a
-      target="_blank"
-      class="display-flex flex-justify-center"
-      aria-label="External link to Weiss homepage"
+    <a target="_blank" class="display-flex flex-justify-center" aria-label="External link to Weiss homepage"
       href="http://weissta.org/">
-      <lib-adapt-inline-svg
-        label="Logo for the Weiss Center"
+      <lib-adapt-inline-svg [decorative]="true" [focusable]="false"
         src="assets/shared/logos/static/footer-logo__left.svg"
-        svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
+      svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
     </a>
   </div>
-  <ng-container *ngIf="$settings()">
+  @if ($settings()) {
     <nav class="display-flex flex-column flex-justify-center gap-2 maxw-tablet" aria-label="Footer Links">
       <ul
         class="usa-list usa-list--unstyled display-flex gap-4 tablet:flex-row flex-justify-center flex-wrap text-center flex-column flex-wrap tablet:flex-align-center">
-        <li *ngFor="let footerLink of $settings()?.footerLinks  || [] | filterMissingProperty:'url'"  [hidden]="!footerLink.url || !footerLink.showAdmin">
-          <a
-            class="font-xs display-flex flex-align-center text-no-underline text-center"
-            [target]="footerLink.target === 'sameTab' ? '' : '_blank'"
-            [href]="footerLink.url"
-            ><span *ngIf="footerLink.external" class="visually-hidden">External link to </span>{{ footerLink.label }}
-            <i *ngIf="footerLink.icon" aria-hidden="true" role="img" alt="" class="margin-left-05" [ngClass]="footerLink.icon"></i>
+        @for (footerLink of $settings().footerLinks || [] | filterMissingProperty:'url'; track footerLink.url) {
+        <li [hidden]="!footerLink.url || !footerLink.showAdmin">
+          <a class="font-xs display-flex flex-align-center text-no-underline text-center"
+            [target]="footerLink.target === 'sameTab' ? '' : '_blank'" [href]="footerLink.url">@if (footerLink.external) {<span
+              class="visually-hidden">External link to </span>}{{ footerLink.label }}
+            @if (footerLink.icon) {<i aria-hidden="true" role="img" alt="" class="margin-left-05"
+              [ngClass]="footerLink.icon"></i>}
           </a>
         </li>
+        }
       </ul>
-      <p class="font-xs text-ink text-center">© {{ year }} {{ copyrightText }} All Rights Reserved.</p>
+      <p class="font-xs text-ink text-center">© {{ year }} <span [innerHTML]="copyrightText | okina"></span> All Rights Reserved.</p>
     </nav>
-  </ng-container>
+  }
   <div class="display-flex flex-justify-center flex-column">
     <p class="font-2xs text-ink line-height-2 text-center">Technology by</p>
 
-    <a *ngIf="appReleaseLoaded" target="_blank"
-      class="display-flex flex-justify-center flex-align-end usa-tooltip"
-      data-position="top" title="Release No: {{appReleaseNo}} & Date: {{appReleaseDate}} | Backend ReleaseNo: {{backendReleaseNo}} & Date: {{backendReleaseDate}}"
-      aria-label="External link to AEM's homepage"
-      href="https://www.aemcorp.com/">
-      <lib-adapt-inline-svg alt="Logo for AEM" src="assets/shared/logos/static/footer-logo__right.svg" svgClass="display-flex logo height-4"></lib-adapt-inline-svg>
-    </a>
+    @if (appReleaseLoaded) {
+      <a target="_blank" class="display-flex flex-justify-center flex-align-end usa-tooltip"
+        data-position="top"
+        title="Release No: {{appReleaseNo}} & Date: {{appReleaseDate}} | Backend ReleaseNo: {{backendReleaseNo}} & Date: {{backendReleaseDate}}"
+        aria-label="External link to AEM's homepage" href="https://www.aemcorp.com/">
+        <lib-adapt-inline-svg [decorative]="true" [focusable]="false"
+          src="assets/shared/logos/static/footer-logo__right.svg"
+          svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
+      </a>
+    }
   </div>
 </footer>

@@ -4,10 +4,14 @@
     dataRepService.filterOrSuppress(content, filtered, suppressed) }}</lib-adapt-h-element>
   <p class="insight" [innerHTML]="insight"></p>
   <div class="action-bar">
-    <ul *ngIf="!noData">
+    @if (!noData) {
+    <ul>
       <li>
         <button (click)="togglePlainLanguage()" #explanationSwitch [attr.aria-controls]="id + '-explanation-region'"
-          aria-pressed="false" [id]="id + '-explanation-switch'">
+          [attr.aria-expanded]="dataRepSettings.showPlainLanguage"
+          [attr.aria-pressed]="dataRepSettings.showPlainLanguage"
+          [attr.aria-label]="(content?.actions?.['explain'] || 'Explain') + ' (show plain-language summary)'"
+          [id]="id + '-explanation-switch'">
           <i class="far" [ngClass]="{
               'fa-toggle-off': !dataRepSettings.showPlainLanguage,
               'fa-toggle-on': dataRepSettings.showPlainLanguage
@@ -18,7 +22,9 @@
       </li>
       <li>
         <button (click)="toggleGlossary()" #glossarySwitch [attr.aria-controls]="glossaryIdsString"
-          [attr.aria-pressed]="dataRepSettings.showGlossary" [id]="id + '-glossary-switch'">
+          [attr.aria-pressed]="dataRepSettings.showGlossary"
+          [attr.aria-label]="(content?.actions?.['glossary'] || 'Glossary') + ' (show definitions)'"
+          [id]="id + '-glossary-switch'">
           <i class="far"
             [ngClass]="{ 'fa-toggle-off': !dataRepSettings.showGlossary, 'fa-toggle-on': dataRepSettings.showGlossary }"
             aria-hidden="true" role="img" alt=""></i>
@@ -27,7 +33,11 @@
         </button>
       </li>
       <li>
-        <button #dataModalSwitch [id]="id + '-data-modal-button'" (click)="openDataModal()">
+        <button #dataModalSwitch [id]="id + '-data-modal-button'" (click)="openDataModal()"
+          [attr.aria-controls]="id + '-data-modal'"
+          [attr.aria-expanded]="isDataModalOpen"
+          aria-haspopup="dialog"
+          [attr.aria-label]="(content?.actions?.['data'] || 'Data') + ' (open data details dialog)'">
           <i class="far fa-table" aria-hidden="true" role="img" alt=""></i>
           {{content?.actions?.['data'] || 'Data'}}
         </button>
@@ -37,89 +47,93 @@
             Share
         </button> -->
     </ul>
+    }
   </div>
-  <div class="plain-language" #explainationRegion [attr.aria-pressed]="dataRepSettings.showPlainLanguage"
-    [attr.aria-expanded]="dataRepSettings.showPlainLanguage"
+  <div class="plain-language" #explainationRegion [id]="id + '-explanation-region'"
+    [attr.aria-live]="shouldAnnouncePlainLanguage ? 'polite' : null"
+    [attr.aria-atomic]="shouldAnnouncePlainLanguage ? 'true' : null"
     [hidden]="dataRepSettings.showPlainLanguage === true ? undefined : true" tabindex="-1">
     <lib-adapt-h-element class="plain-language-title"
       [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{content?.actions?.['plain_language_summary']}}</lib-adapt-h-element>
     <span [innerHTML]="plainLanguage"></span>
   </div>
-  <ol *ngIf="!noData" #bars class="series">
-    <ng-container *ngFor="let item of data; index as index">
+  @if (!noData) {
+    <ol #bars class="series">
+      @for (item of data; track $index; let index = $index) {
+        @if ((!suppressed && item[raw.chart.yAxisValue] > 0) || suppressed) {
+          <li tabindex="0" [id]="id + '-series-item-' + index">
+            <span class="content">
+              <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
+                [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ item[raw.chart.xAxisLabel] | glossary : 'label' :
+                lang : $fileSpec() | async }}</lib-adapt-h-element>
+              <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
+                [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
+                <span
+                  [innerHTML]="item[raw.chart.xAxisLabel] | glossary : 'definition' : lang : $fileSpec() | async"></span>
+              </p>
+            </span>
+            <div class="bar-wrapper">
+              <div class="bar" [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': item.flexAmount }" aria-hidden="true">
+              </div>
+              <ul class="details">
+                @if (suppressed) {
+                  <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                    {{ item?.percentage > 0 ?
+                    item.percentage.toLocaleString(
+                    this.localization,
+                    {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                    }
+                    ) + "%" : content?.actions?.['suppressed'] }}
+                  </li>
 
-      <li tabindex="0" *ngIf="(!suppressed && item[raw.chart.yAxisValue] > 0) || suppressed"
-        [id]="id + '-series-item-' + index">
-        <span class="content">
-          <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
-            [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ item[raw.chart.xAxisLabel] | glossary : 'label' :
-            lang : $fileSpec() | async }}</lib-adapt-h-element>
-          <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-            [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
-            <span
-              [innerHTML]="item[raw.chart.xAxisLabel] | glossary : 'definition' : lang : $fileSpec() | async"></span>
-          </p>
-        </span>
-        <div class="bar-wrapper">
-          <div class="bar" [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': item.flexAmount }" aria-hidden="true">
-          </div>
-          <ul class="details">
-            <ng-container *ngIf="suppressed; else notSuppressedPct">
-              <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                {{ item?.percentage > 0 ?
-                item.percentage.toLocaleString(
-                this.localization,
-                {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
+                  <li class="value" [id]="id + '-series-item-value-' + index">
+                    {{item[raw.chart.yAxisValue] > 0 ? item[raw.chart.yAxisValue].toLocaleString(this.localization, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                    }) : content?.actions?.['suppressed']}}
+                  </li>
+                } @else {
+                  <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                    {{item.percentage?.toLocaleString(this.localization, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                    })}}%
+                  </li>
+                  <li class="value" [id]="id + '-series-item-value-' + index">
+                    {{item[raw.chart.yAxisValue].toLocaleString(this.localization, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                    })}}
+                  </li>
                 }
-                ) + "%" : content?.actions?.['suppressed'] }}
-              </li>
+              </ul>
+            </div>
+          </li>
+        }
+      }
+    </ol>
+  }
 
-              <li class="value" [id]="id + '-series-item-value-' + index">
-                {{item[raw.chart.yAxisValue] > 0 ? item[raw.chart.yAxisValue].toLocaleString(this.localization, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                }) : content?.actions?.['suppressed']}}
-              </li>
-            </ng-container>
+  @if (noData) {
+    <div class="no-data-warning display-flex gap-2 bg-accent-warm-lighter margin-2 padding-2">
+      <div class="errors-icon">
+        <i class="fal font-xl fa-exclamation-circle"></i>
+      </div>
+      <div class="errors-body display-flex flex-column gap-2">
+        <strong>This Section is Unavailable.</strong>
 
-            <ng-template #notSuppressedPct>
-              <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                {{item.percentage?.toLocaleString(this.localization, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                })}}%
-              </li>
-              <li class="value" [id]="id + '-series-item-value-' + index">
-                {{item[raw.chart.yAxisValue].toLocaleString(this.localization, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                })}}
-              </li>
-            </ng-template>
-          </ul>
-        </div>
-      </li>
-    </ng-container>
-  </ol>
-
-  <div *ngIf="noData" class="no-data-warning display-flex gap-2 bg-accent-warm-lighter margin-2 padding-2">
-    <div class="errors-icon">
-      <i class="fal font-xl fa-exclamation-circle"></i>
+        <p class="usa-prose">
+          {{
+          raw.noDataDescription ||
+          "We apologize for the inconvenience, but the way we collected this data doesn't allow us to display it with the
+          current filters. "
+          }}
+        </p>
+      </div>
     </div>
-    <div class="errors-body display-flex flex-column gap-2">
-      <strong>This Section is Unavailable.</strong>
-
-      <p class="usa-prose">
-        {{
-        raw.noDataDescription ||
-        "We apologize for the inconvenience, but the way we collected this data doesn't allow us to display it with the
-        current filters. "
-        }}
-      </p>
-    </div>
-  </div>
+  }
   @if (!noData) {
   <p class="total" tabindex="0" [id]="id + 'total'">
     {{content?.actions?.['total_label'] || 'Total'}}:
@@ -135,9 +149,11 @@
     </strong>
   </p>
   }
-  <p class="font-xs padding-x-205 margin-top-105 line-height-3" *ngIf="noDataSummary.count > 0 && !suppressed">
-    Categories with values of zero: {{ noDataSummary.summary }}
-  </p>
+  @if (noDataSummary.count > 0 && !suppressed) {
+    <p class="font-xs padding-x-205 margin-top-105 line-height-3">
+      Categories with values of zero: {{ noDataSummary.summary }}
+    </p>
+  }
 </article>
 
 <article [id]="id + '-data-modal'" cdkTrapFocus="{{!dataModal.hidden}}" class="modal" role="dialog" aria-modal="true"
@@ -154,9 +170,11 @@
     </div>
 
     <p class="description" [innerHTML]="insight"></p>
-    <p *ngIf="suppressed" class="redaction-note">
-      <strong>{{content?.actions?.['note']}}</strong> {{content?.sections?.[4]?.description}}
-    </p>
+    @if (suppressed) {
+      <p class="redaction-note">
+        <strong>{{content?.actions?.['note']}}</strong> {{content?.sections?.[4]?.description}}
+      </p>
+    }
     <div class="table-content-downloads display-flex gap-2">
       <button (click)="dataRepService.downloadData('csv', header, dataTable)"
         class="usa-button usa-button--unstyled">{{content?.actions?.['download_csv']}}</button>
@@ -172,50 +190,48 @@
         </tr>
       </thead>
       <tbody>
-        <tr tabindex="0" class="flex-row" *ngFor="let item of data">
+        @for (item of data; track $index) {
+          <tr tabindex="0" class="flex-row">
 
-          <th scope="row" class="td label">{{ item[raw.chart.xAxisLabel] | glossary : 'label' : lang : $fileSpec() |
-            async }}</th>
-          <td class="td percentage">
-            <ng-container *ngIf="suppressed; else notSuppressedPct">
-              {{ item?.percentage > 0 ? item.percentage.toLocaleString(
-              this.localization,
-              {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+            <th scope="row" class="td label">{{ item[raw.chart.xAxisLabel] | glossary : 'label' : lang : $fileSpec() |
+              async }}</th>
+            <td class="td percentage">
+              @if (suppressed) {
+                {{ item?.percentage > 0 ? item.percentage.toLocaleString(
+                this.localization,
+                {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                }
+                ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
+              } @else {
+                {{item.percentage.toLocaleString(
+                this.localization,
+                {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                }
+                )
+
+                }}%
               }
-              ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
-            </ng-container>
+            </td>
 
-            <ng-template #notSuppressedPct>
-              {{item.percentage.toLocaleString(
-              this.localization,
-              {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+            <td class="td value">
+              @if (suppressed) {
+                {{item[raw.chart.yAxisValue] > 0 ? item[raw.chart.yAxisValue].toLocaleString(this.localization, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+                }) : content!.actions!['suppressed'] || 'Suppressed'}}
+              } @else {
+                {{item[raw.chart.yAxisValue].toLocaleString(this.localization, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+                })}}
               }
-              )
-
-              }}%
-            </ng-template>
-          </td>
-
-          <td class="td value">
-            <ng-container *ngIf="suppressed; else notSuppressed">
-              {{item[raw.chart.yAxisValue] > 0 ? item[raw.chart.yAxisValue].toLocaleString(this.localization, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              }) : content!.actions!['suppressed'] || 'Suppressed'}}
-            </ng-container>
-
-            <ng-template #notSuppressed>
-              {{item[raw.chart.yAxisValue].toLocaleString(this.localization, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              })}}
-            </ng-template>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        }
       </tbody>
       <tfoot>
         <tr class="footer-row" tabindex="0">

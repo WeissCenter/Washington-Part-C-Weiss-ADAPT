@@ -1,30 +1,25 @@
 @let pageContent = $pageContent();
 <section class="data-management-container grid-container gap-4 display-flex flex-column">
-  <section *ngIf="pageContent" aria-label="Data Management Heading" role="region" class="data-management-banner width-full display-flex gap-2 flex-column">
-    <div class="usa-prose">
-      <!-- Data Views -->
-      <h1 class="margin-0" i18n>{{ pageContent.title }}</h1>
-      <p class="margin-bottom-0 measure-4" i18n>{{ pageContent.description }}</p>
+  @if (pageContent) {
+  <section aria-label="Data Management Heading" role="region"
+    class="data-management-banner width-full display-flex usa-prose flex-align-start flex-column">
 
-      <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/data-views" target="_blank"
-         aria-label="Learn More (opens in a new tab)" style="font-size: 0.8rem;margin-top: 8px;">
-        <span aria-hidden="true">{{pageContent.learn_more_link}}<i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
-      </a>
-    </div>
+    <!-- Data Views -->
+    <h1 class="margin-0" i18n>{{ pageContent.title }}</h1>
+    <p class="margin-top-1 measure-4" i18n>{{ pageContent.description }}</p>
+    <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/data-views" target="_blank"
+      aria-label="Learn More (opens in a new tab)" class="usa-link margin-top-05 display-flex flex-align-center">
+      <span aria-hidden="true" class="font-xs">{{pageContent.learn_more_link}}<i aria-hidden="true"
+          class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+    </a>
+
   </section>
+  }
 
 
-  <adapt-list-view
-    (createButtonClick)="dataViewModal?.open()"
-    [visibleRef]="visibleViewsRef"
-    [actionRef]="actionViewsRef"
-    [collapsedRef]="collapsedViewsRef"
-    [$reports]="$reports"
-    [$dataViews]="$dataViews"
-    [dataViewModal]="dataViewModal"
-    [dataList]="$currentDataList"
-    currentList="views"
-    [loadingRef]="loadingViewsRef">
+  <adapt-list-view (createButtonClick)="dataViewModal?.open()" [visibleRef]="visibleViewsRef"
+    [actionRef]="actionViewsRef" [collapsedRef]="collapsedViewsRef" [$reports]="$reports" [$dataViews]="$dataViews"
+    [dataViewModal]="dataViewModal" [dataList]="$currentDataList" currentList="views" [loadingRef]="loadingViewsRef">
   </adapt-list-view>
 
   <!-- <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet> -->
@@ -32,19 +27,13 @@
 
 <adapt-right-side-panel #filterPanel>
   <ng-container body>
-    <ng-container *ngIf="showFilterPanel">
-      <form [formGroup]="viewFilterGroup" class="display-flex flex-column margin-top-1 gap-3">
-        <lib-adapt-multi-select
-          (applyFn)="doFiltering()"
-          [label]="'Status'"
-          [originalItems]="originalFilters.status"
-          [selectID]="'data-filter-status'"
-          formControlName="status"
-          [items]="statusFilterItems"
-          itemLabel="label"
-          itemAccessor="value"></lib-adapt-multi-select>
-      </form>
-    </ng-container>
+    @if (showFilterPanel) {
+    <form [formGroup]="viewFilterGroup" class="display-flex flex-column margin-top-1 gap-3">
+      <lib-adapt-multi-select (applyFn)="doFiltering()" [label]="'Status'" [originalItems]="originalFilters.status"
+        [selectID]="'data-filter-status'" formControlName="status" [items]="statusFilterItems" itemLabel="label"
+        itemAccessor="value"></lib-adapt-multi-select>
+    </form>
+    }
   </ng-container>
 
   <ng-container footer>
@@ -61,50 +50,24 @@
 
 <ng-template #visibleViewsContent let-item>
   <h3 class="usa-prose margin-0">
-    <a
-      tabindex="0"
-      [attr.aria-label]="'View ' + item.name"
-      (keydown.enter)="dataViewModal?.open(item, true)"
+    <a tabindex="0" [attr.aria-label]="'View ' + item.name" (keydown.enter)="dataViewModal?.open(item, true)"
       (click)="dataViewModal?.open(item, true)"
-      class="margin-bottom-1 text-primary cursor-pointer text-semibold display-inline-flex width-auto"
-      >{{ item.name }}</a
-    >
+      class="margin-bottom-1 text-primary cursor-pointer text-semibold display-inline-flex width-auto">{{ item.name
+      }}</a>
   </h3>
   <p class="text-normal font-sm margin-bottom-1 text-ink">
     {{ item.description || 'No description provided' }}
   </p>
   <div class="display-flex flex-column width-full gap-1">
-    <p class="text-normal font-sm text-ink" *ngIf="item.status">
+    @if (item.status) {
+    <p class="text-normal font-sm text-ink">
       <span><strong>Last Updated:</strong> {{ item.updated | date : 'MM/dd/yyyy' }}, </span>
       <span><strong>Created By:</strong> {{ item.author }}</span>
     </p>
+    }
     <div class="display-flex gap-1 flex-wrap">
       <lib-adapt-tag [status]="item.status">
         <!-- <ng-container [ngSwitch]="view.status">
-                <ng-container *ngSwitchCase="'AVAILABLE'">
-                  <i class="fal fa-check" role="img" aria-hidden="true"></i>
-                </ng-container>
-                <ng-container *ngSwitchCase="'REQUESTED'">
-                  <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
-                </ng-container>
-                <ng-container *ngSwitchCase="'MISSING DATA'">
-                  <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
-                </ng-container>
-                <ng-container *ngSwitchCase="'PROCESSING'">
-                  <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
-                </ng-container>
-                <ng-container *ngSwitchDefault></ng-container>
-              </ng-container> -->
-        {{ item.status ?? 'Not pulled yet' | titlecase }}
-      </lib-adapt-tag>
-      <!-- <span
-        class="usa-tag bg-base-lightest text-ink"
-        [ngClass]="{
-          'bg-success-light': item.status === 'AVAILABLE',
-          'bg-warning-lighter': item.status === 'PROCESSING',
-          'bg-error-lighter': item.status === 'MISSING DATA'
-        }">
-        <ng-container [ngSwitch]="item.status">
           <ng-container *ngSwitchCase="'AVAILABLE'">
             <i class="fal fa-check" role="img" aria-hidden="true"></i>
           </ng-container>
@@ -118,17 +81,38 @@
             <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
           </ng-container>
           <ng-container *ngSwitchDefault></ng-container>
+        </ng-container> -->
+        {{ item.status ?? 'Not pulled yet' | titlecase }}
+      </lib-adapt-tag>
+      <!-- <span
+      class="usa-tag bg-base-lightest text-ink"
+        [ngClass]="{
+          'bg-success-light': item.status === 'AVAILABLE',
+          'bg-warning-lighter': item.status === 'PROCESSING',
+          'bg-error-lighter': item.status === 'MISSING DATA'
+        }">
+      <ng-container [ngSwitch]="item.status">
+        <ng-container *ngSwitchCase="'AVAILABLE'">
+          <i class="fal fa-check" role="img" aria-hidden="true"></i>
         </ng-container>
-      </span> -->
+        <ng-container *ngSwitchCase="'REQUESTED'">
+          <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
+        </ng-container>
+        <ng-container *ngSwitchCase="'MISSING DATA'">
+          <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
+        </ng-container>
+        <ng-container *ngSwitchCase="'PROCESSING'">
+          <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
+        </ng-container>
+        <ng-container *ngSwitchDefault></ng-container>
+      </ng-container>
+    </span> -->
     </div>
   </div>
 </ng-template>
 
 <ng-template #collapsedViewsContent let-item>
-  <adapt-impact-analysis
-    [name]="item.name"
-    [reports]="$reports"
-    type="DataView"
+  <adapt-impact-analysis [name]="item.name" [reports]="$reports" type="DataView"
     [id]="item.dataViewID"></adapt-impact-analysis>
 </ng-template>
 
@@ -136,36 +120,20 @@
   <div class="display-flex gap-1 flex-wrap width-full">
     <button type="button" class="usa-button" (click)="viewDataView(item)">View</button>
 
-    <button
-      (click)="editDataView(item)"
-      type="button"
-      class="usa-button usa-button--outline shadow-none"
+    <button (click)="editDataView(item)" type="button" class="usa-button usa-button--outline shadow-none"
       [id]="'edit_' + item.dataViewID + '_btn'">
       Edit
     </button>
-    <button
-      [disabled]="item.status !== 'AVAILABLE'"
-      type="button"
-      class="usa-button usa-button--outline shadow-none"
-      [routerLink]="['..', 'reports']"
-      [state]="{ dataView: item }">
+    <button [disabled]="item.status !== 'AVAILABLE'" type="button" class="usa-button usa-button--outline shadow-none"
+      [routerLink]="['..', 'reports']" [state]="{ dataView: item }">
       Create Report
     </button>
-    <button
-      type="button"
-      [disabled]="item.status !== 'AVAILABLE'"
-      [id]="'reload_data_' + item.dataViewID + '_btn'"
-      class="usa-button usa-button--outline shadow-none"
-      (click)="editDataView(item, 1)">
+    <button type="button" [disabled]="item.status !== 'AVAILABLE'" [id]="'reload_data_' + item.dataViewID + '_btn'"
+      class="usa-button usa-button--outline shadow-none" (click)="editDataView(item, 1)">
       Reload Data
     </button>
-    <button
-      type="button"
-      class="usa-button usa-button--outline shadow-none"
-      adaptPreviewCategory="removeViewBtn"
-      [id]="'remove_' + item.dataViewID + '_btn'"
-      adaptPreview
-      adaptPreviewVersion="1.0.0">
+    <button type="button" class="usa-button usa-button--outline shadow-none" adaptPreviewCategory="removeViewBtn"
+      [id]="'remove_' + item.dataViewID + '_btn'" adaptPreview adaptPreviewVersion="1.0.0">
       Remove
     </button>
   </div>
@@ -178,10 +146,14 @@
   </div>
 </ng-template>
 
-<div aria-live="polite" id="filterStateMessage" *ngIf="filterStateMessage" class="visually-hidden">
+@if (filterStateMessage) {
+<div aria-live="polite" id="filterStateMessage" class="visually-hidden">
   {{ filterStateMessage }}
 </div>
-<div aria-live="polite" id="filterStateMessage" *ngIf="filterStateMessage" class="visually-hidden">
+}
+@if (filterStateMessage) {
+<div aria-live="polite" id="filterStateMessage" class="visually-hidden">
   {{ filterStateMessage }}
 </div>
+}
 <adapt-data-view-modal (closed)="onClose($event)"></adapt-data-view-modal>

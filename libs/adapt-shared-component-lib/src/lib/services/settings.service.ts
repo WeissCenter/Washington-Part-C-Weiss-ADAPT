@@ -16,9 +16,9 @@ export class SettingsService {
     footerLinks: [],
     copyright: '',
     nSize: 30,
-    idleMinutes: 5,
-    timeoutMinutes: 120,
-    warningMinutes: 120,
+    idleMinutes: 30,
+    timeoutMinutes: 5,
+    warningMinutes: 2,
   };
 
   private $_settings = signal<AdaptSettings>(this.DEFAULT_SETTINGS);

@@ -1,5 +1,7 @@
-<section *ngIf="!datasourceOutlet.isActivated" class="data-management-container display-flex flex-column">
-  <h1>View set</h1>
-</section>
+@if (!datasourceOutlet.isActivated) {
+  <section class="data-management-container display-flex flex-column">
+    <h1>View set</h1>
+  </section>
+}
 
 <router-outlet #datasourceOutlet="outlet"></router-outlet>

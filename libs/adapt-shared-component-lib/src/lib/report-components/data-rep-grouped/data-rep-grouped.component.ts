@@ -35,7 +35,6 @@ interface ChartDataItem {
 export class DataRepGroupedComponent implements OnInit {
   @ViewChild('explainationRegion') explainationRegion!: ElementRef;
   @ViewChild('explanationSwitch') explanationSwitch!: ElementRef;
-  @ViewChild('glossarySwitch') glossarySwitch!: ElementRef;
   @ViewChild('dataModal') dataModal!: ElementRef;
   @ViewChild('dataModalCloseBtn') dataModalCloseBtn!: ElementRef;
   @ViewChild('dataModalSwitch') dataModalSwitch!: ElementRef;
@@ -61,6 +60,8 @@ export class DataRepGroupedComponent implements OnInit {
 
   public noDataItemCount = 0;
   public noDataSummary = '';
+  shouldAnnouncePlainLanguage = false;
+  isDataModalOpen = false;
 
   $fileSpec = computed(() => this.raw.fileSpec);
 
@@ -151,6 +152,13 @@ export class DataRepGroupedComponent implements OnInit {
     return dataToSort;
   });
 
+  $filteredData = computed(() => {
+    if (this.suppressed) {
+      return this.$data()
+    }
+    return this.$data().filter((item: any) => item[this.raw.chart.yAxisValue] > 0);
+  });
+
   $dataTotal = computed(() => {
     // eslint-disable-next-line no-prototype-builtins
     if (this.$rawChartDataAtIdx().hasOwnProperty('total')) {
@@ -221,7 +229,8 @@ export class DataRepGroupedComponent implements OnInit {
           const percentage = (this.$selectedTotal() / this.$dataTotal()) * 100 || 0;
           return `${percentage.toFixed(2)}%`;
         } else if (code === 'filter') {
-          return this.$currentFilterIsAll() ? this.raw.allMap : `${this.raw.prefix || ''} ${this.$currentFilter()}`;
+          const glossaryTerm = this.glossary.getGlossaryTerm(this.$currentFilter(), this.lang as LanguageCode, this.raw?.fileSpec)?.label;
+          return this.$currentFilterIsAll() ? this.raw.allMap : `${this.raw.prefix || ''} ${glossaryTerm}`;
         }
         // handle dynamic variables; assume the format is in {variable-name}-{type} type can be total/percentage for now
         return (
@@ -429,52 +438,9 @@ export class DataRepGroupedComponent implements OnInit {
   togglePlainLanguage() {
     this.dataRepSettings.showPlainLanguage = !this.dataRepSettings.showPlainLanguage;
     this.saveSettingsLocally();
-    this.setupTabbing();
-    // this.explanationSwitch.nativeElement.setAttribute('aria-pressed', this.dataRepSettings.showPlainLanguage);
-    // this.explainationRegion.nativeElement.setAttribute('aria-expanded', this.dataRepSettings.showPlainLanguage);
+    // Only announce when user explicitly toggles explain on.
+    this.shouldAnnouncePlainLanguage = this.dataRepSettings.showPlainLanguage;
   }
-
-  setupTabbing() {
-    if (this.dataRepSettings.showPlainLanguage) {
-      this.explainationRegion?.nativeElement.addEventListener('keydown', this.handleTabFromPanel);
-      this.explanationSwitch?.nativeElement.addEventListener('keydown', this.handleTabFromPlainLanguageBtn);
-      this.glossarySwitch?.nativeElement.addEventListener('keydown', this.handleTabFromGlossaryBtn);
-    } else {
-      this.explanationSwitch?.nativeElement.focus();
-      this.explainationRegion?.nativeElement.removeEventListener('keydown', this.handleTabFromPanel);
-      this.explanationSwitch?.nativeElement.removeEventListener('keydown', this.handleTabFromPlainLanguageBtn);
-      this.glossarySwitch?.nativeElement.removeEventListener('keydown', this.handleTabFromGlossaryBtn);
-    }
-  }
-
-  handleTabFromPanel = (event: KeyboardEvent) => {
-    // Handle forward tab (Tab without Shift)
-    if (event.key === 'Tab' && !event.shiftKey) {
-      event.preventDefault();
-      this.glossarySwitch.nativeElement.focus();
-    }
-    // Handle backward tab (Shift + Tab)
-    else if (event.key === 'Tab' && event.shiftKey) {
-      event.preventDefault();
-      this.explanationSwitch.nativeElement.focus();
-    }
-  };
-
-  handleTabFromPlainLanguageBtn = (event: KeyboardEvent) => {
-    // Handle forward tab (Tab without Shift)
-    if (event.key === 'Tab' && !event.shiftKey) {
-      event.preventDefault();
-      this.explainationRegion.nativeElement.focus();
-    }
-  };
-
-  handleTabFromGlossaryBtn = (event: KeyboardEvent) => {
-    // Handle backward tab (Shift + Tab)
-    if (event.key === 'Tab' && event.shiftKey) {
-      event.preventDefault();
-      this.explainationRegion.nativeElement.focus();
-    }
-  };
 
   toggleGlossary() {
     this.dataRepSettings.showGlossary = !this.dataRepSettings.showGlossary;
@@ -491,6 +457,7 @@ export class DataRepGroupedComponent implements OnInit {
 
     this.dataModalCloseBtn.nativeElement.focus();
     this.dataModal.nativeElement.addEventListener('keydown', this.trapTabKey);
+    this.isDataModalOpen = true;
     this.dataModalStateChange.emit(true);
   }
 
@@ -519,6 +486,7 @@ export class DataRepGroupedComponent implements OnInit {
   closeModal() {
     this.dataModal.nativeElement.hidden = true;
     this.dataModal.nativeElement.removeEventListener('keydown', this.trapTabKey);
+    this.isDataModalOpen = false;
     this.dataModalSwitch.nativeElement.focus(); // Return focus to the element that opened the modal
     this.dataModalStateChange.emit(false);
   }
@@ -558,10 +526,6 @@ export class DataRepGroupedComponent implements OnInit {
         Object.assign(accum, { [val.id]: { filters: sortFilters(val.value, idx), metadata: val.metadata } }),
       {}
     );
-  }
-
-  ngAfterViewInit(): void {
-    this.setupTabbing();
   }
 
   public downloadData(what: 'csv' | 'xlsx') {

@@ -1,158 +1,172 @@
 @let content = $content();
-  
-<div *ngIf="content" class="impact-analysis-widget display-flex flex-column gap-2">
-  <ng-container *ngIf="items | async | paginate : page : pageSize as itemsLoaded">
-    <div class="impact-analysis-heading display-flex flex-column gap-2">
-      <lib-adapt-h-element [level]="headingLevel"> {{content['title'] || "Impact analysis"}} </lib-adapt-h-element>
 
-      <ng-container *ngIf="dataViewCount > 0 || reportCount > 0">
+@if (content) {
+  <div class="impact-analysis-widget display-flex flex-column gap-2">
+    @if (items | async | paginate : page : pageSize; as itemsLoaded) {
+      <div class="impact-analysis-heading display-flex flex-column gap-2">
+        <lib-adapt-h-element [level]="headingLevel"> {{content['title'] || "Impact analysis"}} </lib-adapt-h-element>
 
-        <ng-container [ngSwitch]="type">
-          <p *ngSwitchCase="'DataSource'">
-            {{content['dataSourceCountTemplate'] | parseStringTemplate:  {dataViewCount,
-              reportCount } }}
+        @if (dataViewCount > 0 || reportCount > 0) {
+          @switch (type) {
+            @case ('DataSource') {
+              <p>
+                {{content['dataSourceCountTemplate'] | parseStringTemplate:  {dataViewCount,
+                  reportCount } }}
 
-            <!-- There are {{ dataViewCount }} data views(s) and {{ reportCount }} report(s) using this data source: -->
-          </p>
+                <!-- There are {{ dataViewCount }} data views(s) and {{ reportCount }} report(s) using this data source: -->
+              </p>
+            }
+            @case ('DataView') {
+              <p>
+                {{content['dataViewCountTemplate'] | parseStringTemplate:  {
+                  reportCount } }}
+                <!-- There are {{ reportCount }} report(s) using this data view: -->
+              </p>
+            }
+            @case ('Glossary') {
+              <p>
+                {{content['glossaryCountTemplate'] | parseStringTemplate:  {
+                  reportCount } }}
+                <!-- There are {{ reportCount }} report(s) using this glossary term: -->
+              </p>
+            }
+          }
+        }
 
-          <p *ngSwitchCase="'DataView'">
-            {{content['dataViewCountTemplate'] | parseStringTemplate:  {
-              reportCount } }}
-            <!-- There are {{ reportCount }} report(s) using this data view: -->
-          </p>
+        @if (inAccordion && (reportCount > 0 || dataViewCount > 0)) {
+          <button [attr.aria-label]="'learn more about ' + name + ' impact analysis'"
+            class="flex-align-self-start usa-button usa-button--unstyled" (click)="learnMore.emit(id)">
+            {{content['learnMore'] || "To learn more, please click here."}}
+          </button>
+        }
 
-          <p *ngSwitchCase="'Glossary'">
-            {{content['glossaryCountTemplate'] | parseStringTemplate:  {
-              reportCount } }}
-            <!-- There are {{ reportCount }} report(s) using this glossary term: -->
-          </p>
-        </ng-container>
+        @if (inAccordion && (reportCount <= 0 || dataViewCount <= 0)) {
+          @switch (type) {
+            @case ('DataSource') {
+              @if (dataViewCount <= 0) {
+                <ng-container *ngTemplateOutlet="noDataViews"></ng-container>
+              }
+            }
+            @case ('DataView') {
+              @if (reportCount <= 0) {
+                <ng-container *ngTemplateOutlet="noReports"></ng-container>
+              }
+            }
+          }
+        }
 
-      </ng-container>
+      </div>
 
-      <ng-container *ngIf="inAccordion && (reportCount > 0 || dataViewCount > 0)">
-        <button [attr.aria-label]="'learn more about ' + name + ' impact analysis'"
-          class="flex-align-self-start usa-button usa-button--unstyled" (click)="learnMore.emit(id)">
-          {{content['learnMore'] || "To learn more, please click here."}}
-        </button>
-      </ng-container>
+      @if (!inAccordion) {
+        <div class="impact-analysis-list display-flex flex-column gap-1">
+          @if (totalItems > 0) {
+            <h4 class="font-family-body margin-0 font-sm line-height-5 text-normal" id="showing"
+              aria-live="polite">
+              Showing up to
+              <select [value]="pageSize" (change)="onPageSizeChange($event)" aria-labelledby="showing"
+                class="usa-select margin-x-1 width-auto display-inline" name="options" id="options">
+                <option [value]="5">5</option>
+                <option [value]="10">10</option>
+                <option [value]="25">25</option>
+                <option [value]="50">50</option>
+              </select>
+              of {{ totalItems }} items
+            </h4>
+          }
 
-      <ng-container *ngIf="inAccordion && (reportCount <= 0 || dataViewCount <= 0)">
+          @switch (type) {
+            @case ('DataSource') {
+              @if (itemsLoaded.length) {
+                @for (item of itemsLoaded; track $index; let i = $index) {
+                  <div class="impact-analysis-list-item display-flex flex-column gap-2">
+                    <div class="impact-analysis-item-heading display-flex flex-column gap-2">
+                      <h4 class="margin-0">{{ item.view.name }}</h4>
+                      @if (item?.view.description) {
+                        <p>{{ item?.view.description }}</p>
+                      }
+                    </div>
 
-        <ng-container [ngSwitch]="type">
-          <ng-container *ngSwitchCase="'DataSource'">
-            <ng-container *ngIf="dataViewCount <= 0">
-              <ng-container *ngTemplateOutlet="noDataViews"></ng-container>
-            </ng-container>
-          </ng-container>
-          <ng-container *ngSwitchCase="'DataView'">
-            <ng-container *ngIf="reportCount <= 0">
-              <ng-container *ngTemplateOutlet="noReports"></ng-container>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-
-      </ng-container>
-
-    </div>
-
-    <div *ngIf="!inAccordion" class="impact-analysis-list display-flex flex-column gap-1">
-      <h4 *ngIf="totalItems > 0" class="font-family-body margin-0 font-sm line-height-5 text-normal" id="showing"
-        aria-live="polite">
-        Showing up to
-        <select [value]="pageSize" (change)="onPageSizeChange($event)" aria-labelledby="showing"
-          class="usa-select margin-x-1 width-auto display-inline" name="options" id="options">
-          <option [value]="5">5</option>
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-        of {{ totalItems }} items
-      </h4>
-
-      <ng-container [ngSwitch]="type">
-        <ng-container *ngSwitchCase="'DataSource'">
-
-          <ng-container *ngIf="itemsLoaded.length; else noDataViews">
-
-            <div *ngFor="let item of itemsLoaded; let i = index"
-              class="impact-analysis-list-item display-flex flex-column gap-2">
-              <div class="impact-analysis-item-heading display-flex flex-column gap-2">
-                <h4 class="margin-0">{{ item.view.name }}</h4>
-                <p *ngIf="item?.view.description">{{ item?.view.description }}</p>
-              </div>
-
-              <div class="impact-analysis-item-body">
-                <p>Created By: {{ item.view.author }}</p>
-              </div>
-
-
-              <table *ngIf="item.reports.length; else noReports" class="usa-table usa-table--borderless width-full">
-                <thead>
-                  <tr>
-                    <th scope="col">{{ content['reportName'] || "Report Name"}}</th>
-                    <th scope="col">{{ content['status'] || "Status"}}</th>
-                    <th scope="col">{{ content['audience'] || "Audience"}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let row of item.reports">
-                    <td>
-                      <a [routerLink]="['/admin', 'reports', row.reportID]">{{ row.name }}</a>
-                    </td>
-                    <td>{{ row.version | titlecase }}</td>
-                    <td>{{row.visibility}}</td>
-                  </tr>
-                </tbody>
-              </table>
+                    <div class="impact-analysis-item-body">
+                      <p>Created By: {{ item.view.author }}</p>
+                    </div>
 
 
-            </div>
-          </ng-container>
+                    @if (item.reports.length) {
+                      <table class="usa-table usa-table--borderless width-full">
+                        <thead>
+                          <tr>
+                            <th scope="col">{{ content['reportName'] || "Report Name"}}</th>
+                            <th scope="col">{{ content['status'] || "Status"}}</th>
+                            <th scope="col">{{ content['audience'] || "Audience"}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (row of item.reports; track row.reportID) {
+                            <tr>
+                              <td>
+                                <a [routerLink]="['/admin', 'reports', row.reportID]">{{ row.name }}</a>
+                              </td>
+                              <td>{{ row.version | titlecase }}</td>
+                              <td>{{row.visibility}}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    } @else {
+                      <ng-container *ngTemplateOutlet="noReports"></ng-container>
+                    }
 
 
-        </ng-container>
+                  </div>
+                }
+              } @else {
+                <ng-container *ngTemplateOutlet="noDataViews"></ng-container>
+              }
+            }
+            @case ('DataView') {
+              <!-- <div class="impact-analysis-item-heading">
+                    <h4 class="margin-0"><a [routerLink]="['/admin', 'reports', item.reportID]">{{item.name}}</a></h4>
+                    <p *ngIf="item?.description">{{item?.view.description}}</p>
 
-        <ng-container *ngSwitchCase="'DataView'">
-          <!-- <div class="impact-analysis-item-heading">
-                <h4 class="margin-0"><a [routerLink]="['/admin', 'reports', item.reportID]">{{item.name}}</a></h4>
-                <p *ngIf="item?.description">{{item?.view.description}}</p>
+                </div>
 
-            </div>
-
-            <div class="impact-analysis-item-body">
-                <p>Created By: {{item.author}}</p>
-            </div>
+                <div class="impact-analysis-item-body">
+                    <p>Created By: {{item.author}}</p>
+                </div>
  -->
 
-          <table *ngIf="itemsLoaded?.length; else noReports" class="usa-table usa-table--borderless width-full">
-            <thead>
-              <tr>
-                <th scope="col">{{ content['reportName'] || "Report Name"}}</th>
-                <th scope="col">{{ content['status'] || "Status"}}</th>
-                <th scope="col">{{ content['audience'] || "Audience"}}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of itemsLoaded">
-                <td>
-                  <a [routerLink]="['/admin', 'reports', row.reportID]">{{ row.name }}</a>
-                </td>
-                <td>{{ row.version | titlecase }}</td>
-                <td>{{row.visibility | titlecase}}</td>
-              </tr>
-            </tbody>
-          </table>
-
-
-        </ng-container>
-
-
-        <lib-adapt-pagination (pageChange)="onPageChange($event)" [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
-      </ng-container>
-    </div>
-  </ng-container>
-</div>
+              @if (itemsLoaded?.length) {
+                <table class="usa-table usa-table--borderless width-full">
+                  <thead>
+                    <tr>
+                      <th scope="col">{{ content['reportName'] || "Report Name"}}</th>
+                      <th scope="col">{{ content['status'] || "Status"}}</th>
+                      <th scope="col">{{ content['audience'] || "Audience"}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of itemsLoaded; track row.reportID) {
+                      <tr>
+                        <td>
+                          <a [routerLink]="['/admin', 'reports', row.reportID]">{{ row.name }}</a>
+                        </td>
+                        <td>{{ row.version | titlecase }}</td>
+                        <td>{{row.visibility | titlecase}}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              } @else {
+                <ng-container *ngTemplateOutlet="noReports"></ng-container>
+              }
+            }
+          }
+          <lib-adapt-pagination (pageChange)="onPageChange($event)" [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
+        </div>
+      }
+    }
+  </div>
+}
 
 
 <ng-template #noDataViews>

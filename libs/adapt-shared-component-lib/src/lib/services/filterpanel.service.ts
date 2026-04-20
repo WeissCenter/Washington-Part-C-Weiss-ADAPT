@@ -40,8 +40,11 @@ export class FilterPanelService {
    */
   changeFilterPanelState(state: boolean) {
     this.filterPanelSource.next(state);
-    const targetElementId = state ? '#filterPanelCloseButton' : '#filterPanelButton';
-    const element = this.findElementInShadowDom(targetElementId);
+    if (state) {
+      return;
+    }
+
+    const element = this.findElementInShadowDom('#filterPanelButton');
 
     if (element) {
       setTimeout(() => (element as HTMLElement).focus(), 0); // Using setTimeout to ensure the element is ready to receive focus

@@ -14,7 +14,7 @@
         [id]="title + '-select-all-checkbox'"
         [label]="'All'"
         [checked]="isSelected('all')"
-        (checkedChange)="toggleSelection('all')"></lib-adapt-checkbox>
+      (checkedChange)="toggleSelection('all')"></lib-adapt-checkbox>
       <button
         class="usa-button usa-button--unstyled"
         (click)="toggleExpand()"
@@ -23,32 +23,33 @@
         {{ isExpanded ? 'Collapse' : 'Expand' }}
       </button>
     </li>
-    <ng-container *ngIf="isExpanded">
-      <li
-        *ngFor="let item of items"
-        role="option"
-        [attr.aria-selected]="isSelected(item.id)"
-        (mouseenter)="setHoveredItem(item.id)"
-        (mouseleave)="setHoveredItem(null)"
-        class="display-flex flex-row gap-2 flex-align-center flex-justify">
-        <lib-adapt-checkbox
-          [value]="item.id"
-          [id]="item.id + '-checkbox'"
-          [label]="item.label"
-          [checked]="isSelected(item.id)"
-          (checkedChange)="toggleSelection(item.id)"
-          (focused)="setFocusedItem(item.id)"
+    @if (isExpanded) {
+      @for (item of items; track item.id) {
+        <li
+          role="option"
+          [attr.aria-selected]="isSelected(item.id)"
+          (mouseenter)="setHoveredItem(item.id)"
+          (mouseleave)="setHoveredItem(null)"
+          class="display-flex flex-row gap-2 flex-align-center flex-justify">
+          <lib-adapt-checkbox
+            [value]="item.id"
+            [id]="item.id + '-checkbox'"
+            [label]="item.label"
+            [checked]="isSelected(item.id)"
+            (checkedChange)="toggleSelection(item.id)"
+            (focused)="setFocusedItem(item.id)"
           (blurred)="setFocusedItem(null)"></lib-adapt-checkbox>
-
-        <button
-          *ngIf="isOnlyButtonVisible(item.id)"
-          (focus)="setFocusedItem(item.id)"
-          (click)="selectOnly(item.id)"
-          class="usa-button usa-button--unstyled"
-          [attr.aria-label]="'Select only ' + item.label">
-          Only
-        </button>
-      </li>
-    </ng-container>
+          @if (isOnlyButtonVisible(item.id)) {
+            <button
+              (focus)="setFocusedItem(item.id)"
+              (click)="selectOnly(item.id)"
+              class="usa-button usa-button--unstyled"
+              [attr.aria-label]="'Select only ' + item.label">
+              Only
+            </button>
+          }
+        </li>
+      }
+    }
   </ul>
 </fieldset>

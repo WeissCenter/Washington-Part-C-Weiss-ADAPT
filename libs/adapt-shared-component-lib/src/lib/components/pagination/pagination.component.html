@@ -1,61 +1,66 @@
-<nav *ngIf="maxPages > 1" aria-label="Pagination" class="usa-pagination">
-  <ul class="usa-pagination__list">
-    <li *ngIf="page > 1" class="usa-pagination__item usa-pagination__arrow">
-      <a (click)="changePage(page - 1)" routerLink="." [queryParams]="{ page: page - 1 }"
-        [queryParamsHandling]="'merge'" href="javascript:void(0);"
-        class="usa-pagination__link usa-pagination__previous-page" aria-label="Previous page"><svg class="usa-icon"
-          aria-hidden="true" role="img" alt="">
-          <use xlink:href="/assets/sprite.svg#navigate_before"></use>
-        </svg>
-        <span class="usa-pagination__link-text">{{ previous }}</span></a>
-    </li>
-
-    <ng-container *ngIf="maxPages <= 5">
-      <li *ngFor="let item of [].constructor(maxPages); let i = index"
-        class="usa-pagination__item usa-pagination__page-no">
-        <a routerLink="." (click)="changePage(i + 1)" [queryParams]="{ page: i + 1 }" [queryParamsHandling]="'merge'"
-          [ngClass]="{ 'usa-current': page === i + 1 }" [attr.aria-current]="page === i + 1 ? 'true' : null"
-          class="usa-pagination__button" [attr.aria-label]="'Page ' + (i + 1)">{{ i + 1 }}</a>
-      </li>
-    </ng-container>
-
-    <ng-container *ngIf="maxPages > 5">
-      <ng-container *ngIf="paginationNumbers() as pages">
-        <ng-container *ngIf="!pages.includes(maxPages); else showAll">
-          <li *ngFor="let num of pages" class="usa-pagination__item usa-pagination__page-no">
-            <a routerLink="." (click)="changePage(num)" [queryParams]="{ page: num }" [queryParamsHandling]="'merge'"
-              [ngClass]="{ 'usa-current': page === num }" [attr.aria-current]="page === num ? 'true' : null"
-              class="usa-pagination__button" [attr.aria-label]="'Page ' + num">{{ num }}</a>
+@if (maxPages > 1) {
+  <nav aria-label="Pagination" class="usa-pagination">
+    <ul class="usa-pagination__list">
+      @if (page > 1) {
+        <li class="usa-pagination__item usa-pagination__arrow">
+          <a (click)="changePage(page - 1)" routerLink="." [queryParams]="{ page: page - 1 }"
+            [queryParamsHandling]="'merge'" href="javascript:void(0);"
+            class="usa-pagination__link usa-pagination__previous-page" aria-label="Previous page"><svg class="usa-icon"
+            aria-hidden="true" role="img" alt="">
+            <use xlink:href="/assets/sprite.svg#navigate_before"></use>
+          </svg>
+          <span class="usa-pagination__link-text">{{ previous }}</span></a>
+        </li>
+      }
+      @if (maxPages <= 5) {
+        @for (item of paginationNumbers(maxPages); track item; let i = $index) {
+          <li
+            class="usa-pagination__item usa-pagination__page-no">
+            <a routerLink="." (click)="changePage(i + 1)" [queryParams]="{ page: i + 1 }" [queryParamsHandling]="'merge'"
+              [ngClass]="{ 'usa-current': page === i + 1 }" [attr.aria-current]="page === i + 1 ? 'true' : null"
+            class="usa-pagination__button" [attr.aria-label]="'Page ' + (i + 1)">{{ i + 1 }}</a>
           </li>
-
-          <li class="usa-pagination__item usa-pagination__overflow" aria-label="ellipsis indicating non-visible pages">
-            <span>…</span>
-          </li>
-
-          <li class="usa-pagination__item usa-pagination__page-no">
-            <a routerLink="." [queryParams]="{ page: maxPages }" [queryParamsHandling]="'merge'"
-              [attr.aria-current]="page === maxPages ? 'true' : null" class="usa-pagination__button"
+        }
+      }
+      @if (maxPages > 5) {
+        @if (paginationNumbers(); as pages) {
+          @if (!pages.includes(maxPages)) {
+            @for (num of pages; track num) {
+              <li class="usa-pagination__item usa-pagination__page-no">
+                <a routerLink="." (click)="changePage(num)" [queryParams]="{ page: num }" [queryParamsHandling]="'merge'"
+                  [ngClass]="{ 'usa-current': page === num }" [attr.aria-current]="page === num ? 'true' : null"
+                class="usa-pagination__button" [attr.aria-label]="'Page ' + num">{{ num }}</a>
+              </li>
+            }
+            <li class="usa-pagination__item usa-pagination__overflow" aria-label="ellipsis indicating non-visible pages">
+              <span>…</span>
+            </li>
+            <li class="usa-pagination__item usa-pagination__page-no">
+              <a routerLink="." [queryParams]="{ page: maxPages }" [queryParamsHandling]="'merge'"
+                [attr.aria-current]="page === maxPages ? 'true' : null" class="usa-pagination__button"
               [attr.aria-label]="'Page ' + maxPages">{{ maxPages }}</a>
-          </li>
-        </ng-container>
-
-        <ng-template #showAll>
-          <li *ngFor="let num of paginationNumbers(5)" class="usa-pagination__item usa-pagination__page-no">
-            <a routerLink="." [queryParams]="{ page: num }" [queryParamsHandling]="'merge'"
-              [ngClass]="{ 'usa-current': page === num }" [attr.aria-current]="page === num ? 'true' : null"
-              class="usa-pagination__button" [attr.aria-label]="'Page ' + num">{{ num }}</a>
-          </li>
-        </ng-template>
-      </ng-container>
-    </ng-container>
-
-    <li *ngIf="page < maxPages" class="usa-pagination__item usa-pagination__arrow">
-      <a (click)="changePage(page + 1)" routerLink="." [queryParams]="{ page: page + 1 }"
-        [queryParamsHandling]="'merge'" class="usa-pagination__link usa-pagination__next-page"
-        aria-label="Next page"><span class="usa-pagination__link-text">{{ next }}</span><svg class="usa-icon"
-          aria-hidden="true" role="img" alt="">
-          <use xlink:href="/assets/sprite.svg#navigate_next"></use>
-        </svg></a>
-    </li>
-  </ul>
-</nav>
+            </li>
+          } @else {
+            @for (num of paginationNumbers(5); track num) {
+              <li class="usa-pagination__item usa-pagination__page-no">
+                <a routerLink="." [queryParams]="{ page: num }" [queryParamsHandling]="'merge'"
+                  [ngClass]="{ 'usa-current': page === num }" [attr.aria-current]="page === num ? 'true' : null"
+                class="usa-pagination__button" [attr.aria-label]="'Page ' + num">{{ num }}</a>
+              </li>
+            }
+          }
+        }
+      }
+      @if (page < maxPages) {
+        <li class="usa-pagination__item usa-pagination__arrow">
+          <a (click)="changePage(page + 1)" routerLink="." [queryParams]="{ page: page + 1 }"
+            [queryParamsHandling]="'merge'" class="usa-pagination__link usa-pagination__next-page"
+            aria-label="Next page"><span class="usa-pagination__link-text">{{ next }}</span><svg class="usa-icon"
+            aria-hidden="true" role="img" alt="">
+            <use xlink:href="/assets/sprite.svg#navigate_next"></use>
+          </svg></a>
+        </li>
+      }
+    </ul>
+  </nav>
+}

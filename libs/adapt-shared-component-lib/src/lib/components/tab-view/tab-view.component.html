@@ -1,20 +1,26 @@
-<section *ngIf="show" class="tab-view-container">
-  <div class="tab-view-list" >
-    <ol role="tablist" class="tab-selector usa-list width-full usa-list--unstyled display-flex">
-      <li
-        role="tab"
-        tabindex="0"
-        [attr.aria-selected]="selectedTab.name === tab.name"
-        class="padding-2 flex-1 border-bottom-05 border-base-light"
-        [ngClass]="{ ' border-primary': selectedTab.name === tab.name }"
-        (keydown.enter)="selectTab(i)"
-        (click)="selectTab(i)"
-        *ngFor="let tab of tabs; let i = index">
-        {{ tab.name }}
-      </li>
-    </ol>
-  </div>
-  <div *ngIf="selectedTab?.content" class="tab-content-container padding-2">
-    <ng-template [ngTemplateOutlet]="selectedTab.content"></ng-template>
-  </div>
-</section>
+@if (show) {
+  <section class="tab-view-container">
+    <div class="tab-view-list" >
+      <ol role="tablist" class="tab-selector usa-list width-full usa-list--unstyled display-flex">
+        @for (tab of tabs; track tab; let i = $index) {
+          <li
+            role="tab"
+            tabindex="0"
+            [attr.aria-selected]="selectedTab.name === tab.name"
+            class="padding-2 flex-1 border-bottom-05 border-base-light"
+            [ngClass]="{ ' border-primary': selectedTab.name === tab.name }"
+            (keydown.enter)="selectTab(i)"
+            (click)="selectTab(i)"
+            >
+            {{ tab.name }}
+          </li>
+        }
+      </ol>
+    </div>
+    @if (selectedTab.content) {
+      <div class="tab-content-container padding-2">
+        <ng-template [ngTemplateOutlet]="selectedTab.content"></ng-template>
+      </div>
+    }
+  </section>
+}

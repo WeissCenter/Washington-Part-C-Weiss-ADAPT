@@ -87,6 +87,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   ReportVersion = ReportVersion;
   @ViewChild(TabViewComponent) tabView?: TabViewComponent;
   @ViewChild('editConfirmationModal') editConfirmationModal?: ModalComponent;
+  @ViewChild('editPublishedConfirmationModal') editPublishedConfirmationModal?: ModalComponent;
 
   @Output() loaded = new EventEmitter<boolean>();
 
@@ -813,10 +814,17 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   public editReport() {
     this.logger.debug('Inside ReportComponent editReport');
 
-    this.isEditMode() ? (this.mode = PageMode.VIEW) : (this.mode = PageMode.EDIT);
-    if (this.mode === PageMode.EDIT) {
-      this.beforeEditFormValue = this.editReportForm.value;
+    if (this.isEditMode()) {
+      this.mode = PageMode.VIEW;
+      return;
     }
+
+    if (this.report?.version === ReportVersion.FINALIZED) {
+      this.editPublishedConfirmationModal?.open();
+      return;
+    }
+
+    this.enableEditMode();
   }
 
   public isEditMode() {
@@ -828,6 +836,11 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editReportForm.reset(this.beforeEditFormValue);
   }
 
+  public confirmEditPublishedReport() {
+    this.editPublishedConfirmationModal?.close();
+    this.enableEditMode();
+  }
+
   public reset() {
     this.editReportForm.reset(this.beforeEditFormValue);
     this.resetModal?.close();
@@ -836,6 +849,11 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   public cancel() {
     if (this.editReportForm.dirty) return this.confirmModal?.open();
     this.mode = PageMode.VIEW;
+  }
+
+  private enableEditMode() {
+    this.mode = PageMode.EDIT;
+    this.beforeEditFormValue = this.editReportForm.getRawValue();
   }
 
   public publishReport() {

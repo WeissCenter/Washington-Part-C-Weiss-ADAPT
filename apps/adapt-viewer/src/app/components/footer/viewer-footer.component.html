@@ -1,4 +1,5 @@
-<footer *ngIf="$footerContent()"
+@if ($footerContent()) {
+<footer
   class="usa-footer usa-footer--slim flex-column tablet:flex-row bg-white display-flex flex-justify-center flex-align-end gap-6 margin-top-5 padding-x-2 padding-y-6">
   <nav class="display-flex flex-column width-full flex-justify-center gap-2 maxw-tablet" aria-label="Footer Links">
     <ul
@@ -7,33 +8,23 @@
         <div class="display-flex flex-justify-center gap-1 flex-column">
           <a target="_blank" class="display-flex flex-justify-center" aria-label="External link to Weiss homepage"
             href="http://weissta.org/">
-            <lib-adapt-inline-svg aria-hidden="true" alt="" role="img" src="assets/shared/logos/static/footer-logo__left.svg"
+            <lib-adapt-inline-svg [decorative]="true" [focusable]="false" src="assets/shared/logos/static/footer-logo__left.svg"
               svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
-          </a>
-        </div>
-      </li>
-      <ng-container *ngIf="$settings()">
-        <li *ngFor="let footerLink of $settings()?.footerLinks  || [] | filterMissingProperty:'url'"
-          [hidden]="!footerLink.url || !footerLink.showPublic">
-          <a class="font-xs display-flex flex-align-center text-no-underline text-center"
-            [target]="footerLink.target === 'sameTab' ? '' : '_blank'" [href]="footerLink.url">{{ footerLink.label }}
-            <i *ngIf="footerLink.icon" aria-hidden="true" class="margin-left-05" [ngClass]="footerLink.icon"></i>
-          </a>
+            </a>
+          </div>
         </li>
-      </ng-container>
       <li>
         <div class="display-flex flex-justify-center gap-1 flex-column">
           <p class="font-2xs text-ink line-height-2 text-center">{{$footerContent()?.technologyBy}}</p>
           <a target="_blank" class="display-flex flex-justify-center" aria-label="External link to AEM's homepage"
             href="https://www.aemcorp.com/">
-            <lib-adapt-inline-svg aria-hidden="true" alt="" role="img" src="assets/shared/logos/static/footer-logo__right.svg"
+            <lib-adapt-inline-svg [decorative]="true" [focusable]="false" src="assets/shared/logos/static/footer-logo__right.svg"
               svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
-          </a>
-        </div>
-      </li>
-    </ul>
-    <p class="font-xs text-ink text-center">© {{ year }} {{ copyrightText }} All Rights Reserved.</p>
-  </nav>
-
-
-</footer>
+            </a>
+          </div>
+        </li>
+      </ul>
+      <p class="font-xs text-ink text-center">© {{ year }} <span [innerHtml]="copyrightText | okina"></span> All Rights Reserved.</p>
+    </nav>
+  </footer>
+}

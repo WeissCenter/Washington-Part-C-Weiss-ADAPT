@@ -1,53 +1,60 @@
 <section class="grid-view-content">
-  <div *ngIf="content" class="display-flex flex-column accessibility-layout desktop:flex-row gap-2">
-    <div *ngFor="let column of content.columns" class="grid-col display-flex flex-column gap-2">
-      <ng-container *ngFor="let row of column.rows">
-        <ng-container *ngIf="$any(row) | reportCondition : filters : page.context : tabIndex as rowResult">
-          <ng-container *ngIf="rowResult.section as row">
-            <ng-container [ngSwitch]="row.type">
-              <section [attr.aria-label]="row.sectionLabel" class="display-flex width-full">
-
-                <lib-adapt-quick-summary
-                  *ngSwitchCase="'quickSummary'"
-                  [report]="report"
-                  [content]="row.content"></lib-adapt-quick-summary>
-                <lib-adapt-data-rep
-                  [filtered]="filtered"
-                  [suppressed]="suppressed"
-                  [content]="cmsContent"
-                  [lang]="lang"
-                  class="width-full"
-                  *ngSwitchCase="'barChart'"
-                  [noData]="rowResult.noData"
-                  rawDataType="barChart"
-                  [raw]="row.content"
-                  (dataModalStateChange)="onDataModalStateChange($event)"
-                  ></lib-adapt-data-rep>
-                <lib-adapt-data-rep
-                  [suppressed]="suppressed"
-                  [lang]="lang"
-                  [content]="cmsContent"
-                  [filtered]="filtered"
-                  *ngSwitchCase="'countBreakdown'"
-                  [noData]="rowResult.noData"
-                  [raw]="row.content"
-                  (dataModalStateChange)="onDataModalStateChange($event)"
-                  ></lib-adapt-data-rep>
-                <lib-adapt-data-rep-grouped
-                  [filtered]="filtered"
-                  [content]="cmsContent"
-                  [lang]="lang"
-                  [suppressed]="suppressed"
-                  *ngSwitchCase="'barChartGrouped'"
-                  [noData]="rowResult.noData"
-                  [raw]="row.content"
-                  (dataModalStateChange)="onDataModalStateChange($event)"
-                  ></lib-adapt-data-rep-grouped>
-              </section>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </ng-container>
+  @if (content) {
+    <div class="display-flex flex-column accessibility-layout desktop:flex-row gap-2">
+      @for (column of content.columns; track $index) {
+        <div class="grid-col display-flex flex-column gap-2">
+          @for (row of column.rows; track $index) {
+            @if ($any(row) | reportCondition : filters : page.context : tabIndex; as rowResult) {
+              @if (rowResult.section; as row) {
+                <section [attr.aria-label]="row.sectionLabel" class="display-flex width-full">
+                  @switch (row.type) {
+                    @case ('quickSummary') {
+                      <lib-adapt-quick-summary
+                        [report]="report"
+                        [content]="row.content"></lib-adapt-quick-summary>
+                    }
+                    @case ('barChart') {
+                      <lib-adapt-data-rep
+                        [filtered]="filtered"
+                        [suppressed]="suppressed"
+                        [content]="cmsContent"
+                        [lang]="lang"
+                        class="width-full"
+                        [noData]="rowResult.noData"
+                        rawDataType="barChart"
+                        [raw]="row.content"
+                        (dataModalStateChange)="onDataModalStateChange($event)"
+                        ></lib-adapt-data-rep>
+                    }
+                    @case ('countBreakdown') {
+                      <lib-adapt-data-rep
+                        [suppressed]="suppressed"
+                        [lang]="lang"
+                        [content]="cmsContent"
+                        [filtered]="filtered"
+                        [noData]="rowResult.noData"
+                        [raw]="row.content"
+                        (dataModalStateChange)="onDataModalStateChange($event)"
+                        ></lib-adapt-data-rep>
+                    }
+                    @case ('barChartGrouped') {
+                      <lib-adapt-data-rep-grouped
+                        [filtered]="filtered"
+                        [content]="cmsContent"
+                        [lang]="lang"
+                        [suppressed]="suppressed"
+                        [noData]="rowResult.noData"
+                        [raw]="row.content"
+                        (dataModalStateChange)="onDataModalStateChange($event)"
+                        ></lib-adapt-data-rep-grouped>
+                    }
+                  }
+                </section>
+              }
+            }
+          }
+        </div>
+      }
     </div>
-  </div>
+  }
 </section>

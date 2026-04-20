@@ -1,7 +1,7 @@
 <lib-adapt-expandable-list-item>
   <div visible-content class="display-flex gap-105 flex-column">
-    <ng-container [ngSwitch]="listType">
-      <ng-container *ngSwitchCase="'views'">
+    @switch (listType) {
+      @case ('views') {
         <lib-adapt-h-element [ngClass]="'usa-prose margin-0'" [level]="headingLvl">
           <button
             class="usa-button usa-button--unstyled cursor-pointer display-inline-flex width-auto"
@@ -11,132 +11,131 @@
           </button>
         </lib-adapt-h-element>
         <!-- <ng-template #viewTitle>
-            <a tabindex="0" class="text-primary cursor-pointer hover:primary-dark text-semibold text-no-underline display-inline-flex width-auto"
-            (click)="dataViewModal.open(view)" (keydown.enter)="dataViewModal.open(view)" (keydown.space)="handleSpaceInput($event)">{{ view.name }}</a>
-        </ng-template>
-
-        <ng-container [ngSwitch]="headingLvl">
-            <h1 *ngSwitchCase="1" class="usa-prose margin-0">
-                <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
-            </h1>
-            <h2 *ngSwitchCase="2" class="usa-prose margin-0">
-                <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
-            </h2>
-            <h3 *ngSwitchDefault class="usa-prose margin-0">
-                <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
-            </h3>
-            <h4 *ngSwitchCase="4" class="usa-prose margin-0">
-                <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
-            </h4>
-        </ng-container> -->
-        <p class="text-normal font-sm line-height-5 text-ink" *ngIf="view.description">{{ view.description }}</p>
-        <p class="text-normal font-sm line-height-5 text-ink">
-          Last updated on {{ view.created | date : 'MM/dd/yyyy' }} at {{ view.created | date : 'hh:mm a' }}, Created by
-          {{ view.author }}
-        </p>
-        <div class="display-flex flex-align-start accessibility-layout flex-column tablet:flex-row gap-105">
-          <div class="display-flex flex-column gap-1">
-            <div class="display-flex gap-1 flex-wrap">
-              <lib-adapt-tag [status]="view.status">
-                <!-- <ng-container [ngSwitch]="view.status">
-                        <ng-container *ngSwitchCase="'AVAILABLE'">
-                          <i class="fal fa-check" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'REQUESTED'">
-                          <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'MISSING DATA'">
-                          <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'PROCESSING'">
-                          <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchDefault></ng-container>
-                      </ng-container> -->
-                {{ view.status ?? 'Not pulled yet' | titlecase }}
-              </lib-adapt-tag>
-            </div>
-          </div>
-          <!-- <div class="display-flex flex-column gap-1">
-                <p class="text-normal font-sm line-height-4 text-ink">Categories:</p>
-                <div class="display-flex gap-1 flex-wrap">
-                    <span class="usa-tag margin-0 bg-base-lightest text-ink">test</span>
-                </div>
-            </div> -->
+        <a tabindex="0" class="text-primary cursor-pointer hover:primary-dark text-semibold text-no-underline display-inline-flex width-auto"
+        (click)="dataViewModal.open(view)" (keydown.enter)="dataViewModal.open(view)" (keydown.space)="handleSpaceInput($event)">{{ view.name }}</a>
+      </ng-template>
+      <ng-container [ngSwitch]="headingLvl">
+        <h1 *ngSwitchCase="1" class="usa-prose margin-0">
+          <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
+        </h1>
+        <h2 *ngSwitchCase="2" class="usa-prose margin-0">
+          <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
+        </h2>
+        <h3 *ngSwitchDefault class="usa-prose margin-0">
+          <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
+        </h3>
+        <h4 *ngSwitchCase="4" class="usa-prose margin-0">
+          <ng-container *ngTemplateOutlet="viewTitle"></ng-container>
+        </h4>
+      </ng-container> -->
+      @if (view.description) {
+        <p class="text-normal font-sm line-height-5 text-ink">{{ view.description }}</p>
+      }
+      <p class="text-normal font-sm line-height-5 text-ink">
+        Last updated on {{ view.created | date : 'MM/dd/yyyy' }} at {{ view.created | date : 'HH:mm a' }}, Created by
+        {{ view.author }}
+      </p>
+      <div class="display-flex flex-align-start accessibility-layout flex-column tablet:flex-row gap-105">
+        <div class="display-flex flex-column gap-1">
+          <div class="display-flex gap-1 flex-wrap">
+            <lib-adapt-tag [status]="view.status">
+              <!-- <ng-container [ngSwitch]="view.status">
+              <ng-container *ngSwitchCase="'AVAILABLE'">
+                <i class="fal fa-check" role="img" aria-hidden="true"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="'REQUESTED'">
+                <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="'MISSING DATA'">
+                <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="'PROCESSING'">
+                <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
+              </ng-container>
+              <ng-container *ngSwitchDefault></ng-container>
+            </ng-container> -->
+            {{ view.status ?? 'Not pulled yet' | titlecase }}
+          </lib-adapt-tag>
         </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'sources'">
-        <div class="visible-wrapper display-flex flex-column gap-1">
-          <h3 class="usa-prose margin-0">
-            <a (click)="dataSourceModal.open(view, PageMode.VIEW)"
-              class="text-semibold text-primary cursor-pointer display-inline-flex width-auto">{{ view.name }}</a>
-          </h3>
-          <p *ngIf="view?.description?.length">{{ view.description }}</p>
-          <div class="display-flex flex-column width-full gap-1">
-            <p class="text-normal font-sm text-ink">
-              Last updated on {{ view.created | date : 'MM/dd/yyyy' }} at {{ view.created | date : 'hh:mm a' }}, Created
-              by {{ view.author }}
-            </p>
-
-            <div class="data-source-collapsed-metadata display-flex gap-2">
-              <div class="data-source-collapsed-metadata-item display-flex gap-1 flex-column">
-                <div class="metadata-item-tags display-flex gap-1">
-                  <lib-adapt-tag [status]="'available'">Available</lib-adapt-tag>
-                </div>
-              </div>
-            </div>
+      </div>
+      <!-- <div class="display-flex flex-column gap-1">
+      <p class="text-normal font-sm line-height-4 text-ink">Categories:</p>
+      <div class="display-flex gap-1 flex-wrap">
+        <span class="usa-tag margin-0 bg-base-lightest text-ink">test</span>
+      </div>
+    </div> -->
+  </div>
+}
+@case ('sources') {
+  <div class="visible-wrapper display-flex flex-column gap-1">
+    <h3 class="usa-prose margin-0">
+      <a (click)="dataSourceModal.open(view, PageMode.VIEW)"
+      class="text-semibold text-primary cursor-pointer display-inline-flex width-auto">{{ view.name }}</a>
+    </h3>
+    @if (view?.description?.length) {
+      <p>{{ view.description }}</p>
+    }
+    <div class="display-flex flex-column width-full gap-1">
+      <p class="text-normal font-sm text-ink">
+        Last updated on {{ view.created | date : 'MM/dd/yyyy' }} at {{ view.created | date : 'HH:mm a' }}, Created
+        by {{ view.author }}
+      </p>
+      <div class="data-source-collapsed-metadata display-flex gap-2">
+        <div class="data-source-collapsed-metadata-item display-flex gap-1 flex-column">
+          <div class="metadata-item-tags display-flex gap-1">
+            <lib-adapt-tag [status]="'available'">Available</lib-adapt-tag>
           </div>
         </div>
-      </ng-container>
-    </ng-container>
+      </div>
+    </div>
   </div>
-  <div collapsed-content>
-    <adapt-impact-analysis (learnMore)="onLearnMore(view)" [inAccordion]="true" [name]="view.name" [reports]="$reports"
-      [dataViews]="$dataViews" [type]="listType === 'views' ? 'DataView' : 'DataSource'"
-      [id]="view.dataViewID || view.dataSourceID"></adapt-impact-analysis>
-  </div>
-  <div action-content>
-    <ng-container [ngSwitch]="listType">
-      <ng-container *ngSwitchCase="'views'">
-        <div class="display-flex flex-wrap gap-1 width-full">
-          <button type="button" class="usa-button" (click)="dataViewModal.open(view, true)">View</button>
-
-          <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" type="button" class="usa-button"
-            (click)="dataViewModal.open(view, false)">
-            Edit
-          </button>
-          <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
-            [hidden]="view.status !== 'AVAILABLE'" type="button" class="usa-button usa-button--outline shadow-none"
-            (click)="reportModal && reportModal.open(view)">
-            Create Report
-          </button>
-          <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" type="button"
-            [hidden]="view.status !== 'AVAILABLE'" [id]="'reload_data_' + view.dataViewID + '_btn'"
-            class="usa-button usa-button--outline shadow-none" (click)="dataViewModal.open(view, false, 1)">
-            Reload Data
-          </button>
-          <!-- <button type="button" class="usa-button usa-button--outline shadow-none" adaptPreviewCategory="removeViewBtn"
-                [id]="'remove_' + view.dataViewID + '_btn'" adaptPreview adaptPreviewVersion="1.0.0">
-                Remove
-              </button> -->
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'sources'">
-        <div class="display-flex gap-4 flex-wrap width-full">
-          <button *adaptAccessControl="'Data Sources'" permissionObject="Data Sources" noPermissionsBehavior="disable"
-            permissionAction="Write" (click)="dataSourceModal.open(view, PageMode.EDIT)" type="button"
-            [id]="'edit_' + view.dataSourceID + '_btn'" class="usa-button shadow-none">
-            Edit
-          </button>
-          <!-- <button type="button" [routerLink]="['..', 'data-source', item.dataSourceID]" class="usa-button usa-button--outline shadow-none">View</button> -->
-          <button type="button" (click)="dataSourceModal.open(view, PageMode.VIEW)"
-            [id]="'view_' + view.dataSourceID + '_btn'" class="usa-button usa-button--outline shadow-none">
-            View
-          </button>
-        </div>
-      </ng-container>
-    </ng-container>
-  </div>
+}
+}
+</div>
+<div collapsed-content>
+  <adapt-impact-analysis (learnMore)="onLearnMore(view)" [inAccordion]="true" [name]="view.name" [reports]="$reports"
+    [dataViews]="$dataViews" [type]="listType === 'views' ? 'DataView' : 'DataSource'"
+  [id]="view.dataViewID || view.dataSourceID"></adapt-impact-analysis>
+</div>
+<div action-content>
+  @switch (listType) {
+    @case ('views') {
+      <div class="display-flex flex-wrap gap-1 width-full">
+        <button type="button" class="usa-button" (click)="dataViewModal.open(view, true)">View</button>
+        <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" type="button" class="usa-button"
+          (click)="dataViewModal.open(view, false)">
+          Edit
+        </button>
+        <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
+          [hidden]="view.status !== 'AVAILABLE'" type="button" class="usa-button usa-button--outline shadow-none"
+          (click)="reportModal && reportModal.open(view)">
+          Create Report
+        </button>
+        <button *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'" type="button"
+          [hidden]="view.status !== 'AVAILABLE'" [id]="'reload_data_' + view.dataViewID + '_btn'"
+          class="usa-button usa-button--outline shadow-none" (click)="dataViewModal.open(view, false, 1)">
+          Reload Data
+        </button>
+        <!-- <button type="button" class="usa-button usa-button--outline shadow-none" adaptPreviewCategory="removeViewBtn"
+        [id]="'remove_' + view.dataViewID + '_btn'" adaptPreview adaptPreviewVersion="1.0.0">
+        Remove
+      </button> -->
+    </div>
+  }
+  @case ('sources') {
+    <div class="display-flex gap-4 flex-wrap width-full">
+      <button *adaptAccessControl="'Data Sources'" permissionObject="Data Sources" noPermissionsBehavior="disable"
+        permissionAction="Write" (click)="dataSourceModal.open(view, PageMode.EDIT)" type="button"
+        [id]="'edit_' + view.dataSourceID + '_btn'" class="usa-button shadow-none">
+        Edit
+      </button>
+      <!-- <button type="button" [routerLink]="['..', 'data-source', item.dataSourceID]" class="usa-button usa-button--outline shadow-none">View</button> -->
+      <button type="button" (click)="dataSourceModal.open(view, PageMode.VIEW)"
+        [id]="'view_' + view.dataSourceID + '_btn'" class="usa-button usa-button--outline shadow-none">
+        View
+      </button>
+    </div>
+  }
+}
+</div>
 </lib-adapt-expandable-list-item>

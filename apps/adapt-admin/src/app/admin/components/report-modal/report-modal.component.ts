@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, computed, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, computed, HostListener, OnDestroy, OnInit, Signal, signal, ViewChild } from '@angular/core';
 import { StepsIndicatorComponent } from '../steps-indicator/steps-indicator.component';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, map, Observable, Subscription } from 'rxjs';
@@ -17,6 +17,7 @@ import slugify from 'slugify';
 import { NGXLogger } from 'ngx-logger';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
+import { ReportTemplateService } from '../../../services/report-template.service';
 @Component({
   selector: 'adapt-report-modal',
   standalone: false,
@@ -60,11 +61,23 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
 
   public reportTemplatesAsync: Observable<{ label: string; value: ITemplate }[]>; //this.data.getTemplates('ReportTemplate').pipe(map((result => result.map((temp: any) => ({label: temp.title,  value: temp})))));
   public filteredReportTemplates$: Observable<{ label: string; value: ITemplate }[]>;
+  reportingYear = signal<string | null>(null);
+  reportTemplateOptions = computed(() => {
+    const year = this.reportingYear();
+    let templateOptions: {
+      value: any;
+      label: string;
+    }[] = [];
+    if (year) {
+      templateOptions = this.reportTemplateService.getTemplatesWithLabels(year);
+    }
+    return templateOptions;
+  });
 
   $pageContent = this.pagesContentService.getPageContentSignal('reports');
   $pageSections = computed(() => this.$pageContent()?.sections);
 
-  @HostListener('window:beforeunload')
+  @HostListener('window:beforeunload', ['$event'])
   beforeUnload(event: any) {
     if (this.reportFormGroup.dirty) {
       event.returnValue = 'You have unsaved changes!';
@@ -77,6 +90,7 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
     public adaptDataService: AdaptDataService,
     private adaptDataViewService: AdaptDataViewService,
     private adaptReportService: AdaptReportService,
+    private reportTemplateService: ReportTemplateService,
     private idle: Idle,
     private cdRef: ChangeDetectorRef,
     private user: UserService,
@@ -93,8 +107,7 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
       template: this.fb.control('', [Validators.required]),
       visibility: this.fb.control('internal', [Validators.required]),
       title: this.fb.control('', [Validators.required], [uniqueNameValidator('Report', this.adaptDataService, PageMode.CREATE)]),
-      slug: this.fb.control('', [Validators.required], [uniqueNameValidator('Report', this.adaptDataService, PageMode.CREATE, 'slug')]
-      ),
+      slug: this.fb.control('', [Validators.required], [uniqueNameValidator('Report', this.adaptDataService, PageMode.CREATE, 'slug')]),
       description: this.fb.control('', [Validators.required]),
       preview: this.fb.control(undefined, [Validators.required]),
     });
@@ -108,14 +121,11 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
       if (event.type === 'popstate') this.cancel();
     });
 
-    this.dataViews = this.adaptDataViewService.getDataViews()
-      .pipe(map((views) => views.filter((view) => view.status === DataSetQueueStatus.AVAILABLE)));
+    this.dataViews = this.adaptDataViewService.getDataViews().pipe(map((views) => views.filter((view) => view.status === DataSetQueueStatus.AVAILABLE)));
 
     this.logger.debug('dataViews: ', this.dataViews);
 
-    this.reportTemplatesAsync = this.adaptDataService
-      .getTemplates<ITemplate>('ReportTemplate')
-      .pipe(map((result) => result.map((temp: ITemplate) => ({ label: temp.title, value: temp }))));
+    this.reportTemplatesAsync = this.adaptDataService.getTemplates<ITemplate>('ReportTemplate').pipe(map((result) => result.map((temp: ITemplate) => ({ label: temp.title, value: temp }))));
 
     this.idle.onTimeout.subscribe(() => {
       if (this.reportFormGroup.dirty) {
@@ -128,30 +138,21 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
     });
 
     // get the dropdown options for the question: What data view do you want to use?
-
-    this.filteredDataViews$ = this.dataViews; //this.filterDataViews('');  // 'SEA (State Education Agency)'
-
-    // this.filteredDataViews$ = this.reportingLevel.valueChanges.pipe(
-    //   startWith(this.reportingLevel.value),
-    //   switchMap((selectedReportingLevel: QuestionOptionContentText) =>
-    //
-    //       this.filterDataViews(selectedReportingLevel.label)
-    //
-    //   )
-    // );
-
-    this.filteredReportTemplates$ = this.reportTemplatesAsync;  //this.filterReportTemplates('');
-
-    // this.filteredReportTemplates$ = this.reportingLevel.valueChanges.pipe(
-    //   startWith(this.reportingLevel.value),
-    //   switchMap((selectedReportingLevel: QuestionOptionContentText) =>
-    //     this.filterReportTemplates(selectedReportingLevel.label)
-    //   )
-    // );
+    this.filteredDataViews$ = this.dataViews;
+    this.filteredReportTemplates$ = this.reportTemplatesAsync;
 
     this.logger.debug('filteredReportTemplates$: ', this.filteredReportTemplates$);
 
     const dataViewSub = this.dataView.valueChanges.subscribe((val) => {
+      let dataViewYear = null;
+      if (val.data.fields.some((f: { id: string }) => f.id === 'reportingYear')) {
+        // handle old style where reporting year is a field on the dataview
+        dataViewYear = val.data.fields.find((f: { id: string }) => f.id === 'reportingYear')?.value || null;
+      } else {
+        dataViewYear = val.reportingYear || null;
+      }
+      this.reportingYear.set(dataViewYear);
+
       this.preview.setValue(undefined);
       this.preview.markAsPristine();
     });
@@ -171,47 +172,24 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
 
   ngOnInit() {
     // Can update these variables with dynamical content pulled from the database if needed
-
     // console.log('Inside report-modal component ngOnInit');
   }
 
   private filterDataViews(reportingLevelLabel: string): Observable<DataViewModel[]> {
-
     this.logger.debug('Inside filteredDataViews, reportingLevelLabel: ', reportingLevelLabel);
 
-    return this.dataViews.pipe(map((items) => {
-
+    return this.dataViews.pipe(
+      map((items) => {
         const filtered = items.filter((item) => {
-
           const rl = item.data.fields.find((f) => f.id === 'reportingLevel');
           return rl?.label === reportingLevelLabel || rl === undefined;
-
         }); // Filtered created as const so that we can sort it before returning it
 
-      this.logger.debug('filtered: ', filtered);
-
-        return filtered.slice() // Using slice() to avoid mutating the source array
-                        .sort((a, b) => b.updated! - a.updated!); // Sorted in descending order by 'updated' field before returning
-      })
-    );
-  }
-
-  private filterReportTemplates(reportingLevelLabel: string): Observable<{ label: string; value: ITemplate }[]> {
-    this.logger.debug('Inside filterReportTemplates, reportingLevelLabel: ', reportingLevelLabel);
-
-    return this.reportTemplatesAsync.pipe(map((items) => {
-        this.logger.debug('Inside filteredReportTemplates, reportingLevelLabel: ', reportingLevelLabel);
-
-        const filtered = items.filter((item) =>
-          item.value.reportingLevels === undefined ||
-          item.value.reportingLevels?.includes(reportingLevelLabel)
-        );
-
         this.logger.debug('filtered: ', filtered);
+
         return filtered;
       })
-    )
-
+    );
   }
 
   public next() {
@@ -392,10 +370,13 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
       dataView: this.dataView.value.dataViewID,
       template: this.currentReportTemplate!,
       slug: this.slug.value,
-    //  reportingLevel: this.reportingLevel.value.value,
+      //  reportingLevel: this.reportingLevel.value.value,
     };
 
-    this.adaptReportService.createReport(newReportItem).pipe(catchError((err) => {
+    this.adaptReportService
+      .createReport(newReportItem)
+      .pipe(
+        catchError((err) => {
           this.saved = false;
           this.saving = false;
           this.failed = true;
@@ -416,7 +397,6 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
   }
 
   public onReportPreviewEvent(event: boolean) {
-    console.log(event);
     this.preview.setValue(event);
 
     !event ? this.preview.setErrors({ invalidPreview: true }) : this.preview.setErrors(null);

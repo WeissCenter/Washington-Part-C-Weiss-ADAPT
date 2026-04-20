@@ -1,5 +1,5 @@
 import { Component, effect, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AdaptDataService } from '../../../../services/adapt-data.service';
 import { SettingsService } from 'libs/adapt-shared-component-lib/src/lib/services/settings.service';

@@ -1,8 +1,14 @@
 <adapt-full-page-modal>
   <div class="display-flex flex-justify" header>
-    <h1 *ngIf="mode === PageMode.CREATE" class="margin-0">{{ createModeModalHeaders[currentStep] }}</h1>
-    <h1 *ngIf="mode === PageMode.EDIT" class="margin-0">{{ editModeModalHeaders[currentStep] }}</h1>
-    <h1 *ngIf="mode === PageMode.VIEW" class="margin-0">Data Source Summary</h1>
+    @if (mode === PageMode.CREATE) {
+      <h1 class="margin-0">{{ createModeModalHeaders[currentStep] }}</h1>
+    }
+    @if (mode === PageMode.EDIT) {
+      <h1 class="margin-0">{{ editModeModalHeaders[currentStep] }}</h1>
+    }
+    @if (mode === PageMode.VIEW) {
+      <h1 class="margin-0">Data Source Summary</h1>
+    }
     <div class="data-view-edit-header-controls display-flex gap-2 flex-align-center">
       <button
         (click)="confirmCloseModal.open()"
@@ -14,7 +20,7 @@
   @let pageContent = $pageContent();
   @let pageSections = $pageSections();
   <div class="grid-container-tablet-lg" [ngClass]="{ 'padding-top-2': mode !== PageMode.VIEW }" body>
-    <ng-container *ngIf="mode !== PageMode.VIEW; else view">
+    @if (mode !== PageMode.VIEW) {
       <!-- Create -->
       <adapt-steps-indicator [(step)]="currentStep" #stepsIndicator>
         <adapt-steps-indicator-step name="{{ pageSections[0].name }}">
@@ -23,307 +29,300 @@
               <h2>{{ pageSections[0].header }}</h2>
               <p class="usa-prose">{{ pageSections[0].description }}</p>
             </div>
-
             <form class="display-flex flex-column gap-2" [formGroup]="dataSourceForm">
               <!-- Source Type -->
-              <lib-adapt-combo-box *ngIf="mode === PageMode.CREATE"
-                [comboBoxStyle]="{ 'max-width': '100%' }"
-                [items]="pageSections[0].questions![0].options"
-                compareID="label"
-                itemLabel="label"
-                itemAccessor="value"
-                label="{{ pageSections[0].questions![0].label }}"
-                formControlName="type">
-                <ng-container errors>
-                  <div
-                    *ngIf="type?.invalid && (type?.dirty || type?.touched)"
-                    class="form-errors margin-top-1 text-emergency">
-                    <div *ngIf="type?.errors?.['required']" i18n>
+              @if (mode === PageMode.CREATE) {
+                <lib-adapt-combo-box
+                  [comboBoxStyle]="{ 'max-width': '100%' }"
+                  [items]="pageSections[0].questions![0].options"
+                  compareID="label"
+                  itemLabel="label"
+                  itemAccessor="value"
+                  label="{{ pageSections[0].questions![0].label }}"
+                  formControlName="type">
+                  <ng-container errors>
+                    @if (type.invalid && (type.dirty || type.touched)) {
+                      <div
+                        class="form-errors margin-top-1 text-emergency">
+                        @if (type.errors?.['required']) {
+                          <div i18n>
                       {{ pageSections[0].questions![0].validation_messages!['required'] }}
                     </div>
-                  </div>
-                </ng-container>
-              </lib-adapt-combo-box>
-
+                        }
+                      </div>
+                    }
+                  </ng-container>
+                </lib-adapt-combo-box>
+              }
               <!-- Source Type -->
-              <div *ngIf="mode !== PageMode.CREATE" class="edit-mode-preview display-flex gap-2 flex-column">
-                <label>{{ pageSections[0].questions![0].label }}:
-                  <strong>{{ type.value | valueLabel : sourceTypeOptions }}</strong></label>
-              </div>
-
-              <!-- Data source name -->
-              <lib-adapt-text-input label="{{ pageSections[0].questions![1].label }}" hint="{{ pageSections[0].questions![1].placeholder }}" formControlName="name">
-                <p required class="usa-prose">{{ pageSections[0].questions![1].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-
-              <!-- Description -->
-              <lib-adapt-text-input type="long" label="{{ pageSections[0].questions![2].label }}" formControlName="description">
-                <p required class="usa-prose">{{ pageSections[0].questions![2].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-            </form>
-          </div>
-        </adapt-steps-indicator-step>
-        <!-- Connect -->
-        <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
-          <div class="connect-step-body display-flex flex-column gap-6">
-            <div class="create-step-header">
-              <h2>{{ pageSections[1].header }}</h2>
-              <p class="usa-prose">{{ pageSections[1].description }}</p>
-            </div>
-
-            <form class="display-flex flex-column gap-2" [formGroup]="dataSourceForm">
-              <!-- Server Address -->
-              <lib-adapt-text-input label="{{ pageSections[1].questions![1].label }}" formControlName="address">
-                <p required class="usa-prose">{{ pageSections[1].questions![1].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-
-              <!-- Port number -->
-              <lib-adapt-text-input
-                type="number"
-                label="{{ pageSections[1].questions![2].label }}"
-                formControlName="port">
-                <p required class="usa-prose">{{ pageSections[1].questions![2].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-
-              <!-- Database name -->
-              <lib-adapt-text-input label="{{ pageSections[1].questions![3].label }}" formControlName="database">
-                <p required class="usa-prose">{{ pageSections[1].questions![3].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-
-              <!-- Username -->
-              <lib-adapt-text-input label="{{ pageSections[1].questions![4].label }}" formControlName="username">
-                <p required class="usa-prose">{{ pageSections[1].questions![4].validation_messages!['required'] }}</p>
-              </lib-adapt-text-input>
-
-              <!-- Password -->
-              <ng-container *ngIf="(editPassword && mode === PageMode.EDIT) || mode !== PageMode.EDIT">
-                <lib-adapt-text-input
-                  autocomplete="password"
-                  type="password"
-                  label="{{ pageSections[1].questions![5].label }}"
-                  formControlName="password">
-                  <p required class="usa-prose">{{ pageSections[1].questions![5].validation_messages!['required'] }}</p>
+              @if (mode !== PageMode.CREATE) {
+                <div class="edit-mode-preview display-flex gap-2 flex-column">
+                  <label>{{ pageSections[0].questions![0].label }}:
+                    <strong>{{ type.value | valueLabel : sourceTypeOptions }}</strong></label>
+                  </div>
+                }
+                <!-- Data source name -->
+                <lib-adapt-text-input label="{{ pageSections[0].questions![1].label }}" hint="{{ pageSections[0].questions![1].placeholder }}" formControlName="name">
+                  <p required class="usa-prose">{{ pageSections[0].questions![1].validation_messages!['required'] }}</p>
                 </lib-adapt-text-input>
-              </ng-container>
-
-              <button *ngIf="mode === PageMode.EDIT" (click)="editPasswordToggle()" class="usa-button flex-align-self-start">
-                {{pageContent?.actions!['edit_pw_button'] ? pageContent?.actions!['edit_pw_button']: 'Edit Password'}}
-              </button>
-            </form>
-
+                <!-- Description -->
+                <lib-adapt-text-input type="long" label="{{ pageSections[0].questions![2].label }}" formControlName="description">
+                  <p required class="usa-prose">{{ pageSections[0].questions![2].validation_messages!['required'] }}</p>
+                </lib-adapt-text-input>
+              </form>
+            </div>
+          </adapt-steps-indicator-step>
+          <!-- Connect -->
+          <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
+            <div class="connect-step-body display-flex flex-column gap-6">
+              <div class="create-step-header">
+                <h2>{{ pageSections[1].header }}</h2>
+                <p class="usa-prose">{{ pageSections[1].description }}</p>
+              </div>
+              <form class="display-flex flex-column gap-2" [formGroup]="dataSourceForm">
+                <!-- Server Address -->
+                <lib-adapt-text-input label="{{ pageSections[1].questions![1].label }}" formControlName="address">
+                  <p required class="usa-prose">{{ pageSections[1].questions![1].validation_messages!['required'] }}</p>
+                </lib-adapt-text-input>
+                <!-- Port number -->
+                <lib-adapt-text-input
+                  type="number"
+                  label="{{ pageSections[1].questions![2].label }}"
+                  formControlName="port">
+                  <p required class="usa-prose">{{ pageSections[1].questions![2].validation_messages!['required'] }}</p>
+                </lib-adapt-text-input>
+                <!-- Database name -->
+                <lib-adapt-text-input label="{{ pageSections[1].questions![3].label }}" formControlName="database">
+                  <p required class="usa-prose">{{ pageSections[1].questions![3].validation_messages!['required'] }}</p>
+                </lib-adapt-text-input>
+                <!-- Username -->
+                <lib-adapt-text-input label="{{ pageSections[1].questions![4].label }}" formControlName="username">
+                  <p required class="usa-prose">{{ pageSections[1].questions![4].validation_messages!['required'] }}</p>
+                </lib-adapt-text-input>
+                <!-- Password -->
+                @if ((editPassword && mode === PageMode.EDIT) || mode !== PageMode.EDIT) {
+                  <lib-adapt-text-input
+                    autocomplete="password"
+                    type="password"
+                    label="{{ pageSections[1].questions![5].label }}"
+                    formControlName="password">
+                    <p required class="usa-prose">{{ pageSections[1].questions![5].validation_messages!['required'] }}</p>
+                  </lib-adapt-text-input>
+                }
+                @if (mode === PageMode.EDIT) {
+                  <button (click)="editPasswordToggle()" class="usa-button flex-align-self-start">
+                    {{pageContent?.actions!['edit_pw_button'] ? pageContent?.actions!['edit_pw_button']: 'Edit Password'}}
+                  </button>
+                }
+              </form>
+              @if (mode !== PageMode.EDIT || (mode === PageMode.EDIT && editPassword)) {
+                <div
+                  class="connect-step-test-container display-flex flex-justify-left">
+                  <button (click)="testConnection()" class="usa-button usa-button--outline">{{pageContent?.actions!['test_connection_button'] ? pageContent?.actions!['test_connection_button']: 'Test connection'}}</button>
+                </div>
+              }
+              @if (testCon.invalid && (testCon.dirty || testCon.touched)) {
+                <div role="alert" class="form-errors text-emergency">
+                  <p class="usa-prose">{{ pageSections[1].messages!['test_fail'].message ? pageSections[1].messages!['test_fail'].message : 'A Successful connection is required to continue.' }}</p>
+                </div>
+              }
+            </div>
+          </adapt-steps-indicator-step>
+          <!-- Review -->
+          @if (mode === PageMode.EDIT) {
+            <adapt-steps-indicator-step name="Review">
+              <div class="impact-step-body display-flex flex-column gap-6">
+                <div class="create-step-header">
+                  <h2>{{ pageSections[2].header }}</h2>
+                  <p class="usa-prose">{{ pageSections[2].description }}</p>
+                </div>
+                <div class="impact-body padding-3 padding-left-5 border-2px border-base-lighter radius-lg bg-white">
+                  <adapt-impact-analysis
+                    type="DataSource"
+                    [dataViews]="$dataViews"
+                    [reports]="$reports"
+                  [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
+                </div>
+              </div>
+            </adapt-steps-indicator-step>
+          }
+          <!-- Save  -->
+          <adapt-steps-indicator-step name="{{pageSections[3].name }}">
+            <div class="review-header">
+              <!-- Data source summary  -->
+              <h2>{{ pageSections[3].header }}</h2>
+              <p class="usa-prose">{{ pageSections[3].description }}</p>
+            </div>
             <div
-              *ngIf="mode !== PageMode.EDIT || (mode === PageMode.EDIT && editPassword)"
-              class="connect-step-test-container display-flex flex-justify-left">
-              <button (click)="testConnection()" class="usa-button usa-button--outline">{{pageContent?.actions!['test_connection_button'] ? pageContent?.actions!['test_connection_button']: 'Test connection'}}</button>
+              class="review-body margin-top-4 padding-3 padding-left-5 border-2px border-base-lighter radius-lg bg-white">
+              <h3 class="margin-0 font-lg">{{ pageSections[3].questions![0].label ? pageSections[3].questions![0].label : 'General information' }}:</h3>
+              <ul class="usa-list display-flex padding-3 flex-column gap-1">
+                <li>
+                  <!-- -->
+                  <span>{{ pageSections[3].questions![1].label ? pageSections[3].questions![1].label : 'Connection type' }}: </span>
+                  <strong>Microsoft SQL Server</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[3].questions![2].label ? pageSections[3].questions![2].label : 'Friendly name' }}: </span>
+                  <strong>{{ name.value }}</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[3].questions![3].label ? pageSections[3].questions![3].label : 'Description' }}: </span>
+                  <strong>{{ description.value }}</strong>
+                </li>
+              </ul>
+              <h3 class="margin-0 font-lg">{{ pageSections[1].questions![0].label ? pageSections[1].questions![0].label : 'Data source details' }}:</h3>
+              <ul class="usa-list display-flex padding-3 flex-column gap-1">
+                <li class="maxw-full">
+                  <span>{{ pageSections[1].questions![1].label ? pageSections[1].questions![1].label : 'Server address' }}: </span>
+                  <strong>{{ address.value }}</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[1].questions![2].label ? pageSections[1].questions![2].label : 'Port number' }}: </span>
+                  <strong>{{ port.value }}</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[1].questions![3].label ? pageSections[1].questions![3].label : 'Database name' }}: </span>
+                  <strong>{{ database.value }}</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[1].questions![4].label ? pageSections[1].questions![4].label : 'Username' }}: </span>
+                  <strong>{{ username.value }}</strong>
+                </li>
+              </ul>
             </div>
-
-            <div role="alert" *ngIf="testCon?.invalid && (testCon?.dirty || testCon?.touched)" class="form-errors text-emergency">
-              <p class="usa-prose">{{ pageSections[1].messages!['test_fail'].message ? pageSections[1].messages!['test_fail'].message : 'A Successful connection is required to continue.' }}</p>
-            </div>
+          </adapt-steps-indicator-step>
+        </adapt-steps-indicator>
+      } @else {
+        <div class="view-mode-container height-full bg-white">
+          <div class="view-mode-body display-flex padding-3 flex-column gap-2">
+            <section
+              class="view-data-source-heading padding-1 bg-base-lightest border-2px border-base display-flex flex-column gap-1">
+              <h2 class="margin-0">{{ currentDataSource?.name }}</h2>
+              <p class="usa-prose">{{ currentDataSource?.description }}</p>
+              <p class="usa-prose">
+                Author: <span>{{ currentDataSource?.author }}</span>
+              </p>
+              <p class="usa-prose">
+                Last updated: {{ currentDataSource?.updated | date : 'MM/dd/yyyy' }} at
+                {{ currentDataSource?.updated | date : 'HH:mm:ss a' }}
+              </p>
+            </section>
+            <section class="view-data-source-details">
+              <h2 class="margin-0">{{ pageSections[1].questions![0].label ? pageSections[1].questions![0].label : 'Data source details' }}</h2>
+              <ul class="usa-list">
+                <li>
+                  {{ pageSections[1].questions![1].label ? pageSections[1].questions![1].label : 'Server address' }}: <strong>{{ address.value }}</strong>
+                </li>
+                <li>
+                  {{ pageSections[1].questions![2].label ? pageSections[1].questions![2].label : 'Port number' }}: <strong>{{ port.value }}</strong>
+                </li>
+                <li>
+                  {{ pageSections[1].questions![3].label ? pageSections[1].questions![3].label : 'Database name' }}: <strong>{{ database.value }}</strong>
+                </li>
+                <li>
+                  <span>{{ pageSections[1].questions![0].label ? pageSections[1].questions![4].label : 'Username' }}:</span> <strong>{{ username.value }}</strong>
+                </li>
+              </ul>
+            </section>
+            <adapt-impact-analysis type="DataSource" [dataViews]="$dataViews" [reports]="$reports" [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
           </div>
-        </adapt-steps-indicator-step>
-
-        <!-- Review -->
-        <adapt-steps-indicator-step *ngIf="mode === PageMode.EDIT" name="Review">
-          <div class="impact-step-body display-flex flex-column gap-6">
-            <div class="create-step-header">
-              <h2>{{ pageSections[2].header }}</h2>
-              <p class="usa-prose">{{ pageSections[2].description }}</p>
-            </div>
-
-            <div class="impact-body padding-3 padding-left-5 border-2px border-base-lighter radius-lg bg-white">
-              <adapt-impact-analysis
-                type="DataSource"
-                [dataViews]="$dataViews"
-                [reports]="$reports"
-                [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
-            </div>
-          </div>
-        </adapt-steps-indicator-step>
-
-        <!-- Save  -->
-        <adapt-steps-indicator-step name="{{pageSections[3].name }}">
-          <div class="review-header">
-            <!-- Data source summary  -->
-            <h2>{{ pageSections[3].header }}</h2>
-            <p class="usa-prose">{{ pageSections[3].description }}</p>
-          </div>
-
-          <div
-            class="review-body margin-top-4 padding-3 padding-left-5 border-2px border-base-lighter radius-lg bg-white">
-            <h3 class="margin-0 font-lg">{{ pageSections[3].questions![0].label ? pageSections[3].questions![0].label : 'General information' }}:</h3>
-
-            <ul class="usa-list display-flex padding-3 flex-column gap-1">
-              <li>
-                <!-- -->
-                <span>{{ pageSections[3].questions![1].label ? pageSections[3].questions![1].label : 'Connection type' }}: </span>
-                <strong>Microsoft SQL Server</strong>
-              </li>
-              <li>
-                <span>{{ pageSections[3].questions![2].label ? pageSections[3].questions![2].label : 'Friendly name' }}: </span>
-                <strong>{{ name.value }}</strong>
-              </li>
-              <li>
-                <span>{{ pageSections[3].questions![3].label ? pageSections[3].questions![3].label : 'Description' }}: </span>
-                <strong>{{ description.value }}</strong>
-              </li>
-            </ul>
-
-            <h3 class="margin-0 font-lg">{{ pageSections[1].questions![0].label ? pageSections[1].questions![0].label : 'Data source details' }}:</h3>
-
-            <ul class="usa-list display-flex padding-3 flex-column gap-1">
-              <li class="maxw-full">
-                <span>{{ pageSections[1].questions![1].label ? pageSections[1].questions![1].label : 'Server address' }}: </span>
-                <strong>{{ address.value }}</strong>
-              </li>
-              <li>
-                <span>{{ pageSections[1].questions![2].label ? pageSections[1].questions![2].label : 'Port number' }}: </span>
-                <strong>{{ port.value }}</strong>
-              </li>
-              <li>
-                <span>{{ pageSections[1].questions![3].label ? pageSections[1].questions![3].label : 'Database name' }}: </span>
-                <strong>{{ database.value }}</strong>
-              </li>
-              <li>
-                <span>{{ pageSections[1].questions![4].label ? pageSections[1].questions![4].label : 'Username' }}: </span>
-                <strong>{{ username.value }}</strong>
-              </li>
-            </ul>
-          </div>
-        </adapt-steps-indicator-step>
-      </adapt-steps-indicator>
-    </ng-container>
-
-    <ng-template #view>
-      <div class="view-mode-container height-full bg-white">
-        <div class="view-mode-body display-flex padding-3 flex-column gap-2">
-          <section
-            class="view-data-source-heading padding-1 bg-base-lightest border-2px border-base display-flex flex-column gap-1">
-            <h2 class="margin-0">{{ currentDataSource?.name }}</h2>
-            <p class="usa-prose">{{ currentDataSource?.description }}</p>
-            <p class="usa-prose">
-              Author: <span>{{ currentDataSource?.author }}</span>
-            </p>
-
-            <p class="usa-prose">
-              Last updated: {{ currentDataSource?.updated | date : 'MM/dd/YYYY' }} at
-              {{ currentDataSource?.updated | date : 'HH:MM:SS a' }}
-            </p>
-          </section>
-
-          <section class="view-data-source-details">
-            <h2 class="margin-0">{{ pageSections[1].questions![0].label ? pageSections[1].questions![0].label : 'Data source details' }}</h2>
-
-            <ul class="usa-list">
-              <li>
-                {{ pageSections[1].questions![1].label ? pageSections[1].questions![1].label : 'Server address' }}: <strong>{{ address.value }}</strong>
-              </li>
-              <li>
-                {{ pageSections[1].questions![2].label ? pageSections[1].questions![2].label : 'Port number' }}: <strong>{{ port.value }}</strong>
-              </li>
-              <li>
-                {{ pageSections[1].questions![3].label ? pageSections[1].questions![3].label : 'Database name' }}: <strong>{{ database.value }}</strong>
-              </li>
-
-              <li>
-                <span>{{ pageSections[1].questions![0].label ? pageSections[1].questions![4].label : 'Username' }}:</span> <strong>{{ username.value }}</strong>
-              </li>
-            </ul>
-          </section>
-
-          <adapt-impact-analysis type="DataSource" [dataViews]="$dataViews" [reports]="$reports" [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
         </div>
-      </div>
-    </ng-template>
-  </div>
+      }
 
-  <div
-    aria-live="polite"
-    extra
+    </div>
+
+    <div
+      aria-live="polite"
+      extra
     [ngClass]="{
       'bg-primary': connectionTestState === ConnectionTestState.SUCCESS,
       'bg-red': connectionTestState === ConnectionTestState.FAILED
     }"
-    class="alert-box width-full display-flex padding-2 margin-top-2 text-white gap-2 flex-justify-center">
-    <ng-container [ngSwitch]="connectionTestState">
-      <ng-container *ngSwitchCase="ConnectionTestState.SUCCESS">
-        <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
-        {{ pageSections[1].messages!['success_connect'].message ? pageSections[1].messages!['success_connect'].message : 'Connected successfully!' }}
-      </ng-container>
+      class="alert-box width-full display-flex padding-2 margin-top-2 text-white gap-2 flex-justify-center">
+      @switch (connectionTestState) {
+        @case (ConnectionTestState.SUCCESS) {
+          <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
+          {{ pageSections[1].messages!['success_connect'].message ? pageSections[1].messages!['success_connect'].message : 'Connected successfully!' }}
+        }
+        @case (ConnectionTestState.FAILED) {
+          <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
+          {{ pageSections[1].messages!['unable_to_connect'].message ? pageSections[1].messages!['unable_to_connect'].message : 'Unable to connect. Review settings and test it again.' }}
+        }
+      }
+    </div>
 
-      <ng-container *ngSwitchCase="ConnectionTestState.FAILED">
-        <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
-        {{ pageSections[1].messages!['unable_to_connect'].message ? pageSections[1].messages!['unable_to_connect'].message : 'Unable to connect. Review settings and test it again.' }}
-
-      </ng-container>
-    </ng-container>
-  </div>
-
-  <div class="grid-container display-flex flex-justify-center gap-2" footer>
-    <ng-container *ngIf="stepsIndicator && opened && mode !== PageMode.VIEW; else viewFooter">
-      <button (click)="previous()" *ngIf="currentStep > 0" class="usa-button">{{pageContent?.actions!['back_button'] ? pageContent?.actions!['back_button']: 'Back'}}</button>
-      <button (click)="next()" *ngIf="currentStep + 1 < stepsIndicator.length" class="usa-button">
-        {{pageContent?.actions!['next_button'] ? pageContent?.actions!['next_button']: 'Next: '}} {{ stepsIndicator.getStepName(currentStep + 1) }}
-      </button>
-
-      <button *ngIf="mode === PageMode.CREATE ? currentStep >= 2 : currentStep >= 3" (click)="doSave(mode === PageMode.CREATE ? currentStep === 2 : currentStep === 3, !dataSourceForm.dirty)"
+    <div class="grid-container display-flex flex-justify-center gap-2" footer>
+      @if (stepsIndicator && opened && mode !== PageMode.VIEW) {
+        @if (currentStep > 0) {
+          <button (click)="previous()" class="usa-button">{{pageContent?.actions!['back_button'] ? pageContent?.actions!['back_button']: 'Back'}}</button>
+        }
+        @if (currentStep + 1 < stepsIndicator.length) {
+          <button (click)="next()" class="usa-button">
+            {{pageContent?.actions!['next_button'] ? pageContent?.actions!['next_button']: 'Next: '}} {{ stepsIndicator.getStepName(currentStep + 1) }}
+          </button>
+        }
+        @if (mode === PageMode.CREATE ? currentStep >= 2 : currentStep >= 3) {
+          <button (click)="doSave(mode === PageMode.CREATE ? currentStep === 2 : currentStep === 3, !dataSourceForm.dirty)"
         class="usa-button {{
           (mode === PageMode.CREATE && currentStep !== 2) || (mode === PageMode.EDIT && currentStep !== 3)
             ? 'usa-button--unstyled'
             : ''
         }}">
-        {{pageContent?.actions!['save_button'] ? pageContent?.actions!['save_button']: 'Save'}}
-      </button>
-      <button (click)="confirmCloseModal.open()" class="usa-button usa-button--unstyled">{{pageContent?.actions!['cancel_button'] ? pageContent?.actions!['cancel_button']: 'Cancel'}}</button>
-    </ng-container>
+            {{pageContent?.actions!['save_button'] ? pageContent?.actions!['save_button']: 'Save'}}
+          </button>
+        }
+        <button (click)="confirmCloseModal.open()" class="usa-button usa-button--unstyled">{{pageContent?.actions!['cancel_button'] ? pageContent?.actions!['cancel_button']: 'Cancel'}}</button>
+      } @else {
+        <button (click)="switchToEditMode()" class="usa-button">{{pageContent?.actions!['edit_button'] ? pageContent?.actions!['edit_button']: 'Edit'}}</button>
+        <button (click)="createDataView()" class="usa-button usa-button--unstyled">
+          {{pageContent?.actions!['add_button'] ? pageContent?.actions!['add_button']: 'Add data view'}}
+        </button>
+      }
 
-    <ng-template #viewFooter>
-      <button (click)="switchToEditMode()" class="usa-button">{{pageContent?.actions!['edit_button'] ? pageContent?.actions!['edit_button']: 'Edit'}}</button>
-      <button (click)="createDataView()" class="usa-button usa-button--unstyled">
-      {{pageContent?.actions!['add_button'] ? pageContent?.actions!['add_button']: 'Add data view'}}
-      </button>
+    </div>
+  </adapt-full-page-modal>
 
-    </ng-template>
-  </div>
-</adapt-full-page-modal>
-
-<lib-adapt-confirm-modal
-  [heading]="$any(dataSourceForm.dirty ? 'You have unsaved changes.' : 'Are you sure you want to close?')"
+  <lib-adapt-confirm-modal
+    [heading]="$any(dataSourceForm.dirty ? 'You have unsaved changes.' : 'Are you sure you want to close?')"
   (confirm)="internalClose()"></lib-adapt-confirm-modal>
 
-<lib-adapt-modal closeText="Close" heading="Please provide a reason." #confirmModal>
-  <div class="confirm-modal-body width-tablet-lg display-flex flex-column gap-2 padding-1">
-    <p>Here is a list of changes you made to confirm:</p>
+  <lib-adapt-modal closeText="Close" heading="Please provide a reason." #confirmModal>
+    <div class="confirm-modal-body width-tablet-lg display-flex flex-column gap-2 padding-1">
+      <p>Here is a list of changes you made to confirm:</p>
 
-    <form class="display-flex flex-column gap-2" [formGroup]="editJustificationForm">
-      <div class="confirm-modal-field">
-        <lib-adapt-combo-box
-          [required]="true"
-          formControlName="reason"
-          placeholder=""
-          [comboBoxStyle]="{ 'max-width': '60%' }"
-          label="Reason:"
-          [items]="refreshReasonOptions"
-          itemAccessor="value"
-          itemLabel="label">
-          <ng-container errors>
-            <div
-              *ngIf="reason?.invalid && (reason?.dirty || reason?.touched)"
-              class="form-errors margin-top-1 text-emergency">
-              <div *ngIf="reason?.errors?.['required']" i18n>Edit reason is required.</div>
-            </div>
-          </ng-container>
-        </lib-adapt-combo-box>
+      <form class="display-flex flex-column gap-2" [formGroup]="editJustificationForm">
+        <div class="confirm-modal-field">
+          <lib-adapt-combo-box
+            [required]="true"
+            formControlName="reason"
+            placeholder=""
+            [comboBoxStyle]="{ 'max-width': '60%' }"
+            label="Reason:"
+            [items]="refreshReasonOptions"
+            itemAccessor="value"
+            itemLabel="label">
+            <ng-container errors>
+              @if (reason.invalid && (reason.dirty || reason.touched)) {
+                <div
+                  class="form-errors margin-top-1 text-emergency">
+                  @if (reason.errors?.['required']) {
+                    <div i18n>Edit reason is required.</div>
+                  }
+                </div>
+              }
+            </ng-container>
+          </lib-adapt-combo-box>
+        </div>
+
+        <lib-adapt-text-input label="Additional comment:" type="long" formControlName="justification">
+          <p required class="usa-prose">Edit justification is required.</p>
+        </lib-adapt-text-input>
+      </form>
+
+      <div class="confirm-modal-footer padding-1 display-flex gap-2">
+        <button class="usa-button" (click)="confirmEdits()">Confirm</button>
+        <button class="usa-button usa-button--unstyled" (click)="internalClose()">Cancel</button>
       </div>
-
-      <lib-adapt-text-input label="Additional comment:" type="long" formControlName="justification">
-        <p required class="usa-prose">Edit justification is required.</p>
-      </lib-adapt-text-input>
-    </form>
-
-    <div class="confirm-modal-footer padding-1 display-flex gap-2">
-      <button class="usa-button" (click)="confirmEdits()">Confirm</button>
-      <button class="usa-button usa-button--unstyled" (click)="internalClose()">Cancel</button>
     </div>
-  </div>
-</lib-adapt-modal>
+  </lib-adapt-modal>
