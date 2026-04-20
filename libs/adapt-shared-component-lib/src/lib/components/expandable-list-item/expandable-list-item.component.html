@@ -1,47 +1,48 @@
 <div class="usa-accordion adapt-expandable-list-item">
   <!-- <ng-container [ngSwitch]="headerTag">
-    <ng-container *ngSwitchCase="'h1'">
-      <h1 class="usa-accordion__heading">
+  <ng-container *ngSwitchCase="'h1'">
+    <h1 class="usa-accordion__heading">
 
-        <ng-container *ngTemplateOutlet="headerContent"></ng-container>
+      <ng-container *ngTemplateOutlet="headerContent"></ng-container>
 
-      </h1>
-    </ng-container>
-    <ng-container *ngSwitchCase="'h2'">
-      <h2 class="usa-accordion__heading">
-        <ng-container *ngTemplateOutlet="headerContent"></ng-container>
-      </h2>
-    </ng-container>
-    <ng-container *ngSwitchCase="'h3'">
-      <h3 class="usa-accordion__heading">
-        <ng-container *ngTemplateOutlet="headerContent"></ng-container>
-      </h3>
-    </ng-container>
-    <ng-container *ngSwitchCase="'h4'">
-      <h4 class="usa-accordion__heading">
-        <ng-container *ngTemplateOutlet="headerContent"></ng-container>
-      </h4>
-    </ng-container>
-  </ng-container> -->
+    </h1>
+  </ng-container>
+  <ng-container *ngSwitchCase="'h2'">
+    <h2 class="usa-accordion__heading">
+      <ng-container *ngTemplateOutlet="headerContent"></ng-container>
+    </h2>
+  </ng-container>
+  <ng-container *ngSwitchCase="'h3'">
+    <h3 class="usa-accordion__heading">
+      <ng-container *ngTemplateOutlet="headerContent"></ng-container>
+    </h3>
+  </ng-container>
+  <ng-container *ngSwitchCase="'h4'">
+    <h4 class="usa-accordion__heading">
+      <ng-container *ngTemplateOutlet="headerContent"></ng-container>
+    </h4>
+  </ng-container>
+</ng-container> -->
 
-  <ng-container *ngTemplateOutlet="headerContent"></ng-container>
+<ng-container *ngTemplateOutlet="headerContent"></ng-container>
 
-  <div [id]="id" hidden class="usa-accordion__content">
-    <ng-content select="[collapsed-content]"></ng-content>
-    <ng-content select="[action-content]"></ng-content>
-  </div>
+<div [id]="id" hidden class="usa-accordion__content">
+  <ng-content select="[collapsed-content]"></ng-content>
+  <ng-content select="[action-content]"></ng-content>
+</div>
 </div>
 
 <ng-template #headerContent>
   <div class="usa-accordion__heading display-flex gap-2 flex-justify">
     <ng-content select="[visible-content]"></ng-content>
 
-    <button
-    *ngIf="expandable"
-      type="button"
-      class="usa-accordion__button"
-      aria-label="Expand list item"
-      aria-expanded="false"
+    @if (expandable) {
+      <button
+        type="button"
+        class="usa-accordion__button"
+        aria-label="Expand list item"
+        aria-expanded="false"
       [attr.aria-controls]="id"></button>
+    }
   </div>
 </ng-template>

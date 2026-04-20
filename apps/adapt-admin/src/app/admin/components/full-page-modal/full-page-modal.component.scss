@@ -6,6 +6,10 @@
   min-height: 100vh;
 }
 
+.full-page-modal-header {
+  --usa-focus-color: var(--usa-color-magenta-vivid-30);
+}
+
 .adapt-dialog-content-wrapper {
   min-width: 100vw;
   min-height: 100vh;

@@ -48,3 +48,5 @@ Thumbs.db
 **/suppress-layer/lib
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+res/github-environment-setup/*.env
+!res/github-environment-setup/example-*.env

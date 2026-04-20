@@ -76,7 +76,7 @@ export class DataSourceModalComponent implements OnDestroy, OnInit {
 
   public dataSourceForm: FormGroup;
 
-  @HostListener('window:beforeunload')
+  @HostListener('window:beforeunload', ['$event'])
   beforeUnload(event: any) {
     if (this.dataSourceForm.dirty && this.user.idleState !== IdleStates.TIMED_OUT) {
       event.returnValue = 'You have unsaved changes!';

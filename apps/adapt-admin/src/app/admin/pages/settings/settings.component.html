@@ -1,18 +1,16 @@
 @let pageContent = $pageContent();
 @let categoriesContent = $categoriesContent();
 <div class="grid-container display-flex flex-column gap-2">
-  <ng-container *ngIf="!outlet.isActivated">
-    <section class="settings-banner width-full display-flex usa-prose flex-column">
+  @if (!outlet.isActivated) {
+    <section class="settings-banner width-full display-flex usa-prose flex-column flex-align-start">
       <!-- Settings -->
       <h1 class="margin-0" i18n>{{ pageContent?.title }}</h1>
-      <p class="margin-bottom-0 usa-prose measure-4" i18n>{{ pageContent?.description }}</p>
-
+      <p class="margin-bottom-0 margin-top-1 measure-4" i18n>{{ pageContent?.description }}</p>
       <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/settings" target="_blank"
-         aria-label="Learn More (opens in a new tab)" style="font-size: 0.8rem;margin-top: 8px;">
-        <span aria-hidden="true">{{pageContent?.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+        aria-label="Learn More (opens in a new tab)" class="usa-link margin-top-05 display-flex flex-align-center">
+        <span aria-hidden="true" class="font-xs">{{pageContent?.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
       </a>
     </section>
-
     <section class="settings-content display-flex">
       <adapt-in-page-navigation
         class="tablet:flex-3"
@@ -23,95 +21,91 @@
         titleText="Jump To:"
         selector=".settings-content-body">
       </adapt-in-page-navigation>
-
-      <div *ngIf="categoriesContent?.sub_sections" class="settings-content-body flex-12 width-full display-flex flex-column gap-1 border-top-2px border-base-lighter">
-        <div class="settings-content-body-header margin-1">
-          <!-- Categories -->
-          <h2 class="font-xl margin-0">{{ categoriesContent?.title }}:</h2>
-          <p class="usa-prose measure-4">{{ categoriesContent?.description }}</p>
+      @if (categoriesContent?.sub_sections) {
+        <div class="settings-content-body flex-12 width-full display-flex flex-column gap-1 border-top-2px border-base-lighter">
+          <div class="settings-content-body-header margin-1">
+            <!-- Categories -->
+            <h2 class="font-xl margin-0">{{ categoriesContent?.title }}:</h2>
+            <p class="usa-prose measure-4">{{ categoriesContent?.description }}</p>
+          </div>
+          <ul class="settings-list usa-list usa-list--unstyled display-flex flex-column gap-2">
+            @for (category of categoriesContent?.sub_sections!; track category.path) {
+              <li [id]="category.path" class="settings-list-item">
+                @switch (category.path) {
+                  <!-- *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Read'" -->
+                  @case ('user-management') {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Read'"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                  @case ('data-suppression') {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                  @case ('data-sources') {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      *adaptAccessControl="'Data Sources'; behavior: 'hide'; action: 'Write'"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                  @case ('security') {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                  @case ('footer-links') {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                  @default {
+                    <a
+                      class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
+                      [routerLink]="category.path!">
+                      <h3 class="margin-0 font-lg">
+                        {{ category.title }}
+                      </h3>
+                      <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
+                    </a>
+                  }
+                }
+              </li>
+            }
+          </ul>
         </div>
-
-        <ul class="settings-list usa-list usa-list--unstyled display-flex flex-column gap-2">
-          <li [id]="category.path" class="settings-list-item" *ngFor="let category of categoriesContent?.sub_sections!">
-            <ng-container [ngSwitch]="category.path">
-              <!-- *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Read'" -->
-
-              <ng-container *ngSwitchCase="'user-management'">
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Read'"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'data-suppression'">
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'data-sources'">
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  *adaptAccessControl="'Data Sources'; behavior: 'hide'; action: 'Write'"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'security'">
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'footer-links'">
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  *adaptAccessControl="'Tool Settings'; behavior: 'hide'; action: 'Write'"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-
-              <ng-container *ngSwitchDefault>
-                <a
-                  class="usa-anchor text-no-underline display-flex bg-white padding-2 border-2px radius-lg border-base-lighter flex-column gap-05"
-                  [routerLink]="category.path!">
-                  <h3 class="margin-0 font-lg">
-                    {{ category.title }}
-                  </h3>
-                  <p class="text-black usa-prose measure-4 text-no-underline">{{ category.description }}</p>
-                </a>
-              </ng-container>
-            </ng-container>
-          </li>
-        </ul>
-      </div>
+      }
     </section>
-  </ng-container>
+  }
 
   <router-outlet #outlet="outlet"></router-outlet>
 </div>

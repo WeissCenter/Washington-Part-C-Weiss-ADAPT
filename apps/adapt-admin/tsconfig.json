@@ -10,8 +10,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "strictPropertyInitialization": false
-    //"strictNullChecks": false
+    "strictPropertyInitialization": false,
+    "moduleResolution": "bundler"
   },
   "files": [],
   "include": [],

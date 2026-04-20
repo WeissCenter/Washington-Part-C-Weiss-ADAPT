@@ -1,24 +1,26 @@
 <div class="adapt-form-field display-flex gap-1 flex-column">
-  <ng-container *ngIf="!readOnly; else isReadOnly">
-    <label [for]="id">{{ label }} <span *ngIf="isRequired" class="text-emergency">(Required)</span></label>
-    <span *ngIf="hint" class="field-hint text-base">{{ hint }}</span>
-
-    <ng-container [ngSwitch]="type">
-      <ng-container *ngSwitchCase="'short'">
+  @if (!readOnly) {
+    <label [for]="id">{{ label }} @if (isRequired) {
+      <span class="text-emergency">(Required)</span>
+    }</label>
+    @if (hint) {
+      <span class="field-hint text-base">{{ hint }}</span>
+    }
+    @switch (type) {
+      @case ('short') {
         <input
           [autocomplete]="autocomplete"
           (blur)="onBlur()"
           [(ngModel)]="value"
           [disabled]="disabled"
-            [mask]="mask"
-            [patterns]="patterns"
+          [mask]="mask"
+          [patterns]="patterns"
           (change)="onChange($any($event.target)?.value)"
           class="usa-input maxw-full usa-masked"
           [id]="id"
           type="text" />
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'number'">
+      }
+      @case ('number') {
         <input
           [autocomplete]="autocomplete"
           (blur)="onBlur()"
@@ -28,9 +30,8 @@
           class="usa-input maxw-full"
           [id]="id"
           type="number" />
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'long'">
+      }
+      @case ('long') {
         <textarea
           [autocomplete]="autocomplete"
           (blur)="onBlur()"
@@ -39,10 +40,9 @@
           (change)="onChange($any($event.target)?.value)"
           class="usa-textarea maxw-full"
           [id]="id"
-          type="text"></textarea>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'password'">
+        type="text"></textarea>
+      }
+      @case ('password') {
         <input
           [autocomplete]="autocomplete"
           (blur)="onBlur()"
@@ -52,21 +52,28 @@
           class="usa-input maxw-full"
           [id]="id"
           type="password" />
-      </ng-container>
-    </ng-container>
-
-    <div role="alert" *ngIf="parent?.invalid && (parent?.dirty || parent?.touched)" class="form-errors text-emergency">
-      <ng-content *ngIf="parent?.errors?.['required']" select="[required]"></ng-content>
-      <ng-content *ngIf="parent?.errors?.['uniqueName']" select="[uniqueName]"></ng-content>
-    </div>
-  </ng-container>
-
-  <ng-template #isReadOnly>
+      }
+    }
+    @if (parent && parent.invalid && (parent.dirty || parent.touched)) {
+      <div role="alert" class="form-errors text-emergency">
+        @if (parent.errors?.['required']) {
+          <ng-content select="[required]"></ng-content>
+        }
+        @if (parent.errors?.['uniqueName']) {
+          <ng-content select="[uniqueName]"></ng-content>
+        }
+      </div>
+    }
+  } @else {
     <div class="adapt-form-field-read-only-preview display-flex gap-2 flex-column">
       <label [for]="id">{{ label }}</label>
-      <span *ngIf="hint" class="field-hint text-base">{{ hint }}</span>
-
-      <p tabindex="0" *ngIf="value || value.length" [id]="id" class="bg-white padding-1 border-1px">{{ value }}</p>
+      @if (hint) {
+        <span class="field-hint text-base">{{ hint }}</span>
+      }
+      @if (value || value.length) {
+        <p tabindex="0" [id]="id" class="bg-white padding-1 border-1px">{{ value }}</p>
+      }
     </div>
-  </ng-template>
+  }
+
 </div>

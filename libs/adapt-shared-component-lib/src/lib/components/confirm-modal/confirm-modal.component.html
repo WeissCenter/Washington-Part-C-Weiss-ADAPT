@@ -1,6 +1,8 @@
 <lib-adapt-modal closeText="Close" [heading]="heading">
   <div class="confirm-modal-body display-flex flex-column gap-2">
-    <p *ngIf="body" class="usa-prose">{{ body }}</p>
+    @if (body) {
+      <p class="usa-prose">{{ body }}</p>
+    }
 
     <div class="confirm-modal-footer display-flex gap-2">
       <button class="usa-button" (click)="confirmCancel()">Confirm</button>

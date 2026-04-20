@@ -27,14 +27,18 @@
         <div class="grid-col-3">
           <label class="usa-label" for="name" i18n>Data View Name</label>
           <input type="text" id="name" formControlName="name" class="usa-input" />
-          <div
-            role="alert"
-            *ngIf="name?.invalid && (name?.dirty || name?.touched)"
-            class="form-errors margin-top-1 text-emergency">
-            <div *ngIf="name?.errors?.['required']" i18n>Data View Name is required.</div>
-
-            <div *ngIf="name?.errors?.['uniqueName']" i18n>Data View name must be unique</div>
-          </div>
+          @if (name && name.invalid && (name.dirty || name.touched)) {
+            <div
+              role="alert"
+              class="form-errors margin-top-1 text-emergency">
+              @if (name.errors?.['required']) {
+                <div i18n>Data View Name is required.</div>
+              }
+              @if (name.errors?.['uniqueName']) {
+                <div i18n>Data View name must be unique</div>
+              }
+            </div>
+          }
         </div>
       </div>
 
@@ -43,259 +47,282 @@
           <label class="usa-label" for="description" i18n>Data View Description (Optional)</label>
           <textarea class="usa-textarea" formControlName="description" id="description"></textarea>
 
-          <div
-            role="alert"
-            *ngIf="description?.invalid && (description?.dirty || description?.touched)"
-            class="form-errors margin-top-1 text-emergency">
-            <div *ngIf="description?.errors?.['required']" i18n>A Description is required.</div>
-          </div>
+          @if (description && description.invalid && (description.dirty || description.touched)) {
+            <div
+              role="alert"
+              class="form-errors margin-top-1 text-emergency">
+              @if (description.errors?.['required']) {
+                <div i18n>A Description is required.</div>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>
 
     <ng-container formArrayName="dataSources">
-      <div
-        *ngFor="let source of dataSources.controls; let i = index; let isFirst = first"
-        [formGroup]="$any(source)"
-        class="create-dataset-form-data-source radius-md bg-gray-5 width-full padding-3 margin-top-4 border-base border">
-        <lib-adapt-combo-box
-          [labelStyle]="{ 'margin-top': '0' }"
-          formControlName="dataSource"
-          comboID="dataSource"
-          label="Select Source"
-          [items]="dataSourceList | async"
-          itemLabel="name">
-          <ng-container errors>
-            <ng-container *ngIf="source.get('dataSource') as dtSource">
-              <div
-                role="alert"
-                *ngIf="dtSource?.invalid && (dtSource?.dirty || dtSource?.touched)"
-                class="form-errors margin-top-1 text-emergency">
-                <div *ngIf="dtSource?.errors?.['required']" i18n>Source is required.</div>
+      @for (source of dataSources.controls; track source; let i = $index; let isFirst = $first) {
+        <div
+          [formGroup]="$any(source)"
+          class="create-dataset-form-data-source radius-md bg-gray-5 width-full padding-3 margin-top-4 border-base border">
+          <lib-adapt-combo-box
+            [labelStyle]="{ 'margin-top': '0' }"
+            formControlName="dataSource"
+            comboID="dataSource"
+            label="Select Source"
+            [items]="dataSourceList | async"
+            itemLabel="name">
+            <ng-container errors>
+              @if (source.get('dataSource'); as dtSource) {
+                @if (dtSource.invalid && (dtSource.dirty || dtSource.touched)) {
+                  <div
+                    role="alert"
+                    class="form-errors margin-top-1 text-emergency">
+                    @if (dtSource.errors?.['required']) {
+                      <div i18n>Source is required.</div>
+                    }
+                  </div>
+                }
+              }
+            </ng-container>
+          </lib-adapt-combo-box>
+          @if (!dataSourceSQLQuery[i]) {
+            @if (source.get('dataSource')!.value; as dtSource) {
+              @if (dataSourceTableLookupPromises.get(dtSource['dataSourceID']) | loading | async; as lookUp) {
+                @if (lookUp.value && dtSource.sourceType === 'sql') {
+                  <lib-adapt-combo-box
+                    formControlName="table"
+                    comboID="table"
+                    label="Select a View or a Table"
+                    [items]="lookUp.value"
+                    itemLabel="TABLE_NAME">
+                    <button (click)="sqlQueryMode(i)" label class="usa-button usa-button--unstyled">
+                      Enter a SQL query instead
+                    </button>
+                    <ng-container errors>
+                      @if (source.get('table'); as table) {
+                        @if (table.invalid && (table.dirty || table.touched)) {
+                          <div
+                            role="alert"
+                            class="form-errors margin-top-1 text-emergency">
+                            @if (table.errors?.['required']) {
+                              <div i18n>Table is required.</div>
+                            }
+                          </div>
+                        }
+                      }
+                    </ng-container>
+                  </lib-adapt-combo-box>
+                }
+                @if (lookUp.loading) {
+                  <p class="usa-prose" i18n>Retrieving Data, please wait a moment</p>
+                }
+              }
+            }
+          }
+          @if (dataSourceSQLQuery[i]) {
+            <div class="grid-row flex-align-end">
+              <label class="usa-label grid-col-2 line-height-mono-3 font-sans-md" for="query" i18n
+                >Enter a SQL Query</label
+                >
+                <div class="grid-col-2 line-height-mono-3 font-sans-md">
+                  <button (click)="listMode(i)" label class="usa-button usa-button--unstyled">
+                    Pick from a table or view instead
+                  </button>
+                </div>
               </div>
-            </ng-container>
-          </ng-container>
-        </lib-adapt-combo-box>
-
-        <ng-container *ngIf="!dataSourceSQLQuery[i]">
-          <ng-container *ngIf="source.get('dataSource')!.value as dtSource">
-            <ng-container
-              *ngIf="dataSourceTableLookupPromises.get(dtSource['dataSourceID']) | loading | async as lookUp">
-              <lib-adapt-combo-box
-                *ngIf="lookUp.value && dtSource.sourceType === 'sql'"
-                formControlName="table"
-                comboID="table"
-                label="Select a View or a Table"
-                [items]="lookUp.value"
-                itemLabel="TABLE_NAME">
-                <button (click)="sqlQueryMode(i)" label class="usa-button usa-button--unstyled">
-                  Enter a SQL query instead
-                </button>
-
-                <ng-container errors>
-                  <ng-container *ngIf="source.get('table') as table">
-                    <div
-                      role="alert"
-                      *ngIf="table?.invalid && (table?.dirty || table?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="table?.errors?.['required']" i18n>Table is required.</div>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </lib-adapt-combo-box>
-
-              <ng-template [ngIf]="lookUp.loading">
-                <p class="usa-prose" i18n>Retrieving Data, please wait a moment</p>
-              </ng-template>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-
-        <ng-container *ngIf="dataSourceSQLQuery[i]">
-          <div class="grid-row flex-align-end">
-            <label class="usa-label grid-col-2 line-height-mono-3 font-sans-md" for="query" i18n
-              >Enter a SQL Query</label
-            >
-
-            <div class="grid-col-2 line-height-mono-3 font-sans-md">
-              <button (click)="listMode(i)" label class="usa-button usa-button--unstyled">
-                Pick from a table or view instead
-              </button>
-            </div>
-          </div>
-
-          <textarea class="usa-textarea" formControlName="query" id="query"></textarea>
-
-          <ng-container *ngIf="source.get('query') as query">
-            <div
-              role="alert"
-              *ngIf="query?.invalid && (query?.dirty || query?.touched)"
-              class="form-errors margin-top-1 text-emergency">
-              <div *ngIf="query?.errors?.['required']" i18n>Query is required.</div>
-            </div>
-          </ng-container>
-        </ng-container>
-
-        <ul class="usa-button-group create-dataset-form-data-button-group margin-top-2">
-          <li class="usa-button-group__item">
-            <button
-              *ngIf="!dataSourceShowPreview[i]"
-              (keydown.enter)="preview(i)"
-              (click)="preview(i)"
-              [disabled]="source.invalid"
-              class="usa-button usa-button--outline"
-              i18n>
+              <textarea class="usa-textarea" formControlName="query" id="query"></textarea>
+              @if (source.get('query'); as query) {
+                @if (query.invalid && (query.dirty || query.touched)) {
+                  <div
+                    role="alert"
+                    class="form-errors margin-top-1 text-emergency">
+                    @if (query.errors?.['required']) {
+                      <div i18n>Query is required.</div>
+                    }
+                  </div>
+                }
+              }
+            }
+            <ul class="usa-button-group create-dataset-form-data-button-group margin-top-2">
+              <li class="usa-button-group__item">
+                @if (!dataSourceShowPreview[i]) {
+                  <button
+                    (keydown.enter)="preview(i)"
+                    (click)="preview(i)"
+                    [disabled]="source.invalid"
+                    class="usa-button usa-button--outline"
+                    i18n>
               Preview
             </button>
-            <button
-              *ngIf="dataSourceShowPreview[i]"
-              (keydown.enter)="hidePreview(i)"
-              (click)="hidePreview(i)"
-              class="usa-button usa-button--outline"
-              i18n>
+                }
+                @if (dataSourceShowPreview[i]) {
+                  <button
+                    (keydown.enter)="hidePreview(i)"
+                    (click)="hidePreview(i)"
+                    class="usa-button usa-button--outline"
+                    i18n>
               Hide Preview
             </button>
-          </li>
-          <li class="usa-button-group__item" *ngIf="!isFirst">
-            <button
-              (keydown.enter)="removeDataSource(i)"
-              (click)="removeDataSource(i)"
-              type="button"
-              class="usa-button usa-button--secondary">
-              Remove
-            </button>
-          </li>
-          <li class="usa-button-group__item">
-            <button (keydown.enter)="reset(i)" (click)="reset(i)" type="button" class="usa-button">Reset</button>
-          </li>
-        </ul>
-
-        <div *ngIf="dataSourceShowPreview[i]" class="create-dataset-form-data-source-preview">
-          <ng-container *ngIf="getPreviewPromise(i) | loading | async as queryResult">
-            <ng-container *ngIf="queryResult.value">
-              <h3 i18n>Preview First 10 Records Retrieved</h3>
-
-              <p class="usa-prose">Total Results: {{ queryResult.value.total }}</p>
-
-              <div
-                class="data-set-query-test-preview-table margin-top-2 padding-05 bg-white overflow-auto border-base-lighter border">
-                <table class="usa-table usa-table--borderless width-full">
-                  <thead>
-                    <tr>
-                      <th *ngFor="let row of queryResult.value.result[0] | keyvalue : originalOrder" scope="col">
-                        {{ row.key }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let row of queryResult.value.result">
-                      <td *ngFor="let item of row | keyvalue : originalOrder">{{ item.value || 'null' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </ng-container>
-
-            <ng-container *ngIf="queryResult.loading">
-              <p class="usa-prose" aria-live="polite" i18n>Fetching Preview, please wait</p>
-            </ng-container>
-
-            <ng-container *ngIf="queryResult.error">
-              <p class="usa-prose text-emergency" aria-live="assertive" i18n>
+                }
+              </li>
+              @if (!isFirst) {
+                <li class="usa-button-group__item">
+                  <button
+                    (keydown.enter)="removeDataSource(i)"
+                    (click)="removeDataSource(i)"
+                    type="button"
+                    class="usa-button usa-button--secondary">
+                    Remove
+                  </button>
+                </li>
+              }
+              <li class="usa-button-group__item">
+                <button (keydown.enter)="reset(i)" (click)="reset(i)" type="button" class="usa-button">Reset</button>
+              </li>
+            </ul>
+            @if (dataSourceShowPreview[i]) {
+              <div class="create-dataset-form-data-source-preview">
+                @if (getPreviewPromise(i) | loading | async; as queryResult) {
+                  @if (queryResult.value) {
+                    <h3 i18n>Preview First 10 Records Retrieved</h3>
+                    <p class="usa-prose">Total Results: {{ queryResult.value.total }}</p>
+                    <div
+                      class="data-set-query-test-preview-table margin-top-2 padding-05 bg-white overflow-auto border-base-lighter border">
+                      <table class="usa-table usa-table--borderless width-full">
+                        <thead>
+                          <tr>
+                            @for (row of queryResult.value.result[0] | keyvalue : originalOrder; track row.key) {
+                              <th scope="col">
+                                {{ row.key }}
+                              </th>
+                            }
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (row of queryResult.value.result; track $index) {
+                            <tr>
+                              @for (item of row | keyvalue : originalOrder; track item.key) {
+                                <td>{{ item.value || 'null' }}</td>
+                              }
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                  @if (queryResult.loading) {
+                    <p class="usa-prose" aria-live="polite" i18n>Fetching Preview, please wait</p>
+                  }
+                  @if (queryResult.error) {
+                    <p class="usa-prose text-emergency" aria-live="assertive" i18n>
                 Failed to query source: {{ queryResult.error | json }}
               </p>
-            </ng-container>
-          </ng-container>
-        </div>
-      </div>
-    </ng-container>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+      </ng-container>
 
-    <button
-      [disabled]="dataSources.invalid"
-      (click)="addDataSource()"
-      class="usa-button usa-button--outline margin-top-2"
-      i18n>
+      <button
+        [disabled]="dataSources.invalid"
+        (click)="addDataSource()"
+        class="usa-button usa-button--outline margin-top-2"
+        i18n>
       Add more data
     </button>
 
-    <div *ngIf="dataSources.controls.length > 1" class="create-dataset-connection-relationships-container margin-top-2">
-      <h2 class="margin-0" i18n>Define Source Relationships</h2>
-
-      <div
-        class="create-dataset-connection-relationships radius-md bg-gray-5 width-full padding-3 margin-top-4 border-base border">
-        <ng-container *ngIf="dataSources.valid; else missingPreviews" formArrayName="dataSourceRelationships">
+      @if (dataSources.controls.length > 1) {
+        <div class="create-dataset-connection-relationships-container margin-top-2">
+          <h2 class="margin-0" i18n>Define Source Relationships</h2>
           <div
-            *ngFor="let group of dataSourceRelationships.controls; let i = index; let isLast = last"
-            [formGroup]="$any(group)"
-            class="relationship margin-top-1">
-            <h3>Data Source #{{ i + 1 }}</h3>
-            <p>{{ group.get('dataSourceName')?.value }}</p>
-
-            <div *ngIf="!isLast" class="grid-row grid-gap-05">
-              <lib-adapt-combo-box
-                class="grid-col"
-                [labelStyle]="{ 'margin-top': '0' }"
-                formControlName="joinType"
-                comboID="joinType"
-                label="Select Join Type"
-                [items]="sqlJoins"
-                itemLabel="label"
-                itemAccessor="value">
-                <ng-container errors>
-                  <ng-container *ngIf="group.get('joinType') as joinType">
-                    <div
-                      *ngIf="joinType?.invalid && (joinType?.dirty || joinType?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="joinType?.errors?.['required']" i18n>A Join Type is required.</div>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </lib-adapt-combo-box>
-
-              <lib-adapt-combo-box
-                class="grid-col"
-                [labelStyle]="{ 'margin-top': '0' }"
-                formControlName="fromField"
-                comboID="fromField"
-                label="Select Column"
-                [items]="getColumns(group) | async">
-                <ng-container errors>
-                  <ng-container *ngIf="group.get('fromField') as fromField">
-                    <div
-                      *ngIf="fromField?.invalid && (fromField?.dirty || fromField?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="fromField?.errors?.['required']" i18n>A Column is required.</div>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </lib-adapt-combo-box>
-              <lib-adapt-combo-box
-                class="grid-col"
-                [labelStyle]="{ 'margin-top': '0' }"
-                formControlName="toField"
-                comboID="toField"
-                label="Select Target Column"
-                [items]="getColumns(dataSourceRelationships.controls[i + 1]) | async">
-                <ng-container errors>
-                  <ng-container *ngIf="group.get('toField') as toField">
-                    <div
-                      *ngIf="toField?.invalid && (toField?.dirty || toField?.touched)"
-                      class="form-errors margin-top-1 text-emergency">
-                      <div *ngIf="toField?.errors?.['required']" i18n>A Target Column is required.</div>
-                    </div>
-                  </ng-container>
-                </ng-container>
-              </lib-adapt-combo-box>
-            </div>
+            class="create-dataset-connection-relationships radius-md bg-gray-5 width-full padding-3 margin-top-4 border-base border">
+            @if (dataSources.valid) {
+              <ng-container formArrayName="dataSourceRelationships">
+                @for (group of dataSourceRelationships.controls; track group; let i = $index; let isLast = $last) {
+                  <div
+                    [formGroup]="$any(group)"
+                    class="relationship margin-top-1">
+                    <h3>Data Source #{{ i + 1 }}</h3>
+                    <p>{{ group.get('dataSourceName')?.value }}</p>
+                    @if (!isLast) {
+                      <div class="grid-row grid-gap-05">
+                        <lib-adapt-combo-box
+                          class="grid-col"
+                          [labelStyle]="{ 'margin-top': '0' }"
+                          formControlName="joinType"
+                          comboID="joinType"
+                          label="Select Join Type"
+                          [items]="sqlJoins"
+                          itemLabel="label"
+                          itemAccessor="value">
+                          <ng-container errors>
+                            @if (group.get('joinType'); as joinType) {
+                              @if (joinType.invalid && (joinType.dirty || joinType.touched)) {
+                                <div
+                                  class="form-errors margin-top-1 text-emergency">
+                                  @if (joinType.errors?.['required']) {
+                                    <div i18n>A Join Type is required.</div>
+                                  }
+                                </div>
+                              }
+                            }
+                          </ng-container>
+                        </lib-adapt-combo-box>
+                        <lib-adapt-combo-box
+                          class="grid-col"
+                          [labelStyle]="{ 'margin-top': '0' }"
+                          formControlName="fromField"
+                          comboID="fromField"
+                          label="Select Column"
+                          [items]="getColumns(group) | async">
+                          <ng-container errors>
+                            @if (group.get('fromField'); as fromField) {
+                              @if (fromField.invalid && (fromField.dirty || fromField.touched)) {
+                                <div
+                                  class="form-errors margin-top-1 text-emergency">
+                                  @if (fromField.errors?.['required']) {
+                                    <div i18n>A Column is required.</div>
+                                  }
+                                </div>
+                              }
+                            }
+                          </ng-container>
+                        </lib-adapt-combo-box>
+                        <lib-adapt-combo-box
+                          class="grid-col"
+                          [labelStyle]="{ 'margin-top': '0' }"
+                          formControlName="toField"
+                          comboID="toField"
+                          label="Select Target Column"
+                          [items]="getColumns(dataSourceRelationships.controls[i + 1]) | async">
+                          <ng-container errors>
+                            @if (group.get('toField'); as toField) {
+                              @if (toField.invalid && (toField.dirty || toField.touched)) {
+                                <div
+                                  class="form-errors margin-top-1 text-emergency">
+                                  @if (toField.errors?.['required']) {
+                                    <div i18n>A Target Column is required.</div>
+                                  }
+                                </div>
+                              }
+                            }
+                          </ng-container>
+                        </lib-adapt-combo-box>
+                      </div>
+                    }
+                  </div>
+                }
+              </ng-container>
+            } @else {
+              <h3 i18n>Each source must be previewed and have at least one result before relationships can be created</h3>
+            }
           </div>
-        </ng-container>
+        </div>
+      }
 
-        <ng-template #missingPreviews>
-          <h3 i18n>Each source must be previewed and have at least one result before relationships can be created</h3>
-        </ng-template>
-      </div>
-    </div>
-
-    <button [disabled]="dataSetFormGroup.invalid" class="usa-button margin-top-2" i18n>Create data view</button>
-  </form>
-</section>
+      <button [disabled]="dataSetFormGroup.invalid" class="usa-button margin-top-2" i18n>Create data view</button>
+    </form>
+  </section>

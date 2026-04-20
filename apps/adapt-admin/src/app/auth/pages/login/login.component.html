@@ -1,14 +1,13 @@
 @let pageContent = $pageContent();
 @let loginContent = $loginContent();
 <adapt-header></adapt-header>
-<ng-container *ngIf="pageContent && loginContent">
+@if (pageContent && loginContent) {
   <section class="usa-container width-full display-flex flex-justify-center tablet:flex-align-center padding-x-1">
     <div
       class="login-content margin-top-2 tablet:margin-top-5 display-flex flex-column bg-white padding-x-2 tablet:padding-x-8 padding-y-4 tablet:padding-y-8 width-full maxw-tablet border border-base-lighter margin-bottom-6 usa-prose">
       <h1 class="margin-top-0 margin-bottom-2 font-lg text-medium line-height-3" i18n>
         {{ pageContent.title }}
       </h1>
-
       <form (ngSubmit)="performLogin($event)" class="usa-form margin-top-1">
         <fieldset class="usa-fieldset">
           <legend [innerHtml]="loginContent.subtitle"></legend>
@@ -48,40 +47,40 @@
                 style="line-height: var(--usa-line-height-3)"
                 for="check-remember-me"
                 >{{ loginContent.rememberMeLabel }}</label
-              >
+                >
+              </div>
             </div>
-          </div>
-          <div class="display-flex mobile-lg:margin-top-1 margin-top-3 flex-column">
-            <button
-              id="submit-btn"
-              class="usa-button flex-align-self-stretch"
-              type="submit"
-              i18n
-              (click)="performLogin($event)">
+            <div class="display-flex mobile-lg:margin-top-1 margin-top-3 flex-column">
+              <button
+                id="submit-btn"
+                class="usa-button flex-align-self-stretch"
+                type="submit"
+                i18n
+                (click)="performLogin($event)">
               {{ loginContent.loginButtonLabel }}
             </button>
-          </div>
-        </fieldset>
-      </form>
-      <!-- <div class="display-flex flex-column margin-top-4 padding-y-2 border-y border-base-lighter">
+            </div>
+          </fieldset>
+        </form>
+        <!-- <div class="display-flex flex-column margin-top-4 padding-y-2 border-y border-base-lighter">
         <p class="full-width font-sans-2xs text-center">{{ loginContent.ssoLabel }}</p>
         <div class="display-flex flex-column mobile-lg:flex-row gap-1 margin-top-2 margin-bottom-1"> -->
           <!-- <button class="usa-button gap-2 flex-1 usa-button--outline" i18n>
-                    <i class="fab fa-google" aria-hidden="true"></i>
-                    Google
-                </button> -->
-      <button
-        class="usa-button gap-2 flex-1 usa-button--outline"
-        (click)="goToSSO()"
-        (keydown.enter)="goToSSO()"
-        aria-label="Login using your Microsoft credentials."
-        i18n>
+          <i class="fab fa-google" aria-hidden="true"></i>
+          Google
+        </button> -->
+        <button
+          class="usa-button gap-2 flex-1 usa-button--outline"
+          (click)="goToSSO()"
+          (keydown.enter)="goToSSO()"
+          aria-label="Login using your Microsoft credentials."
+          i18n>
         <i class="fab fa-windows" aria-hidden="true" role="img" alt=""></i>
         {{ loginContent.microsoftLabel }}
       </button>
       <!-- </div> -->
-      <!-- </div> -->
-      <!-- <p class="full-width font-sans-2xs text-center margin-top-4">No account yet? <a href="">Sign Up</a></p> -->
-    </div>
-  </section>
-</ng-container>
+    <!-- </div> -->
+    <!-- <p class="full-width font-sans-2xs text-center margin-top-4">No account yet? <a href="">Sign Up</a></p> -->
+  </div>
+</section>
+}

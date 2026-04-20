@@ -421,7 +421,7 @@ export class AdaptDataService {
 
   public getTemplate<T>(type: TemplateType, templateID: string) {
     return this.http
-      .get<APIResponse<T>>(`${environment.API_URL}template/${type}/${templateID}`)
+      .get<APIResponse<T>>(`${environment.API_URL}template/${type}/${encodeURIComponent(templateID)}`)
       .pipe(map((result) => result.data));
   }
 

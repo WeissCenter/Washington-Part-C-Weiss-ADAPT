@@ -12,81 +12,86 @@
       <div class="footer-links-settings-option-wrapper display-flex flex-justify gap-05">
         <div class="footer-links-settings-option-information display-flex flex-column gap-2">
           <h2 class="margin-0 font-xl text-no-underline">{{pageContent?.sections![0].header ?
-            pageContent?.sections![0].header : 'Links'}}</h2>
+          pageContent?.sections![0].header : 'Links'}}</h2>
           <p class="text-black usa-prose measure-4 text-no-underline">{{pageContent?.sections![0].description ?
-            pageContent?.sections![0].description : 'Configure your footer links.'}}</p>
+          pageContent?.sections![0].description : 'Configure your footer links.'}}</p>
         </div>
 
-        <div class="footer-links-settings-option-controls" *ngIf="pageContent">
-          <button (click)="editLinks = !editLinks" class="usa-button usa-button--outline">
-            {{ editLinks ? ( pageContent!.actions!['close_button'] ? pageContent!.actions!['close_button'] : 'Close') :
-            (pageContent!.actions!['edit_button'] ? pageContent!.actions!['edit_button'] : 'Edit') }}
-          </button>
-        </div>
-      </div>
-
-      <div *ngIf="editLinks" class="footer-links-settings-option-edit border-top-2px padding-top-2 border-base-light">
-        <p class="usa-prose margin-bottom-2"
-          [innerHTML]="pageContent?.sections![0].instructions ? pageContent?.sections![0].instructions : 'Make edits and adjustments here.'">
-        </p>
-        <form (ngSubmit)="onSave()" [formGroup]="footerLinksForm"
-          class="footer-links-settings-logo-form display-flex flex-column gap-2">
-          <div formArrayName="links" class="width-full display-flex flex-column gap-2">
-
-              <div *ngFor="let item of links.controls; let i = index"
-                class="footer-link-controls display-flex flex-column gap-2 border-1px border-base-light padding-x-105 padding-y-105 bg-base-lightest radius-lg"
-                [formGroup]="$any(item)">
-                <div class="footer-links-control-row display-flex width-full gap-2">
-                  <lib-adapt-text-input class="flex-1" formControlName="label"
-                    [label]="pageContent?.sections![0].questions![0].label"></lib-adapt-text-input>
-                  <div class="flex-1 display-flex gap-2 flex-align-end">
-                    <lib-adapt-text-input class="flex-1" formControlName="icon"
-                      [label]="pageContent?.sections![0].questions![4].label"></lib-adapt-text-input>
-                    <i *ngIf="item.value.icon" class="margin-bottom-105" aria-hidden="true" role="img" alt=""
-                      [ngClass]="item.value.icon"></i>
-                  </div>
-
-                </div>
-                <lib-adapt-text-input class="flex-1" formControlName="url"
-                  [label]="pageContent?.sections![0].questions![1].label"></lib-adapt-text-input>
-                <div class="footer-links-control-row display-flex  flex-align-center gap-2">
-                  <div class="flex-1 display-flex gap-2">
-                     <lib-adapt-checkbox formControlName="showAdmin"
-                      [label]="pageContent?.sections![0].questions![5].label"></lib-adapt-checkbox>
-                       <lib-adapt-checkbox formControlName="showPublic"
-                      [label]="pageContent?.sections![0].questions![6].label"></lib-adapt-checkbox>
-
-                  </div>
-                  <div class="flex-1 display-flex flex-align-center gap-2">
-                    <lib-adapt-checkbox formControlName="external"
-                      [label]="pageContent?.sections![0].questions![2].label"></lib-adapt-checkbox>
-                    <div class="display-flex flex-column gap-1">
-                      <label class="combo-box-label usa-label margin-y-0 sr-only" for="target-options-{{ i }}">{{
-                        pageContent?.sections![0].questions![3].label }}</label>
-                      <select class="usa-select margin-0 width-full" formControlName="target" id="target-options-{{ i }}">
-                        <option *ngFor="let option of targetOptions" [value]="option.value">
-                          {{ option.label }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                </div>
-                <button (click)="removeLink(i)" type="button"
-                  class="usa-button usa-button--outline flex-align-self-start">
-                  {{pageContent!.actions!['remove_button'] ? pageContent!.actions!['remove_button'] : 'Remove'}}
-                </button>
-              </div>
-            <div aria-live="polite" class="sr-only" [innerText]="liveMessage"></div>
-            <button #addBtn (click)="addLink()" type="button" class="usa-button usa-button--outline flex-align-self-start">
-              {{pageContent!.actions!['add_button'] ? pageContent!.actions!['add_button'] : 'Add Footer Link'}}
+        @if (pageContent) {
+          <div class="footer-links-settings-option-controls">
+            <button (click)="editLinks = !editLinks" class="usa-button usa-button--outline">
+              {{ editLinks ? ( pageContent!.actions!['close_button'] ? pageContent!.actions!['close_button'] : 'Close') :
+              (pageContent!.actions!['edit_button'] ? pageContent!.actions!['edit_button'] : 'Edit') }}
             </button>
           </div>
-
-          <button class="usa-button flex-align-self-start" type="submit">{{pageContent!.actions!['save_button'] ?
-            pageContent!.actions!['save_button'] : 'Save'}}</button>
-        </form>
+        }
       </div>
+
+      @if (editLinks) {
+        <div class="footer-links-settings-option-edit border-top-2px padding-top-2 border-base-light">
+          <p class="usa-prose margin-bottom-2"
+            [innerHTML]="pageContent?.sections![0].instructions ? pageContent?.sections![0].instructions : 'Make edits and adjustments here.'">
+          </p>
+          <form (ngSubmit)="onSave()" [formGroup]="footerLinksForm"
+            class="footer-links-settings-logo-form display-flex flex-column gap-2">
+            <div formArrayName="links" class="width-full display-flex flex-column gap-2">
+              @for (item of links.controls; track item; let i = $index) {
+                <div
+                  class="footer-link-controls display-flex flex-column gap-2 border-1px border-base-light padding-x-105 padding-y-105 bg-base-lightest radius-lg"
+                  [formGroup]="$any(item)">
+                  <div class="footer-links-control-row display-flex width-full gap-2">
+                    <lib-adapt-text-input class="flex-1" formControlName="label"
+                    [label]="pageContent?.sections![0].questions![0].label"></lib-adapt-text-input>
+                    <div class="flex-1 display-flex gap-2 flex-align-end">
+                      <lib-adapt-text-input class="flex-1" formControlName="icon"
+                      [label]="pageContent?.sections![0].questions![4].label"></lib-adapt-text-input>
+                      @if (item.value.icon) {
+                        <i class="margin-bottom-105" aria-hidden="true" role="img" alt=""
+                        [ngClass]="item.value.icon"></i>
+                      }
+                    </div>
+                  </div>
+                  <lib-adapt-text-input class="flex-1" formControlName="url"
+                  [label]="pageContent?.sections![0].questions![1].label"></lib-adapt-text-input>
+                  <div class="footer-links-control-row display-flex  flex-align-center gap-2">
+                    <div class="flex-1 display-flex gap-2">
+                      <lib-adapt-checkbox formControlName="showAdmin"
+                      [label]="pageContent?.sections![0].questions![5].label"></lib-adapt-checkbox>
+                      <lib-adapt-checkbox formControlName="showPublic"
+                      [label]="pageContent?.sections![0].questions![6].label"></lib-adapt-checkbox>
+                    </div>
+                    <div class="flex-1 display-flex flex-align-center gap-2">
+                      <lib-adapt-checkbox formControlName="external"
+                      [label]="pageContent?.sections![0].questions![2].label"></lib-adapt-checkbox>
+                      <div class="display-flex flex-column gap-1">
+                        <label class="combo-box-label usa-label margin-y-0 sr-only" for="target-options-{{ i }}">{{
+                        pageContent?.sections![0].questions![3].label }}</label>
+                        <select class="usa-select margin-0 width-full" formControlName="target" id="target-options-{{ i }}">
+                          @for (option of targetOptions; track option.value) {
+                            <option [value]="option.value">
+                              {{ option.label }}
+                            </option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <button (click)="removeLink(i)" type="button"
+                    class="usa-button usa-button--outline flex-align-self-start">
+                    {{pageContent!.actions!['remove_button'] ? pageContent!.actions!['remove_button'] : 'Remove'}}
+                  </button>
+                </div>
+              }
+              <div aria-live="polite" class="sr-only" [innerText]="liveMessage"></div>
+              <button #addBtn (click)="addLink()" type="button" class="usa-button usa-button--outline flex-align-self-start">
+                {{pageContent!.actions!['add_button'] ? pageContent!.actions!['add_button'] : 'Add Footer Link'}}
+              </button>
+            </div>
+            <button class="usa-button flex-align-self-start" type="submit">{{pageContent!.actions!['save_button'] ?
+            pageContent!.actions!['save_button'] : 'Save'}}</button>
+          </form>
+        </div>
+      }
     </div>
   </section>
 </div>

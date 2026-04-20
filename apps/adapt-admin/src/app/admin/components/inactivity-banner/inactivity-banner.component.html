@@ -1,15 +1,16 @@
-<section
-  *ngIf="showWarning"
-  class="usa-alert padding-4 display-flex flex-justify usa-alert--warning border-left-0 border-bottom-1 radius-0"
-  aria-live="assertive"
-  aria-atomic="true"
-  aria-label="User inactivity banner">
-  <div class="usa-alert__body">
-    <h1 class="usa-alert__heading">You've been inactive for {{ idleTime | date : 'm' }} minute(s).</h1>
-    <p class="usa-alert__text">
-      for security reasons, we will sign you out in {{ countdown | date : 'mm:ss' }} minute(s).
-    </p>
-  </div>
-</section>
+@if (showWarning) {
+  <section
+    class="usa-alert padding-4 display-flex flex-justify usa-alert--warning border-left-0 border-bottom-1 radius-0"
+    aria-live="assertive"
+    aria-atomic="true"
+    aria-label="User inactivity banner">
+    <div class="usa-alert__body">
+      <h1 class="usa-alert__heading">You've been inactive for {{ idleTime | date : 'm' }} minute(s).</h1>
+      <p class="usa-alert__text">
+        for security reasons, we will sign you out in {{ countdown | date : 'mm:ss' }} minute(s).
+      </p>
+    </div>
+  </section>
+}
 
 <!-- *ngIf="!dismiss && idleState === 'IDLE'" -->

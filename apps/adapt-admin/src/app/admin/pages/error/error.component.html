@@ -1,36 +1,29 @@
-<ng-container *ngIf="$pageContent() as ctn">
-
-
-
-<section
-  [attr.aria-label]="'label'"
-  class="hero-container shadow-1 display-flex flex-justify-center flex-align-center padding-x-2 tablet:padding-x-4 gap-4 border-top border-bottom border-base-lighter">
-  <lib-adapt-inline-svg
-    [alt]="logoAlt"
-    [src]="logo"
+@if ($pageContent(); as ctn) {
+  <section
+    [attr.aria-label]="'label'"
+    class="hero-container shadow-1 display-flex flex-justify-center flex-align-center padding-x-2 tablet:padding-x-4 gap-4 border-top border-bottom border-base-lighter">
+    <lib-adapt-inline-svg
+      [alt]="logoAlt"
+      [src]="logo"
     svgClass="display-none desktop:display-flex width-card-lg"></lib-adapt-inline-svg>
-  <div class="auth-banner-info display-flex flex-column tablet:flex-row gap-2 padding-y-8">
-    <div class="auth-banner-heading-container display-flex gap-1 flex-column">
-      <p class="auth-banner-subtitle">{{ ctn.subHeader }}</p>
-      <h1 class="font-3xl font-weight-normal margin-0">
-        {{ ctn.header }}
-      </h1>
+    <div class="auth-banner-info display-flex flex-column tablet:flex-row gap-2 padding-y-8">
+      <div class="auth-banner-heading-container display-flex gap-1 flex-column">
+        <p class="auth-banner-subtitle">{{ ctn.subHeader }}</p>
+        <h1 class="font-3xl font-weight-normal margin-0">
+          {{ ctn.header }}
+        </h1>
+      </div>
     </div>
-  </div>
-</section>
-
-
-<section
-  aria-label="Timed out information and relogin"
-  class="timed-out-container display-flex flex-justify-center flex-align-center">
-  <div class="timed-out-body display-flex flex-column maxw-desktop gap-3 padding-top-6">
-    <h2 class="margin-0 font-xl">{{ctn.sub_sections[0].title}}</h2>
-
-    <p class="usa-prose maxw-tablet">
+  </section>
+  <section
+    aria-label="Timed out information and relogin"
+    class="timed-out-container display-flex flex-justify-center flex-align-center">
+    <div class="timed-out-body display-flex flex-column maxw-desktop gap-3 padding-top-6">
+      <h2 class="margin-0 font-xl">{{ctn.sub_sections[0].title}}</h2>
+      <p class="usa-prose maxw-tablet">
         {{ctn.sub_sections[0].description}}
-    </p>
-
-    <button [routerLink]="['/admin']" class="usa-button flex-align-self-start">{{ctn.actions.return}}</button>
-  </div>
-</section>
-</ng-container>
+      </p>
+      <button [routerLink]="['/admin']" class="usa-button flex-align-self-start">{{ctn.actions.return}}</button>
+    </div>
+  </section>
+}

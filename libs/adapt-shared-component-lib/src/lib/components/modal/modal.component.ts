@@ -24,6 +24,7 @@ export class ModalComponent implements OnDestroy {
   //@ViewChild('wrapper') wrapper?: ElementRef<HTMLDivElement>;
   @ViewChild('dialog') dialog?: ElementRef<HTMLDialogElement>;
   @ViewChild('exit', { static: false }) exit?: ElementRef<HTMLDivElement>;
+  @ViewChild('headingEl', { static: false }) headingEl?: ElementRef<HTMLHeadingElement>;
 
   @Output() closed = new EventEmitter();
 
@@ -34,6 +35,8 @@ export class ModalComponent implements OnDestroy {
   @Input() heading? = '';
   @Input() closeText = '';
   @Input() classes = '';
+  @Input() focusHeadingOnOpen = false;
+  public modalHeadingId = `adapt-modal-heading-${crypto.randomUUID()}`;
 
   private closeRoute?: string;
 
@@ -43,6 +46,12 @@ export class ModalComponent implements OnDestroy {
     if (!this.dialog) return;
     this.closeRoute = closeRoute;
     this.dialog?.nativeElement.showModal();
+
+    if (this.focusHeadingOnOpen) {
+      setTimeout(() => {
+        this.headingEl?.nativeElement.focus();
+      }, 0);
+    }
   }
 
   public close() {

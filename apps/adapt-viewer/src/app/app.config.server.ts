@@ -1,4 +1,3 @@
-
 // old setup
 /*
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
@@ -15,16 +14,10 @@ export const config = mergeApplicationConfig(appConfig, serverConfig);
 
  */
 
-
-
-
-
 // new setup
-import { provideServerRouting } from '@angular/ssr';
+import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { serverRoutes } from './app.routes.server';
 import { ApplicationConfig, mergeApplicationConfig } from '@angular/core';
-import { provideServerRendering } from '@angular/platform-server';
-// import { appConfig } from '@adapt-apps/adapt-admin/src/app/app.config';
 import { appConfig } from './app.config';
 
 /**
@@ -32,15 +25,10 @@ import { appConfig } from './app.config';
  * Combines browser config with server-specific providers.
  */
 const serverConfig: ApplicationConfig = {
-  providers: [
-    provideServerRendering(),           // enables SSR (transfer state, hydration, etc.)
-    provideServerRouting(serverRoutes), // provides server routing for prerender/serve
-  ]
+  providers: [provideServerRendering(withRoutes(serverRoutes))],
 };
 
 export const config = mergeApplicationConfig(appConfig, serverConfig);
-
-
 
 // future setup
 /*

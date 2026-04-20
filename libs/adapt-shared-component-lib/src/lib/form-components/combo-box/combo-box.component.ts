@@ -1,5 +1,5 @@
 import {
-  afterRender,
+  afterNextRender,
   AfterViewInit,
   Component,
   ElementRef,
@@ -72,7 +72,7 @@ export class ComboBoxComponent implements AfterViewInit, OnDestroy, ControlValue
       this.parentControl.valueAccessor = this;
     }
 
-    afterRender(() => {
+    afterNextRender(() => {
       import('@uswds/uswds/js').then((lib) => {
         comboBox = lib.comboBox
 

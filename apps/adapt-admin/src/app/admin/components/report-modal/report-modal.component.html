@@ -1,263 +1,266 @@
 @let pageContent = $pageContent();
 @let pageSections = $pageSections();
-<adapt-full-page-modal *ngIf="pageSections">
-  <div  class="display-flex flex-justify" header>
-    <!-- modalHeaders[currentStep] {{ -->
-    <h1 class="margin-0">{{ pageSections[currentStep].title }}</h1>
-
-    <div class="data-view-edit-header-controls display-flex gap-2 flex-align-center">
-      <button
-        (click)="confirmCloseModal?.open()"
-        class="save-and-close usa-button text-white flex-align-center border-2px border-white hover:text-white shadow-none usa-button--outline">
-        Close <i class="fas fa-times"></i>
-      </button>
+@if (pageSections) {
+  <adapt-full-page-modal>
+    <div  class="display-flex flex-justify" header>
+      <!-- modalHeaders[currentStep] {{ -->
+      <h1 class="margin-0">{{ pageSections[currentStep].title }}</h1>
+      <div class="data-view-edit-header-controls display-flex gap-2 flex-align-center">
+        <button
+          (click)="confirmCloseModal?.open()"
+          class="save-and-close usa-button text-white flex-align-center border-2px border-white hover:text-white shadow-none usa-button--outline">
+          Close <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
-  </div>
-
-  <div class="grid-container-tablet-lg padding-top-2 padding-bottom-2" body>
-    <adapt-steps-indicator [(step)]="currentStep" #stepsIndicator>
-      <!-- Define -->
-      <adapt-steps-indicator-step name="{{ pageSections[0].name }}">
-        <div class="define-step-body display-flex flex-column gap-6">
-          <div class="define-step-header">
-            <h2>{{ pageSections[0].header }}</h2>
-            <p>{{ pageSections[0].description }}</p>
-          </div>
-
-          <div class="define-step-form">
-            <form class="display-flex flex-column gap-2" [formGroup]="reportFormGroup">
-              <!-- Reporting level -->
-<!--              <lib-adapt-combo-box [required]="true" formControlName="reportingLevel" placeholder="Select a reporting level"-->
-<!--                [comboBoxStyle]="{ 'max-width': '100%' }"-->
-<!--                label="{{ pageSections[0].questions![0].label }}"-->
-<!--                [items]="pageSections[0].questions![0].options"-->
-<!--                itemLabel="label">-->
-<!--                <ng-container errors>-->
-<!--                  <div-->
-<!--                    *ngIf="reportingLevel?.invalid && (reportingLevel?.dirty || reportingLevel?.touched)"-->
-<!--                    class="form-errors margin-top-1 text-emergency">-->
-<!--                    <div *ngIf="dataView?.errors?.['required']" i18n>{{ pageSections[0].questions![0].validation_messages!['required'] ? pageSections[0].questions![0].validation_messages!['required'] : 'Reporting level is required.' }}</div>-->
-<!--                  </div>-->
-<!--                </ng-container>-->
-<!--              </lib-adapt-combo-box>-->
-              <!-- What data view do you want to use? -->
-              <lib-adapt-combo-box [required]="true" compareID="dataViewID" formControlName="dataView" placeholder="Select a data view"
-                [comboBoxStyle]="{ 'max-width': '100%' }"
-                label="{{ pageSections[0].questions![1].label }}"
-                [items]="filteredDataViews$ | async"
-                itemLabel="name">
-                <ng-container errors>
-                  <div
-                    *ngIf="dataView?.invalid && (dataView?.dirty || dataView?.touched)"
-                    class="form-errors margin-top-1 text-emergency">
-                    <div *ngIf="dataView?.errors?.['required']" i18n>{{ pageSections[0].questions![1].validation_messages!['required'] ? pageSections[0].questions![1].validation_messages!['required'] : 'Data View is required.' }}</div>
-                  </div>
-                </ng-container>
-              </lib-adapt-combo-box>
-
-              <!-- Select report template -->
-              <lib-adapt-combo-box
-                [required]="true"
-                formControlName="template"
-                [comboBoxStyle]="{ 'max-width': '100%' }"
-                label="{{ pageSections[0].questions![2].label }}"
-                [items]="filteredReportTemplates$ | async"
-                itemAccessor="value"
-                itemLabel="label">
-                <ng-container errors>
-                  <div
-                    *ngIf="reportTemplate?.invalid && (reportTemplate?.dirty || reportTemplate?.touched)"
-                    class="form-errors margin-top-1 text-emergency">
-                    <div *ngIf="reportTemplate?.errors?.['required']" i18n>{{ pageSections[0].questions![2].validation_messages!['required'] ? pageSections[0].questions![2].validation_messages!['required'] : 'Report Template is required.' }}</div>
-                  </div>
-                </ng-container>
-              </lib-adapt-combo-box>
-
-              <!-- Who is the audience for the report
-              radioSelectItems -->
-              <lib-adapt-radio-select [required]="true" legend="{{ pageSections[0].questions![3].label }}" formControlName="visibility"
-                [items]="pageSections[0].questions![3].options"></lib-adapt-radio-select>
-            </form>
-          </div>
-        </div>
-      </adapt-steps-indicator-step>
-      <!-- Preview -->
-      <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
-        <div class="preview-step-body display-flex flex-column gap-6">
-          <div class="define-step-header">
-            <h2>{{ pageSections[1].header }}</h2>
-            <p>{{ pageSections[1].description }}</p>
-          </div>
-
-          <div class="preview-step-form display-flex gap-2 flex-column">
-            <form class="display-flex flex-column gap-2" [formGroup]="reportFormGroup">
-
-              <lib-adapt-text-input [label]="pageSections[1].questions![0].label" [hint]="pageSections[1].questions![0].comment" type="short" formControlName="title">
-                <div required>Report title is required</div>
-                <div uniqueName>Report title must be unique</div>
-              </lib-adapt-text-input>
-
-              <lib-adapt-text-input *ngIf="audience.value === 'external'" [patterns]="{ 'A': { pattern: slugPattern } }"  mask="A*"    [label]="pageSections[1].questions![1].label" [hint]="pageSections[1].questions![1].comment" type="short" formControlName="slug">
-                <div required>Public report identifier is required</div>
-                <div uniqueName>Public report identifier must be unique</div>
-              </lib-adapt-text-input>
-
-              <lib-adapt-text-input [label]="pageSections[1].questions![2].label" [hint]="pageSections[1].questions![2].comment" type="long" formControlName="description">
-                <div required>Description is required</div>
-              </lib-adapt-text-input>
-
-
-            </form>
-
-            <div *ngIf="currentReportTemplate" class="report-meta-tags display-flex flex-column gap-2">
-              <p>Meta tags:</p>
-              <ul class="usa-list usa-list--unstyled display-flex flex gap-1">
-                <li *ngFor="let tag of currentReportTemplate.metaTags">
+    <div class="grid-container-tablet-lg padding-top-2 padding-bottom-2" body>
+      <adapt-steps-indicator [(step)]="currentStep" #stepsIndicator>
+        <!-- Define -->
+        <adapt-steps-indicator-step name="{{ pageSections[0].name }}">
+          <div class="define-step-body display-flex flex-column gap-6">
+            <div class="define-step-header">
+              <h2>{{ pageSections[0].header }}</h2>
+              <p>{{ pageSections[0].description }}</p>
+            </div>
+            <div class="define-step-form">
+              <form class="display-flex flex-column gap-2" [formGroup]="reportFormGroup">
+                <!-- Reporting level -->
+                <!--              <lib-adapt-combo-box [required]="true" formControlName="reportingLevel" placeholder="Select a reporting level"-->
+                <!--                [comboBoxStyle]="{ 'max-width': '100%' }"-->
+                <!--                label="{{ pageSections[0].questions![0].label }}"-->
+                <!--                [items]="pageSections[0].questions![0].options"-->
+                <!--                itemLabel="label">-->
+                <!--                <ng-container errors>-->
+                <!--                  <div-->
+                <!--                    *ngIf="reportingLevel.invalid && (reportingLevel.dirty || reportingLevel.touched)"-->
+                <!--                    class="form-errors margin-top-1 text-emergency">-->
+                <!--                    <div *ngIf="dataView.errors?.['required']" i18n>{{ pageSections[0].questions![0].validation_messages!['required'] ? pageSections[0].questions![0].validation_messages!['required'] : 'Reporting level is required.' }}</div>-->
+              <!--                  </div>-->
+            <!--                </ng-container>-->
+          <!--              </lib-adapt-combo-box>-->
+          <!-- What data view do you want to use? -->
+          <lib-adapt-combo-box [required]="true" compareID="dataViewID" formControlName="dataView" placeholder="Select a data view"
+            [comboBoxStyle]="{ 'max-width': '100%' }"
+            label="{{ pageSections[0].questions![1].label }}"
+            [items]="filteredDataViews$ | async"
+            itemLabel="name">
+            <ng-container errors>
+              @if (dataView.invalid && (dataView.dirty || dataView.touched)) {
+                <div
+                  class="form-errors margin-top-1 text-emergency">
+                  @if (dataView.errors?.['required']) {
+                    <div i18n>{{ pageSections[0].questions![1].validation_messages!['required'] ? pageSections[0].questions![1].validation_messages!['required'] : 'Data View is required.' }}</div>
+                  }
+                </div>
+              }
+            </ng-container>
+          </lib-adapt-combo-box>
+          <!-- Select report template -->
+          <lib-adapt-combo-box
+            [required]="true"
+            formControlName="template"
+            [comboBoxStyle]="{ 'max-width': '100%' }"
+            label="{{ pageSections[0].questions![2].label }}"
+            [items]="reportTemplateOptions()"
+            itemAccessor="value"
+            itemLabel="label">
+            <ng-container errors>
+              @if (reportTemplate.invalid && (reportTemplate.dirty || reportTemplate.touched)) {
+                <div
+                  class="form-errors margin-top-1 text-emergency">
+                  @if (reportTemplate.errors?.['required']) {
+                    <div i18n>{{ pageSections[0].questions![2].validation_messages!['required'] ? pageSections[0].questions![2].validation_messages!['required'] : 'Report Template is required.' }}</div>
+                  }
+                </div>
+              }
+            </ng-container>
+          </lib-adapt-combo-box>
+          <!-- Who is the audience for the report
+          radioSelectItems -->
+          <lib-adapt-radio-select [required]="true" legend="{{ pageSections[0].questions![3].label }}" formControlName="visibility"
+          [items]="pageSections[0].questions![3].options"></lib-adapt-radio-select>
+        </form>
+      </div>
+    </div>
+  </adapt-steps-indicator-step>
+  <!-- Preview -->
+  <adapt-steps-indicator-step name="{{ pageSections[1].name }}">
+    <div class="preview-step-body display-flex flex-column gap-6">
+      <div class="define-step-header">
+        <h2>{{ pageSections[1].header }}</h2>
+        <p>{{ pageSections[1].description }}</p>
+      </div>
+      <div class="preview-step-form display-flex gap-2 flex-column">
+        <form class="display-flex flex-column gap-2" [formGroup]="reportFormGroup">
+          <lib-adapt-text-input [label]="pageSections[1].questions![0].label" [hint]="pageSections[1].questions![0].comment" type="short" formControlName="title">
+            <div required>Report title is required</div>
+            <div uniqueName>Report title must be unique</div>
+          </lib-adapt-text-input>
+          @if (audience.value === 'external') {
+            <lib-adapt-text-input [patterns]="{ 'A': { pattern: slugPattern } }"  mask="A*"    [label]="pageSections[1].questions![1].label" [hint]="pageSections[1].questions![1].comment" type="short" formControlName="slug">
+              <div required>Public report identifier is required</div>
+              <div uniqueName>Public report identifier must be unique</div>
+            </lib-adapt-text-input>
+          }
+          <lib-adapt-text-input [label]="pageSections[1].questions![2].label" [hint]="pageSections[1].questions![2].comment" type="long" formControlName="description">
+            <div required>Description is required</div>
+          </lib-adapt-text-input>
+        </form>
+        @if (currentReportTemplate) {
+          <div class="report-meta-tags display-flex flex-column gap-2">
+            <p>Meta tags:</p>
+            <ul class="usa-list usa-list--unstyled display-flex flex gap-1">
+              @for (tag of currentReportTemplate.metaTags; track $index) {
+                <li>
                   <span class="usa-tag">{{ tag }}</span>
                 </li>
-<!--                <li *ngIf="reportingLevel.value"><span class="usa-tag">{{ reportingLevel.value.value }}</span></li>-->
-              </ul>
-            </div>
-
-            <!-- You must generate a preview of your report and confirm it loads before proceeding to the next step to save your report -->
-            <p class="usa-prose">{{ pageSections[1].messages!['preview'].message }}</p>
-
-            <button (click)="generatePreview()" class="usa-button usa-button--outline flex-align-self-start">
-              {{pageContent?.actions!['preview_button'] ? pageContent?.actions!['preview_button']: 'Generate preview'}}
-            </button>
-
-            <div role="alert" *ngIf="preview?.invalid && (preview?.dirty || preview?.touched)" class="form-errors margin-top-1 text-emergency">
-              <!-- Successful report preview is required. Check your data view and template and try again -->
-              <div *ngIf="preview?.errors?.['invalidPreview']" i18n>
+              }
+              <!--                <li *ngIf="reportingLevel.value"><span class="usa-tag">{{ reportingLevel.value.value }}</span></li>-->
+            </ul>
+          </div>
+        }
+        <!-- You must generate a preview of your report and confirm it loads before proceeding to the next step to save your report -->
+        <p class="usa-prose">{{ pageSections[1].messages!['preview'].message }}</p>
+        <button (click)="generatePreview()" class="usa-button usa-button--outline flex-align-self-start">
+          {{pageContent?.actions!['preview_button'] ? pageContent?.actions!['preview_button']: 'Generate preview'}}
+        </button>
+        @if (preview.invalid && (preview.dirty || preview.touched)) {
+          <div role="alert" class="form-errors margin-top-1 text-emergency">
+            <!-- Successful report preview is required. Check your data view and template and try again -->
+            @if (preview.errors?.['invalidPreview']) {
+              <div i18n>
                 {{ pageSections[1].messages!['status'].message }}
               </div>
-              <div *ngIf="preview?.errors?.['required']" i18n>Successful report preview is required.</div>
+            }
+            @if (preview.errors?.['required']) {
+              <div i18n>Successful report preview is required.</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </adapt-steps-indicator-step>
+  <!-- Save -->
+  <adapt-steps-indicator-step name="{{ pageSections[2].name }}">
+    <div class="review-header">
+      <h2>{{ pageSections[2].header }}</h2>
+      <p>{{ pageSections[2].description }}</p>
+    </div>
+    <div [attr.aria-busy]="saving" aria-live="polite" class="review-save-status-container padding-top-2">
+      @if (saved && !failed) {
+        <div class="report-create-success display-flex gap-2 padding-2">
+          <div class="success-icon">
+            <i class="fal text-green font-xl fa-thumbs-up"></i>
+          </div>
+          <div class="success-body">
+            <strong>Report created successfully.</strong>
+            <p>
+              View your report <button (click)="viewReport()" class="usa-button usa-button--unstyled">here</button> or
+              <button (click)="cancel()" class="usa-button usa-button--unstyled">close this window</button>
+            </p>
+          </div>
+        </div>
+      }
+      @if (saving && !saved && !failed) {
+        <div
+          class="save-status-saving usa-summary-box"
+          role="region"
+          aria-labelledby="saved-header">
+          <div class="usa-summary-box__body">
+            <strong class="usa-summary-box__heading" id="saved-header"> Report is being created. </strong>
+            <div class="usa-summary-box__text display-flex flex-column gap-1">
+              <p class="usa-prose">Please wait, you will be notified when it has been created.</p>
             </div>
           </div>
         </div>
-      </adapt-steps-indicator-step>
-      <!-- Save -->
-      <adapt-steps-indicator-step name="{{ pageSections[2].name }}">
-        <div class="review-header">
-          <h2>{{ pageSections[2].header }}</h2>
-          <p>{{ pageSections[2].description }}</p>
-        </div>
-
-        <div [attr.aria-busy]="saving" aria-live="polite" class="review-save-status-container padding-top-2">
-          <div *ngIf="saved && !failed" class="report-create-success display-flex gap-2 padding-2">
-            <div class="success-icon">
-              <i class="fal text-green font-xl fa-thumbs-up"></i>
-            </div>
-
-            <div class="success-body">
-              <strong>Report created successfully.</strong>
-              <p>
-                View your report <button (click)="viewReport()" class="usa-button usa-button--unstyled">here</button> or
-                <button (click)="cancel()" class="usa-button usa-button--unstyled">close this window</button>
-              </p>
-            </div>
+      }
+      @if (!saving && !saved && failed) {
+        <div class="save-status-error display-flex gap-2 bg-secondary-lighter padding-2">
+          <div class="errors-icon">
+            <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
           </div>
-
-          <div
-            *ngIf="saving && !saved && !failed"
-            class="save-status-saving usa-summary-box"
-            role="region"
-            aria-labelledby="saved-header">
-            <div class="usa-summary-box__body">
-              <strong class="usa-summary-box__heading" id="saved-header"> Report is being created. </strong>
-              <div class="usa-summary-box__text display-flex flex-column gap-1">
-                <p class="usa-prose">Please wait, you will be notified when it has been created.</p>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="!saving && !saved && failed" class="save-status-error display-flex gap-2 bg-secondary-lighter padding-2">
-            <div class="errors-icon">
-              <i class="fal text-secondary font-xl fa-exclamation-circle"></i>
-            </div>
-            <div class="errors-body display-flex flex-column">
-              <strong>Something went wrong.</strong>
-
-              <p class="usa-prose">Failed to create report please try again.</p>
-            </div>
+          <div class="errors-body display-flex flex-column">
+            <strong>Something went wrong.</strong>
+            <p class="usa-prose">Failed to create report please try again.</p>
           </div>
         </div>
-
-        <div class="review-body margin-top-4 padding-3 border-2px border-base-lighter radius-lg bg-white">
-          <h3 class="margin-0">Summary:</h3>
-
-          <ul class="usa-list display-flex flex-column gap-1">
+      }
+    </div>
+    <div class="review-body margin-top-4 padding-3 border-2px border-base-lighter radius-lg bg-white">
+      <h3 class="margin-0">Summary:</h3>
+      <ul class="usa-list display-flex flex-column gap-1">
+        <li>
+          <span>{{ pageSections[2].questions![0].label ? pageSections[2].questions![0].label : 'Report name:'}}</span>
+          <ul class="usa-list">
             <li>
-              <span>{{ pageSections[2].questions![0].label ? pageSections[2].questions![0].label : 'Report name:'}}</span>
-              <ul class="usa-list">
-                <li>
-                  <strong>{{ title.value }}</strong>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span>{{ pageSections[2].questions![1].label ? pageSections[2].questions![1].label : 'Report description:'}}</span>
-              <ul class="usa-list">
-                <li>
-                  <strong>{{ description.value }}</strong>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span>{{ pageSections[2].questions![2].label ? pageSections[2].questions![2].label : 'Report template:'}}</span>
-              <ul class="usa-list">
-                <li>
-                  <strong>{{ currentReportTemplate?.title }}</strong>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span>{{ pageSections[2].questions![3].label ? pageSections[2].questions![3].label : 'Data view:'}}</span>
-              <ul class="usa-list">
-                <li>
-                  <strong>{{ dataView.value?.name }}</strong>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span>{{ pageSections[2].questions![4].label ? pageSections[2].questions![4].label : 'Distribution:'}}</span>
-              <ul class="usa-list">
-                <li>
-                  <strong>{{ audience.value | valueLabel : pageSections[0].questions![3].options }}</strong>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span>{{ pageSections[2].questions![5].label ? pageSections[2].questions![5].label : 'Meta Tags:'}}</span>
-              <ul class="usa-list">
-                <li *ngFor="let tag of currentReportTemplate?.metaTags">
-                  <strong>{{ tag }}</strong>
-                </li>
-<!--                <li *ngIf="reportingLevel.value"><strong>{{ reportingLevel.value.value }}</strong></li>-->
-              </ul>
+              <strong>{{ title.value }}</strong>
             </li>
           </ul>
-        </div>
-      </adapt-steps-indicator-step>
-    </adapt-steps-indicator>
-  </div>
-
-  <div class="grid-container display-flex flex-justify-center gap-2" footer>
-    <button (click)="previous()" *ngIf="currentStep > 0" class="usa-button">{{pageContent!.actions!['back_button'] ? pageContent!.actions!['back_button'] : 'Back'}}</button>
-    <button (click)="next()" *ngIf="currentStep + 1 < stepsIndicator.length" class="usa-button">
+        </li>
+        <li>
+          <span>{{ pageSections[2].questions![1].label ? pageSections[2].questions![1].label : 'Report description:'}}</span>
+          <ul class="usa-list">
+            <li>
+              <strong>{{ description.value }}</strong>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span>{{ pageSections[2].questions![2].label ? pageSections[2].questions![2].label : 'Report template:'}}</span>
+          <ul class="usa-list">
+            <li>
+              <strong>{{ currentReportTemplate?.title }}</strong>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span>{{ pageSections[2].questions![3].label ? pageSections[2].questions![3].label : 'Data view:'}}</span>
+          <ul class="usa-list">
+            <li>
+              <strong>{{ dataView.value?.name }}</strong>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span>{{ pageSections[2].questions![4].label ? pageSections[2].questions![4].label : 'Distribution:'}}</span>
+          <ul class="usa-list">
+            <li>
+              <strong>{{ audience.value | valueLabel : pageSections[0].questions![3].options }}</strong>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span>{{ pageSections[2].questions![5].label ? pageSections[2].questions![5].label : 'Meta Tags:'}}</span>
+          <ul class="usa-list">
+            @for (tag of currentReportTemplate?.metaTags; track $index) {
+              <li>
+                <strong>{{ tag }}</strong>
+              </li>
+            }
+            <!--                <li *ngIf="reportingLevel.value"><strong>{{ reportingLevel.value.value }}</strong></li>-->
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </adapt-steps-indicator-step>
+</adapt-steps-indicator>
+</div>
+<div class="grid-container display-flex flex-justify-center gap-2" footer>
+  @if (currentStep > 0) {
+    <button (click)="previous()" class="usa-button">{{pageContent!.actions!['back_button'] ? pageContent!.actions!['back_button'] : 'Back'}}</button>
+  }
+  @if (currentStep + 1 < stepsIndicator.length) {
+    <button (click)="next()" class="usa-button">
       {{pageContent?.actions!['next_button'] ? pageContent?.actions!['next_button']: 'Next: '}} {{ stepsIndicator.getStepName(currentStep + 1) }}
     </button>
-
-    <button *ngIf="currentStep === 2" (click)="save(true, true)" class="usa-button">{{pageContent?.actions!['save_button'] ? pageContent?.actions!['save_button']: 'Save and View Draft'}}</button>
-
-    <button (click)="cancel()" class="usa-button usa-button--unstyled">{{pageContent?.actions!['cancel_button'] ? pageContent?.actions!['cancel_button']: 'Cancel'}}</button>
-  </div>
+  }
+  @if (currentStep === 2) {
+    <button (click)="save(true, true)" class="usa-button">{{pageContent?.actions!['save_button'] ? pageContent?.actions!['save_button']: 'Save and View Draft'}}</button>
+  }
+  <button (click)="cancel()" class="usa-button usa-button--unstyled">{{pageContent?.actions!['cancel_button'] ? pageContent?.actions!['cancel_button']: 'Cancel'}}</button>
+</div>
 </adapt-full-page-modal>
+}
 
 <lib-adapt-modal
   (closed)="showPreview = false"
@@ -267,11 +270,12 @@
   #previewModal>
   <div
     class="report-preview-container overflow-auto maxh-tablet padding-1 bg-base-lightest border-05 border-base-light">
-    <adapt-report
-      (loaded)="onReportPreviewEvent($event)"
-      *ngIf="showPreview"
-      [preview]="true"
+    @if (showPreview) {
+      <adapt-report
+        (loaded)="onReportPreviewEvent($event)"
+        [preview]="true"
       [report]="reportFormGroup.getRawValue()"></adapt-report>
+    }
   </div>
 </lib-adapt-modal>
 

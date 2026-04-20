@@ -57,6 +57,7 @@ interface ReportFilter {
 export class ReportComponent {
   @ViewChild('shareModal') shareModal?: ModalComponent;
   public filterStateMessage: string;
+  public shareCopyStatusMessage = '';
   public loading = false;
   public reportTabIndex = 0;
   public shareURL?: Observable<string>;
@@ -516,7 +517,11 @@ export class ReportComponent {
 
   public copy(text: string) {
     navigator.clipboard.writeText(text);
-    this.shareModal?.close();
+    // Reset then set so the same message is re-announced on repeated presses.
+    this.shareCopyStatusMessage = '';
+    setTimeout(() => {
+      this.shareCopyStatusMessage = 'Link copied to clipboard.';
+    }, 0);
     this.alert.add({type: 'success', title: 'Success', body: 'The URL has been successfully copied to your clipboard.'})
   }
 }

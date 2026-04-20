@@ -4,22 +4,30 @@
     <button [attr.aria-expanded]="!nav_collapsed" type="button"
       class="usa-button gap-0 flex-column usa-button--outline shadow-none" id="expand-menu-button" (click)="toggleNav()"
       i18n>
-      <ng-container *ngIf="nav_collapsed">
+      @if (nav_collapsed) {
+
         <i aria-hidden="true" class="fal fa-bars" role="img" alt=""></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">Open </span>Menu</span>
-      </ng-container>
+      
+}
 
-      <ng-container *ngIf="!nav_collapsed">
+      @if (!nav_collapsed) {
+
         <i aria-hidden="true" class="fal fa-arrow-from-right" role="img" alt=""></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">Collapse </span>Menu</span>
-      </ng-container>
+      
+}
     </button>
 
     <div class="sidebar-header">
       <div class="display-flex width-full padding-1 gap-1 flex-align-center flex-justify-center">
-        <img *ngIf="!logoIsSvg" [src]="logoURL" class="logo" aria-hidden="true" alt="" />
-        <lib-adapt-inline-svg [src]="logoURL" [attr.aria-hidden]="true"
-          svgClass="maxw-6 height-6 display-none desktop:display-flex" *ngIf="logoIsSvg"></lib-adapt-inline-svg>
+        @if (!logoIsSvg) {
+          <img [src]="logoURL" class="logo" aria-hidden="true" alt="" />
+        }
+        @if (logoIsSvg) {
+          <lib-adapt-inline-svg [src]="logoURL" [decorative]="true"
+            svgClass="maxw-6 height-6 display-none desktop:display-flex"></lib-adapt-inline-svg>
+        }
       </div>
     </div>
 
@@ -48,41 +56,43 @@
           </a>
         </li>
         <!-- <li role="none">
-          <a role="menuitem" routerLinkActive="active-nav hover:bg-primary-dark" adaptPreview="true"
-            adaptPreviewVersion="1.0.0" id="glossaryBtn" class="usa-icon-list__item site-nav">
-            <i aria-hidden="true" class="fal fa-book"></i>
-            <span> Glossary </span>
-          </a>
-        </li>
+        <a role="menuitem" routerLinkActive="active-nav hover:bg-primary-dark" adaptPreview="true"
+          adaptPreviewVersion="1.0.0" id="glossaryBtn" class="usa-icon-list__item site-nav">
+          <i aria-hidden="true" class="fal fa-book"></i>
+          <span> Glossary </span>
+        </a>
+      </li>
+      <li role="none">
+        <a role="menuitem" routerLinkActive="active-nav hover:bg-primary-dark" adaptPreview="true"
+          adaptPreviewVersion="1.0.0" id="alertBtn" class="usa-icon-list__item site-nav">
+          <i aria-hidden="true" class="fal fa-bell"></i>
+          <span> Alerts </span>
+        </a>
+      </li> -->
+      @if (this.role.hasPermission('Tool Settings', 'Read')) {
         <li role="none">
-          <a role="menuitem" routerLinkActive="active-nav hover:bg-primary-dark" adaptPreview="true"
-            adaptPreviewVersion="1.0.0" id="alertBtn" class="usa-icon-list__item site-nav">
-            <i aria-hidden="true" class="fal fa-bell"></i>
-            <span> Alerts </span>
-          </a>
-        </li> -->
-        <li role="none" *ngIf="this.role.hasPermission('Tool Settings', 'Read')">
           <a routerLink="settings" role="menuitem" routerLinkActive="active-nav hover:bg-primary-dark" id="settingsBtn"
             class="usa-icon-list__item site-nav">
             <i aria-hidden="true" class="fal fa-cog" role="img" alt=""></i>
             <span> Settings </span>
           </a>
         </li>
-        <li role="none">
-          <button role="menuitem" weissA11yToggle="ADAPT-a11y-center" class="usa-icon-list__item site-nav width-full">
-            <i aria-hidden="true" class="fal fa-universal-access" role="img" alt=""></i>
+      }
+      <li role="none">
+        <button role="menuitem" weissA11yToggle="ADAPT-a11y-center" class="usa-icon-list__item site-nav width-full">
+          <i aria-hidden="true" class="fal fa-universal-access" role="img" alt=""></i>
 
-            <span> Accessibility </span>
-          </button>
-        </li>
-        <li role="none"></li>
-        <li role="none">
-          <a role="menuitem" rel="noopener noreferrer" href="https://github.com/WeissCenter/Weiss-ADAPT/issues"
-            target="_blank" aria-label="Give Feedback (opens in a new tab)"
-            class="usa-icon-list__item site-nav width-full">
-            <i aria-hidden="true" class="fal fa-comment-alt-exclamation" role="img" alt=""></i>
-            <span aria-hidden="true">
-              Give Feedback <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+          <span> Accessibility </span>
+        </button>
+      </li>
+      <li role="none"></li>
+      <li role="none">
+        <a role="menuitem" rel="noopener noreferrer" href="https://github.com/WeissCenter/Weiss-ADAPT/issues"
+          target="_blank" aria-label="Give Feedback (opens in a new tab)"
+          class="usa-icon-list__item site-nav width-full">
+          <i aria-hidden="true" class="fal fa-comment-alt-exclamation" role="img" alt=""></i>
+          <span aria-hidden="true">
+            Give Feedback <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
           </a>
         </li>
         <li role="none">
@@ -95,10 +105,14 @@
       </ul>
     </nav>
     <span class="margin-top-auto display-flex width-full flex-justify-center">
-      <lib-adapt-inline-svg *ngIf="!nav_collapsed" alt="ADAPT logo" [src]="openLogo"
+      @if (!nav_collapsed) {
+        <lib-adapt-inline-svg alt="ADAPT logo" [src]="openLogo"
         svgClass="display-flex width-15"></lib-adapt-inline-svg>
-      <lib-adapt-inline-svg *ngIf="nav_collapsed" alt="ADAPT logo" [src]="collapsedLogo"
+      }
+      @if (nav_collapsed) {
+        <lib-adapt-inline-svg alt="ADAPT logo" [src]="collapsedLogo"
         svgClass="display-flex width-5"></lib-adapt-inline-svg>
+      }
     </span>
   </section>
 </aside>

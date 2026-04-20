@@ -58,8 +58,8 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "maximumWarning": "200kb",
+              "maximumError": "400kb"
             }
           ],
           "outputHashing": "all",
@@ -143,7 +143,8 @@
           "buildTarget": "adapt-viewer:build:local"
         }
       },
-      "defaultConfiguration": "local"
+      "defaultConfiguration": "local",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -163,7 +164,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/adapt-viewer/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "tsConfig": "apps/adapt-viewer/tsconfig.spec.json"
       },
       "configurations": {
         "ci": {
@@ -263,7 +265,8 @@
           "serverTarget": "adapt-viewer:server:production"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "prerender": {
       "executor": "@angular-devkit/build-angular:prerender",

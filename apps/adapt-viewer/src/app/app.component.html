@@ -4,8 +4,10 @@
   <div class="viewer-content display-flex flex-column grid-col">
     <adapt-top-banner></adapt-top-banner>
     <main id="main" class="display-flex height-full width-full flex-column">
-      <div class="grid-container width-full"><lib-adapt-breadcrumb *ngIf="$breadcrumbContent()"
-          [contentMap]="$breadcrumbContent()" [root]="$breadcrumbContent()?.home || ''"></lib-adapt-breadcrumb></div>
+      <div class="grid-container width-full">@if ($breadcrumbContent()) {
+        <lib-adapt-breadcrumb
+        [contentMap]="$breadcrumbContent()" [root]="$breadcrumbContent()?.home || ''"></lib-adapt-breadcrumb>
+      }</div>
       <router-outlet></router-outlet>
     </main>
     <adapt-viewer-footer class="margin-top-auto"></adapt-viewer-footer>

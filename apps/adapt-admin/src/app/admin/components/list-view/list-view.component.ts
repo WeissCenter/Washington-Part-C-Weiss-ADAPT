@@ -95,8 +95,12 @@ export class ListViewComponent implements OnDestroy, OnInit {
   }
 
   // Define the trackBy function
-  identify(index: number, item: any): any {
-    return item.id; // or any unique identifier property of your item
+  identify(item: any, property: any = 'id'): any {
+    if (typeof item === 'object' && item !== null && property in item) {
+      return item[property];
+    } else {
+      return item;
+    }
   }
 
   public icon() {

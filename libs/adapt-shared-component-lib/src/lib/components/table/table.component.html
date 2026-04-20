@@ -1,22 +1,30 @@
 <table class="usa-table">
   <caption>
     {{
-      caption
+    caption
     }}
   </caption>
   <div class="table-wrapper maxw-desktop-lg overflow-auto">
     <thead>
       <tr>
-        <th class="bg-white" *ngFor="let header of headers" scope="col">{{ header }}</th>
+        @for (header of headers; track $index) {
+          <th class="bg-white" scope="col">{{ header }}</th>
+        }
       </tr>
     </thead>
     <tbody>
-      <tr height="25px" *ngFor="let item of data">
-        <ng-container *ngFor="let keyValue of item | keyvalue : originalOrder; let isFirst = first">
-          <th *ngIf="isFirst" scope="row">{{ keyValue.value }}</th>
-          <td *ngIf="!isFirst">{{ keyValue.value }}</td>
-        </ng-container>
-      </tr>
+      @for (item of data; track $index) {
+        <tr height="25px">
+          @for (keyValue of item | keyvalue : originalOrder; track keyValue.key; let isFirst = $first) {
+            @if (isFirst) {
+              <th scope="row">{{ keyValue.value }}</th>
+            }
+            @if (!isFirst) {
+              <td>{{ keyValue.value }}</td>
+            }
+          }
+        </tr>
+      }
     </tbody>
   </div>
 </table>

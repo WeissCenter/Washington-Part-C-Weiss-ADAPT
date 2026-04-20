@@ -1,4 +1,6 @@
-<div *ngIf="show" class="background-overlay" (click)="close()"></div>
+@if (show) {
+  <div class="background-overlay" (click)="close()"></div>
+}
 <div
   [hidden]="!show"
   #sidePanel
@@ -9,7 +11,12 @@
   [ngClass]="{'border-left-1px radius-left-lg': direction === 'right', 'border-right-1px radius-right-lg': direction === 'left'}"
   aria-labelledby="adaptSidePanelTitle">
   <div class="display-flex margin-y-1 padding-x-2 flex-align-start gap-2 flex-justify">
-    <h2 id="adaptSidePanelTitle" class="font-lg text-semibold margin-x-0 margin-bottom-0 margin-top-1">{{ title }}</h2>
+    <h2
+      #panelHeading
+      id="adaptSidePanelTitle"
+      [attr.aria-describedby]="description ? 'adaptSidePanelDescription' : null"
+      tabindex="-1"
+      class="font-lg text-semibold margin-x-0 margin-bottom-0 margin-top-1">{{ title }}</h2>
     <button
       type="button"
       class="usa-button usa-button--unstyled width-auto text-no-underline margin-left-auto"
@@ -19,7 +26,7 @@
       <i class="fas fa-times" aria-hidden="true" role="img" alt=""></i>
     </button>
   </div>
-  <p class="padding-x-2">{{ description }}</p>
+  <p class="padding-x-2" id="adaptSidePanelDescription">{{ description }}</p>
 
   <div
     class="display-flex flex-1 margin-top-2 padding-2 overflow-auto flex-column gap-3 bg-white border-top-05 border-accent-warm">

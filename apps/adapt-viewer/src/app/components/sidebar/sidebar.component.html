@@ -1,91 +1,97 @@
-<aside
-  *ngIf="$sidebar()"
-  class="display-flex minh-full height-viewport"
-  aria-label="App Sidebar Menu"
-  [ngClass]="{ collapsed: nav_collapsed }">
-  <section class="sidebar-content display-flex gap-1 bg-white flex-column width-full padding-1">
+@if ($sidebar()) {
+  <aside
+    class="display-flex minh-full height-viewport"
+    aria-label="App Sidebar Menu"
+    [ngClass]="{ collapsed: nav_collapsed }">
+    <section class="sidebar-content display-flex gap-1 bg-white flex-column width-full padding-1">
+      <button [attr.aria-expanded]="!nav_collapsed" type="button"
+        class="usa-button gap-0 flex-column usa-button--outline shadow-none" id="expand-menu-button" (click)="toggleNav()"
+        i18n>
+      @if (nav_collapsed) {
 
-    <button [attr.aria-expanded]="!nav_collapsed" type="button"
-      class="usa-button gap-0 flex-column usa-button--outline shadow-none" id="expand-menu-button" (click)="toggleNav()"
-      i18n>
-      <ng-container *ngIf="nav_collapsed">
         <i aria-hidden="true" class="fal fa-bars" role="img" alt=""></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">{{$sidebar()?.open}}
           </span>{{$sidebar()?.menu}}</span>
-      </ng-container>
+      
+}
 
-      <ng-container *ngIf="!nav_collapsed">
+      @if (!nav_collapsed) {
+
         <i aria-hidden="true" class="fal fa-arrow-from-right" role="img" alt=""></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">{{$sidebar()?.collapse}}
           </span>{{$sidebar()?.menu}}</span>
-      </ng-container>
+      
+}
     </button>
 
     <div class="sidebar-header">
       <div class="display-flex width-full padding-1 gap-1 flex-align-center flex-justify-center">
-        <img *ngIf="!logoIsSvg" [src]="logoURL" class="logo" aria-hidden="true" alt="" />
-        <lib-adapt-inline-svg [src]="logoURL" [attr.aria-hidden]="true"
-          svgClass="maxw-6 height-6 display-none desktop:display-flex" *ngIf="logoIsSvg"></lib-adapt-inline-svg>
+        @if (!logoIsSvg) {
+          <img [src]="logoURL" class="logo" aria-hidden="true" alt="" />
+        }
+        @if (logoIsSvg) {
+          <lib-adapt-inline-svg [src]="logoURL" [decorative]="true"
+            svgClass="maxw-6 height-6 display-none desktop:display-flex"></lib-adapt-inline-svg>
+        }
       </div>
+      <nav aria-label="primary" class="margin-top-1">
+        <ul #navList role="menubar" aria-orientation="vertical" class="usa-icon-list display-flex flex-column gap-05">
+          <li role="none">
+            <a role="menuitem" routerLink="/" (click)="closeMenuOnNavigation()"
+              routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
+              class="usa-icon-list__item site-nav">
+              <i aria-hidden="true" class="fal fa-home" role="img" alt=""></i>
+              <span id="home"> {{$sidebar()?.home}} </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" routerLink="reports" (click)="closeMenuOnNavigation()"
+              routerLinkActive="active-nav hover:bg-primary-dark " [routerLinkActiveOptions]="{ exact: true }"
+              class="usa-icon-list__item site-nav">
+              <i aria-hidden="true" class="fal fa-chart-line" role="img" alt=""></i>
+              <span> {{$sidebar()?.reports}} </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" routerLink="resources" (click)="closeMenuOnNavigation()"
+              routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
+              id="resourcesBtn" class="usa-icon-list__item site-nav">
+              <i aria-hidden="true" class="fal fa-file" role="img" alt=""></i>
+              <span> {{$sidebar()?.resources}} </span>
+            </a>
+          </li>
+          <li role="none">
+            <button role="menuitem" (click)="langPanel.open()" class="usa-icon-list__item site-nav width-full">
+              <i aria-hidden="true" class="fal fa-language" role="img" alt=""></i>
+              <span> {{$sidebar()?.languageAccess}} </span>
+            </button>
+          </li>
+          <li role="none">
+            <button role="menuitem" weissA11yToggle class="usa-icon-list__item site-nav width-full">
+              <i aria-hidden="true" class="fal fa-universal-access" role="img" alt=""></i>
+              <span> {{$sidebar()?.accessibility}} </span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
-
-    <nav aria-label="primary" class="margin-top-1">
-      <ul #navList role="menubar" aria-orientation="vertical" class="usa-icon-list display-flex flex-column gap-05">
-        <li role="none">
-          <a role="menuitem" routerLink="/" (click)="closeMenuOnNavigation()"
-            routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
-            class="usa-icon-list__item site-nav">
-            <i aria-hidden="true" class="fal fa-home" role="img" alt=""></i>
-            <span id="home"> {{$sidebar()?.home}} </span>
-          </a>
-        </li>
-        <li role="none">
-          <a role="menuitem" routerLink="reports" (click)="closeMenuOnNavigation()"
-            routerLinkActive="active-nav hover:bg-primary-dark " [routerLinkActiveOptions]="{ exact: true }"
-            class="usa-icon-list__item site-nav">
-            <i aria-hidden="true" class="fal fa-chart-line" role="img" alt=""></i>
-            <span> {{$sidebar()?.reports}} </span>
-          </a>
-        </li>
-        <li role="none">
-          <a role="menuitem" routerLink="resources" (click)="closeMenuOnNavigation()"
-            routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
-            id="resourcesBtn" class="usa-icon-list__item site-nav">
-            <i aria-hidden="true" class="fal fa-file" role="img" alt=""></i>
-            <span> {{$sidebar()?.resources}} </span>
-          </a>
-        </li>
-        <li role="none">
-          <button role="menuitem" (click)="langPanel.open()" class="usa-icon-list__item site-nav width-full">
-            <i aria-hidden="true" class="fal fa-language" role="img" alt=""></i>
-
-            <span> {{$sidebar()?.languageAccess}} </span>
-          </button>
-        </li>
-        <li role="none">
-          <button role="menuitem" weissA11yToggle class="usa-icon-list__item site-nav width-full">
-            <i aria-hidden="true" class="fal fa-universal-access" role="img" alt=""></i>
-
-            <span> {{$sidebar()?.accessibility}} </span>
-          </button>
-        </li>
-
-      </ul>
-    </nav>
     <span class="display-flex width-full tablet:margin-top-auto tablet:flex-justify-center" [ngClass]="{'margin-top-auto flex-justify-center': !nav_collapsed}">
-      <lib-adapt-inline-svg
-        *ngIf="!nav_collapsed"
-        alt="ADAPT logo"
-        [src]="openLogo"
+      @if (!nav_collapsed) {
+        <lib-adapt-inline-svg
+          alt="ADAPT logo"
+          [src]="openLogo"
         svgClass="display-flex width-15"></lib-adapt-inline-svg>
-      <lib-adapt-inline-svg
-        *ngIf="nav_collapsed"
-        alt="ADAPT logo"
-        [src]="collapsedLogo"
+      }
+      @if (nav_collapsed) {
+        <lib-adapt-inline-svg
+          alt="ADAPT logo"
+          [src]="collapsedLogo"
         svgClass="display-flex width-5"></lib-adapt-inline-svg>
+      }
     </span>
-  </section>
-</aside>
+    </section>
+  </aside>
+}
 
 
 
@@ -99,7 +105,7 @@
 
     <lib-adapt-radio-select name="language" (ngModelChange)="handleLangChange($event)"
       [ngModel]="langModel" [items]="$langOptions() || []" itemAccessor="langCode"
-      labelAccessor="translatedLabel"></lib-adapt-radio-select>
+    labelAccessor="translatedLabel"></lib-adapt-radio-select>
 
   </ng-container>
 

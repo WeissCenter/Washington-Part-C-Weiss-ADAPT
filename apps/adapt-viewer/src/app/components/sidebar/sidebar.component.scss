@@ -44,11 +44,16 @@ aside {
 
     button,
     a.site-nav {
+      --usa-focus-offset: var(--usa-spacing-05);
       --usa-button-font-size: var(--usa-font-size-3xs);
       flex-direction: column;
       gap: var(--usa-spacing-1);
       border: none;
       padding: var(--usa-spacing-1) var(--usa-spacing-05) var(--usa-spacing-05);
+
+      &:focus {
+        border-radius:0;
+      }
 
       > i {
         font-size: var(--usa-font-size-lg);
@@ -67,7 +72,7 @@ aside {
   .site-nav {
     font-size: var(--usa-button-font-size);
     text-decoration: none;
-    border-radius: var(--usa-border-radius-lg);
+    border-radius: var(--usa-border-radius-sm);
     color: var(--usa-primary);
     cursor: pointer;
     display: flex;
