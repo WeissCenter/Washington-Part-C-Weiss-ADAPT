@@ -6,5 +6,6 @@ export const environment = {
   API_URL: '',
   logoPath: 'assets/shared/logos/generic',
   logoExtension: 'svg',
+  logoStyleClass: 'width-card',
   copyrightText: 'AEM Corporation.',
 };

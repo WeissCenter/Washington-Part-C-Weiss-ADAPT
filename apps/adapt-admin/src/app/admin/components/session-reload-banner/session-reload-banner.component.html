@@ -1,38 +1,39 @@
-<section
-  *ngIf="show"
-  class="usa-alert padding-4 display-flex flex-justify usa-alert--info border-left-0 border-bottom-1 radius-0"
-  role="alert"
-  aria-live="assertive"
-  aria-label="User inactivity banner">
-  <div class="usa-alert__body maxw-full width-full display-flex flex-justify">
-    <ng-container *ngIf="!cache?.dirty; else isDirty">
-      <div class="usa-alert__info">
-        <h1 class="usa-alert__heading">
-          You were recently logged out for inactivity would you like to resume where you left off?
-        </h1>
-        <p *ngIf="review" class="usa-alert__text">You were last {{ review }}</p>
-      </div>
-      <div class="usa-alert__controls display-flex gap-2">
-        <button class="usa-button" (click)="resumeSession()">Resume Session</button>
-
-        <button class="usa-button usa-button--unstyled" (click)="show = false">Dismiss</button>
-      </div>
-    </ng-container>
-
-    <ng-template #isDirty>
-      <div class="usa-alert__info">
-        <h1 class="usa-alert__heading">
-          You were recently logged out for inactivity and the item you were working on was updated.
-        </h1>
-        <p *ngIf="review" class="usa-alert__text">You were last {{ review }}</p>
-      </div>
-      <div class="usa-alert__controls display-flex gap-2">
-        <button class="usa-button" (click)="resumeSession()">View Updated Item</button>
-
-        <button class="usa-button usa-button--unstyled" (click)="show = false">Dismiss</button>
-      </div>
-    </ng-template>
-  </div>
-</section>
+@if (show) {
+  <section
+    class="usa-alert padding-4 display-flex flex-justify usa-alert--info border-left-0 border-bottom-1 radius-0"
+    role="alert"
+    aria-live="assertive"
+    aria-label="User inactivity banner">
+    <div class="usa-alert__body maxw-full width-full display-flex flex-justify">
+      @if (!cache?.dirty) {
+        <div class="usa-alert__info">
+          <h1 class="usa-alert__heading">
+            You were recently logged out for inactivity would you like to resume where you left off?
+          </h1>
+          @if (review) {
+            <p class="usa-alert__text">You were last {{ review }}</p>
+          }
+        </div>
+        <div class="usa-alert__controls display-flex gap-2">
+          <button class="usa-button" (click)="resumeSession()">Resume Session</button>
+          <button class="usa-button usa-button--unstyled" (click)="show = false">Dismiss</button>
+        </div>
+      } @else {
+        <div class="usa-alert__info">
+          <h1 class="usa-alert__heading">
+            You were recently logged out for inactivity and the item you were working on was updated.
+          </h1>
+          @if (review) {
+            <p class="usa-alert__text">You were last {{ review }}</p>
+          }
+        </div>
+        <div class="usa-alert__controls display-flex gap-2">
+          <button class="usa-button" (click)="resumeSession()">View Updated Item</button>
+          <button class="usa-button usa-button--unstyled" (click)="show = false">Dismiss</button>
+        </div>
+      }
+    </div>
+  </section>
+}
 
 <!-- *ngIf="!dismiss && idleState === 'IDLE'" -->

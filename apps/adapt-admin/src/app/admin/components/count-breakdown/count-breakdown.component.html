@@ -1,11 +1,13 @@
 <section
   class="report-count-breakdown display-flex flex-column height-full bg-white width-full padding-3 border-base-lighter border flex-justify">
-  <div *ngIf="content" class="report-count-breakdown-heading">
-    <div class="report-count-breakdown-heading-text">
-      <h3 class="font-sans-lg margin-0">{{ content['title'] }}</h3>
-      <p>{{ content['description'] }}</p>
+  @if (content) {
+    <div class="report-count-breakdown-heading">
+      <div class="report-count-breakdown-heading-text">
+        <h3 class="font-sans-lg margin-0">{{ content['title'] }}</h3>
+        <p>{{ content['description'] }}</p>
+      </div>
     </div>
-  </div>
+  }
 
   <table class="usa-table usa-table--borderless width-full">
     <thead>
@@ -16,17 +18,21 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of content.data">
-        <th scope="row">{{ item[content.labelField] }}</th>
-        <td>
-          {{ item[content.countField] }}
-        </td>
-        <td>{{ getPercentage(content.data, item, 'StudentCount') }}%</td>
-      </tr>
+      @for (item of content.data; track $index) {
+        <tr>
+          <th scope="row">{{ item[content.labelField] }}</th>
+          <td>
+            {{ item[content.countField] }}
+          </td>
+          <td>{{ getPercentage(content.data, item, 'StudentCount') }}%</td>
+        </tr>
+      }
     </tbody>
   </table>
 
-  <div *ngIf="content['caption'] as caption" class="report-count-breakdown-caption">
-    <p>{{ caption }}</p>
-  </div>
+  @if (content['caption']; as caption) {
+    <div class="report-count-breakdown-caption">
+      <p>{{ caption }}</p>
+    </div>
+  }
 </section>

@@ -2,35 +2,44 @@
 <fieldset class="usa-fieldset display-flex flex-{{ display }} gap-2" [attr.aria-labelledby]="legendId">
   <legend [id]="legendId" class="usa-legend">
     {{ legend }}
-    <span *ngIf="required" class="text-emergency">(Required)</span>
-    <div *ngIf="hint" [id]="hintId" class="usa-legend-hint font-2xs">
-      {{ hint }}
-    </div>
+    @if (required) {
+      <span class="text-emergency">(Required)</span>
+    }
+    @if (hint) {
+      <div [id]="hintId" class="usa-legend-hint font-2xs">
+        {{ hint }}
+      </div>
+    }
   </legend>
-  <div *ngFor="let item of items; let i = index" class="usa-radio">
-    <input
-      class="usa-radio__input usa-radio__input--tile"
-      [id]="inputId + '-' + i"
-      type="radio"
-      [name]="name || inputId"
-      [value]="item[itemAccessor]"
-      [checked]="value === item[itemAccessor]"
-      [disabled]="disabled"
-      [attr.required]="required || null"
-      [attr.aria-describedby]="describedBy"
-      [attr.aria-invalid]="errorState"
-      (change)="onSelected(item[itemAccessor])" />
-
-    <label class="usa-radio__label" [for]="inputId + '-' + i">
-      {{ item[labelAccessor] }}
-      <span *ngIf="item[descriptionAccessor]" class="usa-checkbox__label-description margin-top-1">
-        {{ item[descriptionAccessor] }}
-      </span>
-    </label>
-  </div>
+  @for (item of items; track item; let i = $index) {
+    <div class="usa-radio">
+      <input
+        class="usa-radio__input usa-radio__input--tile"
+        [id]="inputId + '-' + i"
+        type="radio"
+        [name]="name || inputId"
+        [value]="item[itemAccessor]"
+        [checked]="value === item[itemAccessor]"
+        [disabled]="disabled"
+        [attr.required]="required || null"
+        [attr.aria-describedby]="describedBy"
+        [attr.aria-invalid]="errorState"
+        (change)="onSelected(item[itemAccessor])" />
+      <label class="usa-radio__label" [for]="inputId + '-' + i">
+        {{ item[labelAccessor] }}
+        @if (item[descriptionAccessor]) {
+          <span class="usa-checkbox__label-description margin-top-1">
+            {{ item[descriptionAccessor] }}
+          </span>
+        }
+      </label>
+    </div>
+  }
 
   <!-- validation error -->
-  <div *ngIf="errorState" [id]="errorId" class="usa-error-message" role="alert">
-    {{ errorMessage || 'This field is required.' }}
-  </div>
+  @if (errorState) {
+    <div [id]="errorId" class="usa-error-message" role="alert">
+      {{ errorMessage || 'This field is required.' }}
+    </div>
+  }
 </fieldset>

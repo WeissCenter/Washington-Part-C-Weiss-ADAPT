@@ -1,50 +1,51 @@
 @let content = $content();
-<div *ngIf="content" class="data-suppression-settings-content-wrapper display-flex flex-column gap-2">
-  <section
-    class="data-suppression-settings-banner border-top-2px border-base-lighter width-full display-flex gap-1 usa-prose flex-column">
-    <h1 class="margin-0" i18n>{{content.title}}</h1>
-    <p class="margin-0 usa-prose measure-4" i18n>{{content.description}}</p>
-  </section>
-
-  <section *ngIf="content.sections![0] as section" class="data-suppression-settings-options display-flex flex-column gap-2">
-    <div
-      class="data-suppression-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
-      <div class="data-suppression-settings-option-wrapper display-flex flex-justify gap-05">
-        <div class="data-suppression-settings-option-information display-flex flex-column gap-2">
-          <h2 class="margin-0 font-xl text-no-underline">{{section.header}}</h2>
-          <p class="text-black usa-prose measure-4 text-no-underline">
-            {{section.description}}
-          </p>
+@if (content) {
+  <div class="data-suppression-settings-content-wrapper display-flex flex-column gap-2">
+    <section
+      class="data-suppression-settings-banner border-top-2px border-base-lighter width-full display-flex gap-1 usa-prose flex-column">
+      <h1 class="margin-0" i18n>{{content.title}}</h1>
+      <p class="margin-0 usa-prose measure-4" i18n>{{content.description}}</p>
+    </section>
+    @if (content.sections![0]; as section) {
+      <section class="data-suppression-settings-options display-flex flex-column gap-2">
+        <div
+          class="data-suppression-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
+          <div class="data-suppression-settings-option-wrapper display-flex flex-justify gap-05">
+            <div class="data-suppression-settings-option-information display-flex flex-column gap-2">
+              <h2 class="margin-0 font-xl text-no-underline">{{section.header}}</h2>
+              <p class="text-black usa-prose measure-4 text-no-underline">
+                {{section.description}}
+              </p>
+            </div>
+            <div class="data-suppression-settings-option-controls">
+              <button (click)="toggleNSizeSetting()" class="usa-button usa-button--outline">
+                {{ editSuppression ? content.actions!['close_button'] : content.actions!['edit_button'] }}
+              </button>
+            </div>
+          </div>
+          @if (editSuppression) {
+            <div
+              class="data-suppression-settings-option-edit border-top-2px padding-top-2 border-base-light">
+              <form
+                (ngSubmit)="onSave()"
+                [formGroup]="suppressionForm"
+                class="data-suppression-settings-logo-form display-flex flex-column gap-2">
+                <lib-adapt-text-input
+                  [hint]="section.questions![0].comment"
+                  class="flex-1"
+                  formControlName="nSize"
+                  type="number"
+                  [label]="section.questions![0].label">
+                  <p required class="usa-prose">{{section.questions![0].validation_messages!['required']}}</p>
+                </lib-adapt-text-input>
+                <button class="usa-button flex-align-self-start">{{content.actions!['save_button']}}</button>
+              </form>
+            </div>
+          }
         </div>
-
-        <div class="data-suppression-settings-option-controls">
-          <button (click)="toggleNSizeSetting()" class="usa-button usa-button--outline">
-            {{ editSuppression ? content.actions!['close_button'] : content.actions!['edit_button'] }}
-          </button>
-        </div>
-      </div>
-
-      <div
-        *ngIf="editSuppression"
-        class="data-suppression-settings-option-edit border-top-2px padding-top-2 border-base-light">
-        <form
-          (ngSubmit)="onSave()"
-          [formGroup]="suppressionForm"
-          class="data-suppression-settings-logo-form display-flex flex-column gap-2">
-          <lib-adapt-text-input
-            [hint]="section.questions![0].comment"
-            class="flex-1"
-            formControlName="nSize"
-            type="number"
-            [label]="section.questions![0].label">
-            <p required class="usa-prose">{{section.questions![0].validation_messages!['required']}}</p>
-          </lib-adapt-text-input>
-
-          <button class="usa-button flex-align-self-start">{{content.actions!['save_button']}}</button>
-        </form>
-      </div>
-    </div>
-  </section>
-</div>
+      </section>
+    }
+  </div>
+}
 
 <lib-adapt-confirm-modal (confirm)="cancel()"></lib-adapt-confirm-modal>

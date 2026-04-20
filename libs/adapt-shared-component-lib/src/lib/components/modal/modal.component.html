@@ -1,24 +1,25 @@
 <dialog
   #dialog
-  [attr.aria-labelledby]="ariaLabelledby"
-  [attr.aria-describedby]="ariaDescribedby"
+  [attr.aria-labelledby]="ariaLabelledby || modalHeadingId"
+  [attr.aria-describedby]="ariaDescribedby || null"
   class="usa-modal-wrapper border-0 {{ classes }} ">
   <div class="adapt-modal text-left padding-2">
     <div class="adapt-modal__content display-flex gap-4 flex-column">
       <div class="modal-heading gap-4 display-flex flex-justify">
-        <h1 class="margin-0">{{ heading }}</h1>
-        <button
-          *ngIf="!hideClose"
-          #exit
-          type="button"
-          class="usa-button usa-button--outline padding-1 flex-align-end usa-modal__close"
-          aria-label="Close this window"
-          (click)="close()">
-          <span class="text-primary"> {{ closeText }}</span>
-          <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" alt="">
-            <use xlink:href="/assets/sprite.svg#close"></use>
-          </svg>
-        </button>
+        <h1 #headingEl [id]="modalHeadingId" class="margin-0" tabindex="-1">{{ heading }}</h1>
+        @if (!hideClose) {
+          <button
+            #exit
+            type="button"
+            class="usa-button usa-button--outline padding-1 flex-align-end usa-modal__close"
+            aria-label="Close this window"
+            (click)="close()">
+            <span class="text-primary"> {{ closeText }}</span>
+            <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" alt="">
+              <use xlink:href="/assets/sprite.svg#close"></use>
+            </svg>
+          </button>
+        }
       </div>
 
       <div class="adapt-modal__main">

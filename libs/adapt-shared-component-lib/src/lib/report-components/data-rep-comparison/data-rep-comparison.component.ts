@@ -17,7 +17,6 @@ export class DataRepComparisonComponent implements OnInit {
 
   @ViewChild('explainationRegion') explainationRegion!: ElementRef;
   @ViewChild('explanationSwitch') explanationSwitch!: ElementRef;
-  @ViewChild('glossarySwitch') glossarySwitch!: ElementRef;
   @ViewChild('dataModal') dataModal!: ElementRef;
   @ViewChild('dataModalCloseBtn') dataModalCloseBtn!: ElementRef;
   @ViewChild('dataModalSwitch') dataModalSwitch!: ElementRef;
@@ -38,6 +37,8 @@ export class DataRepComparisonComponent implements OnInit {
   showGlossary = false;
   showGlossaryBtn = false;
   glossaryIdsString = '';
+  shouldAnnouncePlainLanguage = false;
+  isDataModalOpen = false;
 
   @Input() suppressed = false;
   @Input() filtered = false;
@@ -67,26 +68,11 @@ export class DataRepComparisonComponent implements OnInit {
 
   @Output() dataModalStateChange = new EventEmitter<boolean>();
 
-  // Placeholder for teardown function; will be replaced when tab listeners are set up
-  private teardownTabListeners: () => void = () => {
-    // intentionally left blank
-  };
-
   togglePlainLanguage() {
     this.dataRepSettings.showPlainLanguage = !this.dataRepSettings.showPlainLanguage;
     this.dataRepService.saveSettingsLocally(this.dataRepSettings);
-    // Remove old listeners (if any)
-    this.teardownTabListeners?.();
-    if (this.dataRepSettings.showPlainLanguage) {
-      this.teardownTabListeners = this.dataRepService.setupTabbing(true, {
-        region: this.explainationRegion,
-        backwardTrigger: this.explanationSwitch,
-        forwardTrigger: this.glossarySwitch,
-      });
-    } else {
-      // Restore focus to toggle
-      this.explanationSwitch.nativeElement.focus();
-    }
+    // Only announce when user explicitly toggles explain on.
+    this.shouldAnnouncePlainLanguage = this.dataRepSettings.showPlainLanguage;
   }
 
   toggleGlossary() {
@@ -98,6 +84,7 @@ export class DataRepComparisonComponent implements OnInit {
     this.dataModal.nativeElement.hidden = false;
     this.dataModalCloseBtn.nativeElement.focus();
     this.dataModal.nativeElement.addEventListener('keydown', this.trapTabKey);
+    this.isDataModalOpen = true;
     this.dataModalStateChange.emit(true);
   }
 
@@ -126,6 +113,7 @@ export class DataRepComparisonComponent implements OnInit {
   closeModal() {
     this.dataModal.nativeElement.hidden = true;
     this.dataModal.nativeElement.removeEventListener('keydown', this.trapTabKey);
+    this.isDataModalOpen = false;
     this.dataModalSwitch.nativeElement.focus(); // Return focus to the element that opened the modal
     this.dataModalStateChange.emit(false);
   }

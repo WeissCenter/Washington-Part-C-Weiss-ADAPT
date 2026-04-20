@@ -155,11 +155,10 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
     });
 
     this.outletViewsSub = this.$dataViews.subscribe((views) => {
-      const sorted = views.sort((a, b) => b.updated! - a.updated!);
       this.originalFilters = this.viewFilterGroup.getRawValue();
 
-      this.currentDataList.next(sorted);
-      this.totalCurrentDataList.next(sorted);
+      this.currentDataList.next([...views]);
+      this.totalCurrentDataList.next([...views]);
     });
 
     // this.outletCreateClickSub = event.createButtonClick.subscribe(evt => this.dataViewModal?.open())

@@ -1,21 +1,19 @@
 
-<div *ngIf="pageContentLoaded" class="language-access-settings-content-wrapper display-flex flex-column gap-2">
+@if (pageContentLoaded) {
+  <div class="language-access-settings-content-wrapper display-flex flex-column gap-2">
     <section class="language-access-settings-banner border-top-2px border-base-lighter width-full display-flex gap-1 usa-prose flex-column">
       <h1 class="margin-0" i18n>{{pageContent?.title ? pageContent!.title : 'Footer Links'}}</h1>
       <p class="margin-0 usa-prose measure-4" i18n>
         {{pageContent?.description ? pageContent!.description : 'Customize your adapt footer links with additional information.'}}</p>
     </section>
-
     <section class="language-access-settings-options display-flex flex-column gap-2">
       <div class="language-access-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
         <div class="language-access-settings-option-wrapper display-flex flex-justify gap-05">
           <div class="language-access-settings-option-information display-flex flex-column gap-2">
             <h2 class="margin-0 font-xl text-no-underline">{{pageContent?.sections![0].header}}</h2>
-
             <p class="text-black usa-prose measure-4 text-no-underline">{{pageContent?.sections![0].description}}</p>
             <!-- <p class="text-black usa-prose measure-4 text-no-underline">{{pageContent?.sections![0].disclaimer}}</p> -->
           </div>
-
           <div class="language-access-settings-option-controls">
             <button (click)="editAccess = !editAccess" class="usa-button usa-button--outline">
               {{ editAccess ? pageContent?.actions!['close_button'] : pageContent?.actions!['edit_button'] }}
@@ -23,39 +21,37 @@
             </button>
           </div>
         </div>
-
         <div [ngClass]="{'language-access-settings-option-edit border-top-2px padding-top-2 border-base-light': editAccess}"  >
           <form (submit)="onSubmit()" [formGroup]="langForm" class="language-access-settings-form display-flex flex-column gap-2">
-            <div *ngIf="editAccess" formArrayName="enabledLangs" class="language-access-settings-select">
-
+            @if (editAccess) {
+              <div formArrayName="enabledLangs" class="language-access-settings-select">
                 <fieldset class="usa-fieldset">
                   <legend class="usa-legend usa-legend margin-bottom-1" i18n>Select Available Languages</legend>
                   <p class="usa-legend-hint font-2xs">The languages you select here are the additional languages your reports can be translated into.</p>
                   <ul class="usa-list--unstyled" role="group">
-                    <li *ngFor="let item of $supportedLanguages(); let i = index"><lib-adapt-checkbox [label]="item.label" [formControlName]="i" ></lib-adapt-checkbox></li>
+                    @for (item of $supportedLanguages(); track item; let i = $index) {
+                      <li><lib-adapt-checkbox [label]="item.label" [formControlName]="i" ></lib-adapt-checkbox></li>
+                    }
                   </ul>
-
-
                 </fieldset>
-
-            </div>
-
+              </div>
+            }
             <!-- REMOVED DEFAULT LANG -->
             <!-- <lib-adapt-combo-box  [hidden]="!editAccess" placeholder="Select a default language"  label="Default Language" formControlName="default" [items]="$availableDefaultLangOptions | async" itemLabel="label" itemAccessor="value">
-
-              <ng-container errors>
-                <ng-container *ngIf="enabledLangs.dirty && default.hasError('required')">
-                  <span class="margin-top-2 text-emergency">Please select a new default language. The default language must be one of the languages you’ve selected to support for translation.</span>
-                </ng-container>
+            <ng-container errors>
+              <ng-container *ngIf="enabledLangs.dirty && default.hasError('required')">
+                <span class="margin-top-2 text-emergency">Please select a new default language. The default language must be one of the languages you’ve selected to support for translation.</span>
               </ng-container>
-
-            </lib-adapt-combo-box> -->
-
-            <button *ngIf="editAccess" class="usa-button flex-align-self-start">{{pageContent!.actions!['save_button'] ? pageContent!.actions!['save_button'] : 'Save'}}</button>
-          </form>
-        </div>
+            </ng-container>
+          </lib-adapt-combo-box> -->
+          @if (editAccess) {
+            <button class="usa-button flex-align-self-start">{{pageContent!.actions!['save_button'] ? pageContent!.actions!['save_button'] : 'Save'}}</button>
+          }
+        </form>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+</div>
+}
 
-  <lib-adapt-confirm-modal (confirm)="confirmed = true"></lib-adapt-confirm-modal>
+<lib-adapt-confirm-modal (confirm)="confirmed = true"></lib-adapt-confirm-modal>

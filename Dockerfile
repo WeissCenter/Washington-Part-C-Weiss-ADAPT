@@ -1,4 +1,4 @@
-FROM --platform=linux/x86-64 node:20.13.1-alpine3.19 as build
+FROM --platform=linux/x86-64 node:24.13-alpine3.22 as build
 
 ARG CONFIGURATION
 
@@ -16,7 +16,7 @@ COPY . ./
 
 RUN npx nx server adapt-viewer --configuration=$CONFIGURATION
 
-FROM --platform=linux/x86-64 node:20.13.1-alpine3.19
+FROM --platform=linux/x86-64 node:24.13-alpine3.22 
 
 WORKDIR /usr/app
 

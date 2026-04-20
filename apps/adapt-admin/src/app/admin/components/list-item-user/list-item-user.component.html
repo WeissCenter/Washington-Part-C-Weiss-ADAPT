@@ -3,39 +3,49 @@
     <lib-adapt-h-element [ngClass]="'usa-prose margin-0 display-flex flex-align-center'" [level]="headingLvl">
       <span [id]="user.attributes.email + '-name'" class="padding-right-1"
         >{{ user.attributes.given_name }} {{ user.attributes.family_name }}</span
-      >
+        >
 
-      <lib-adapt-tag class="margin-0" status="active" *ngIf="user.active">Active</lib-adapt-tag>
-      <lib-adapt-tag class="margin-0" status="inactive" *ngIf="!user.active">Inactive</lib-adapt-tag>
-    </lib-adapt-h-element>
+        @if (user.active) {
+          <lib-adapt-tag class="margin-0" status="active">Active</lib-adapt-tag>
+        }
+        @if (!user.active) {
+          <lib-adapt-tag class="margin-0" status="inactive">Inactive</lib-adapt-tag>
+        }
+      </lib-adapt-h-element>
 
-    <p class="text-normal font-sm line-height-5 text-ink" *ngIf="user.lastLogin">
-      Last login {{ user.lastLogin | date : 'MM/dd/yyyy' }} at {{ user.lastLogin | date : 'hh:mm a' }}
-    </p>
+      @if (user.lastLogin) {
+        <p class="text-normal font-sm line-height-5 text-ink">
+          Last login {{ user.lastLogin | date : 'MM/dd/yyyy' }} at {{ user.lastLogin | date : 'HH:mm a' }}
+        </p>
+      }
 
-    <p class="text-normal font-sm line-height-5 text-ink" *ngIf="user.attributes.email">
-      Email: {{ user.attributes.email }}
-    </p>
-  </div>
-
-  <div class="list-item-user-controls flex-justify-center display-flex gap-2 flex-column">
-    <lib-adapt-toggle-switch
-      [describedByID]="user.attributes.email + '-name'"
-      [ngModel]="user.active"
-      *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Write';"
-      (ngModelChange)="onChangeState($event)"
-      toggledLabel="Deactivate User"
-      unToggledLabel="Activate User"></lib-adapt-toggle-switch>
-    <div>
-      <p class="usa-label" [id]="user.attributes.email + '-role'">Role:</p>
-      <select #roleSelect *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Write'"
-        (ngModelChange)="onChangeRole($event)" [ngModel]="user.role" [attr.aria-labelledby]="user.attributes.email + '-role'"
-        class="usa-select width-auto display-inline" name="role">
-        <option *ngFor="let role of roles" [value]="role.value">
-          {{ role.label }}
-        </option>
-      </select>
+      @if (user.attributes.email) {
+        <p class="text-normal font-sm line-height-5 text-ink">
+          Email: {{ user.attributes.email }}
+        </p>
+      }
     </div>
-    
+
+    <div class="list-item-user-controls flex-justify-center display-flex gap-2 flex-column">
+      <lib-adapt-toggle-switch
+        [describedByID]="user.attributes.email + '-name'"
+        [ngModel]="user.active"
+        *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Write';"
+        (ngModelChange)="onChangeState($event)"
+        toggledLabel="Deactivate User"
+      unToggledLabel="Activate User"></lib-adapt-toggle-switch>
+      <div>
+        <p class="usa-label" [id]="user.attributes.email + '-role'">Role:</p>
+        <select #roleSelect *adaptAccessControl="'Users'; behavior: 'hide'; action: 'Write'"
+          (ngModelChange)="onChangeRole($event)" [ngModel]="user.role" [attr.aria-labelledby]="user.attributes.email + '-role'"
+          class="usa-select width-auto display-inline" name="role">
+          @for (role of roles; track role.value) {
+            <option [value]="role.value">
+              {{ role.label }}
+            </option>
+          }
+        </select>
+      </div>
+
+    </div>
   </div>
-</div>

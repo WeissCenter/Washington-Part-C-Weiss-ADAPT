@@ -3,228 +3,234 @@
 
 <!--@let pageContent = $pageContent();-->
 <!--@let pageSections = $pageSections();-->
-<section *ngIf="pageContent && pageSections && pageSections[0]" aria-label="Recent activities and common actions" class="padding-top-3 tablet:padding-top-5">
-  <div class="grid-container padding-x-0 tablet:padding-x-5">
-    <div class="display-flex margin-top-4 width-full padding-x-2 tablet:padding-x-0 flex-column">
-      <div class="usa-prose">
-        <!-- What can you do here? -->
-        <h2>{{ pageSections[0].title }}</h2>
-        <p class="measure-4">{{ pageSections[0].description }}</p>
-
-        <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/quickstart/homepage" target="_blank"
-          aria-label="Learn More (opens in a new tab)" style="font-size: 0.8rem;margin-top: 8px;">
-          <span aria-hidden="true">{{pageContent.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
-        </a>
-
+@if (pageContent && pageSections && pageSections[0]) {
+  <section aria-label="Recent activities and common actions" class="padding-top-3 tablet:padding-top-5">
+    <div class="grid-container padding-x-0 tablet:padding-x-5">
+      <div class="display-flex margin-top-4 width-full padding-x-2 tablet:padding-x-0 flex-column flex-align-start usa-prose">
+          <!-- What can you do here? -->
+          <h2>{{ pageSections[0].title }}</h2>
+          <p class="measure-4">{{ pageSections[0].description }}</p>
+          <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/quickstart/homepage" target="_blank"
+            aria-label="Learn More (opens in a new tab)" class="usa-link margin-top-05 display-flex flex-align-center">
+            <span aria-hidden="true" class="font-xs">{{pageContent.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+          </a>
+      </div>
+      <div
+        class="display-flex flex-align-start flex-column desktop:flex-row accessibility-layout gap-2 margin-top-2 desktop:margin-top-4">
+        @if ((pageSections[0]?.sub_sections)![0]) {
+          <div
+            class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg"
+            [hidden]="!recentActivity.length">
+            <div class="usa-prose">
+              <h3>{{ pageSections[0].sub_sections![0].title }}</h3>
+              <p>{{ pageSections[0].sub_sections![0].description }}</p>
+            </div>
+            <ul class="usa-icon-list margin-top-2">
+              @for (activity of recentActivity; track activity.id) {
+                <li class="usa-icon-list__item text-no-underline">
+                  @switch (activity.type) {
+                    @case ('DataView') {
+                      <a
+                        class="usa-link text-no-underline flex-align-center display-flex gap-05"
+                        [routerLink]="['data-view', activity.id]">
+                        <div class="usa-icon-list__icon text-primary">
+                          <i class="fal fa-chart-pie" aria-hidden="true" role="img" alt=""></i>
+                        </div>
+                        <div class="usa-icon-list__content text-no-underline">
+                          {{ activity.item.name }}
+                        </div>
+                      </a>
+                    }
+                    @case ('DataSource') {
+                      <a
+                        class="usa-link text-no-underline flex-align-center display-flex gap-05"
+                        [routerLink]="['data-source', activity.id]">
+                        <div class="usa-icon-list__icon text-primary">
+                          <i class="fal fa-database" aria-hidden="true" role="img" alt=""></i>
+                        </div>
+                        <div class="usa-icon-list__content">
+                          {{ activity.item.name }}
+                        </div>
+                      </a>
+                    }
+                    @case ('Report') {
+                      <a
+                        class="usa-link text-no-underline flex-align-center display-flex gap-05"
+                        [routerLink]="['reports', activity.id]">
+                        <div class="usa-icon-list__icon text-primary">
+                          <i class="fal fa-chart-line" aria-hidden="true" role="img" alt=""></i>
+                        </div>
+                        <div class="usa-icon-list__content">
+                          {{ activity.item.name }}
+                        </div>
+                      </a>
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        @if (this.role.hasPermission('Reports', 'Write') || this.role.hasPermission('Data Views', 'Write')) {
+          <div
+            class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg">
+            <div class="usa-prose">
+              <h3>{{ pageSections[0].sub_sections![1].title }}</h3>
+              <p>{{ pageSections[0].sub_sections![1].description }}</p>
+            </div>
+            <ul class="usa-icon-list margin-top-2">
+              @if (this.role.hasPermission('Reports', 'Write')) {
+                <li class="usa-icon-list__item">
+                  <button
+                    class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
+                    (click)="reportModal && reportModal.open()">
+                    <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
+                    {{ pageSections[0].sub_sections![1].items![0] }}
+                  </button>
+                </li>
+              }
+              @if (this.role.hasPermission('Data Views', 'Write')) {
+                <li class="usa-icon-list__item">
+                  <button
+                    class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
+                    (click)="dataViewModal && dataViewModal.open()">
+                    <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
+                    {{ pageSections[0].sub_sections![1].items![1] }}
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
       </div>
     </div>
+  </section>
+}
 
-    <div
-      class="display-flex flex-align-start flex-column desktop:flex-row accessibility-layout gap-2 margin-top-2 desktop:margin-top-4">
-      <div
-        *ngIf="(pageSections[0]?.sub_sections)![0]"
-        class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg"
-        [hidden]="!recentActivity.length">
+@if (pageSections && pageSections[1]) {
+  <section aria-label="Data Collection" class="padding-y-4 desktop:padding-y-6">
+    <div class="grid-container padding-x-0 tablet:padding-x-5">
+      <div class="display-flex width-full padding-x-2 tablet:padding-x-0 flex-column">
         <div class="usa-prose">
-          <h3>{{ pageSections[0].sub_sections![0].title }}</h3>
-          <p>{{ pageSections[0].sub_sections![0].description }}</p>
+          <!-- Reports and Data Views -->
+          <h2>{{ pageSections[1].title }}</h2>
+          <p class="measure-4">{{ pageSections[1].description }}</p>
         </div>
-
-        <ul class="usa-icon-list margin-top-2">
-          <ng-container *ngFor="let activity of recentActivity">
-            <li class="usa-icon-list__item text-no-underline">
-              <ng-container [ngSwitch]="activity.type">
-                <a
-                  *ngSwitchCase="'DataView'"
-                  class="usa-link text-no-underline flex-align-center display-flex gap-05"
-                  [routerLink]="['data-view', activity.id]">
-                  <div class="usa-icon-list__icon text-primary">
-                    <i class="fal fa-chart-pie" aria-hidden="true" role="img" alt=""></i>
-                  </div>
-                  <div class="usa-icon-list__content text-no-underline">
-                    {{ activity.item.name }}
-                  </div>
-                </a>
-
-                <a
-                  *ngSwitchCase="'DataSource'"
-                  class="usa-link text-no-underline flex-align-center display-flex gap-05"
-                  [routerLink]="['data-source', activity.id]">
-                  <div class="usa-icon-list__icon text-primary">
-                    <i class="fal fa-database" aria-hidden="true" role="img" alt=""></i>
-                  </div>
-                  <div class="usa-icon-list__content">
-                    {{ activity.item.name }}
-                  </div>
-                </a>
-
-                <a
-                  *ngSwitchCase="'Report'"
-                  class="usa-link text-no-underline flex-align-center display-flex gap-05"
-                  [routerLink]="['reports', activity.id]">
-                  <div class="usa-icon-list__icon text-primary">
-                    <i class="fal fa-chart-line" aria-hidden="true" role="img" alt=""></i>
-                  </div>
-                  <div class="usa-icon-list__content">
-                    {{ activity.item.name }}
-                  </div>
-                </a>
-              </ng-container>
-            </li>
-          </ng-container>
-        </ul>
       </div>
       <div
-        *ngIf="this.role.hasPermission('Reports', 'Write') || this.role.hasPermission('Data Views', 'Write')"
-        class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg">
-        <div class="usa-prose">
-          <h3>{{ pageSections[0].sub_sections![1].title }}</h3>
-          <p>{{ pageSections[0].sub_sections![1].description }}</p>
-        </div>
-        <ul class="usa-icon-list margin-top-2">
-          <li class="usa-icon-list__item" *ngIf="this.role.hasPermission('Reports', 'Write')">
+        class="display-flex flex-column flex-align-start desktop:flex-row accessibility-layout gap-2 margin-top-2 desktop:margin-top-4">
+        <div
+          aria-label="Reports list"
+          role="region"
+          class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
+          @if ((pageSections[1]?.sub_sections)![0]) {
+            <div class="usa-prose">
+              <!-- View Reports -->
+              <h3>{{ pageSections[1].sub_sections![0].title }}</h3>
+              <p [innerHtml]="pageSections[1].sub_sections![0].description"></p>
+            </div>
+          }
+          <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
+            <a class="usa-button usa-button--outline" [routerLink]="['reports']" aria-label="View all reports">
+              <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
+              View all
+            </a>
             <button
-              class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
+              *adaptAccessControl="'Reports'; behavior: 'hide'; action: 'Write'"
+              class="usa-button usa-button--outline"
               (click)="reportModal && reportModal.open()">
               <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
-              {{ pageSections[0].sub_sections![1].items![0] }}
+              Create new report
             </button>
-          </li>
-          <li class="usa-icon-list__item" *ngIf="this.role.hasPermission('Data Views', 'Write')">
-            <button
-              class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
-              (click)="dataViewModal && dataViewModal.open()">
-              <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
-              {{ pageSections[0].sub_sections![1].items![1] }}
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="pageSections && pageSections[1]" aria-label="Data Collection" class="padding-y-4 desktop:padding-y-6">
-  <div class="grid-container padding-x-0 tablet:padding-x-5">
-    <div class="display-flex width-full padding-x-2 tablet:padding-x-0 flex-column">
-      <div class="usa-prose">
-        <!-- Reports and Data Views -->
-        <h2>{{ pageSections[1].title }}</h2>
-        <p class="measure-4">{{ pageSections[1].description }}</p>
-      </div>
-    </div>
-    <div
-      class="display-flex flex-column flex-align-start desktop:flex-row accessibility-layout gap-2 margin-top-2 desktop:margin-top-4">
-      <div
-        aria-label="Reports list"
-        role="region"
-        class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
-        <div *ngIf="(pageSections[1]?.sub_sections)![0]" class="usa-prose">
-          <!-- View Reports -->
-          <h3>{{ pageSections[1].sub_sections![0].title }}</h3>
-          <p [innerHtml]="pageSections[1].sub_sections![0].description"></p>
-        </div>
-        <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
-          <a class="usa-button usa-button--outline" [routerLink]="['reports']" aria-label="View all reports">
-            <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
-            View all
-          </a>
-          <button
-            *adaptAccessControl="'Reports'; behavior: 'hide'; action: 'Write'"
-            class="usa-button usa-button--outline"
-            (click)="reportModal && reportModal.open()">
-            <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
-            Create new report
-          </button>
-        </div>
-        <!-- <div class="display-flex flex-column margin-top-1 gap-1 width-full">
+          </div>
+          <!-- <div class="display-flex flex-column margin-top-1 gap-1 width-full">
           <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="loadingReports">
             <div class="display-flex flex-align-center gap-1">
               <div class="loader"></div>
               <p class="usa-prose" i18n>Loading reports...</p>
             </div>
           </div> -->
-        <ng-container *ngIf="$reports | loading : 'Reports have loaded' | async as reportsLoaded">
-          <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reportsLoaded.loading">
-            <div class="display-flex flex-align-center gap-1">
-              <div class="loader"></div>
-              <p class="usa-prose" i18n>Loading reports...</p>
-            </div>
-          </div>
-
-          <ng-container *ngIf="reportsLoaded.value">
-            <ng-container *ngIf="reportsLoaded.value.length; else noReports">
-              <span class="visually-hidden" aria-live="polite" id="report-load-notifier">Reports have loaded</span>
-              <adapt-list-item-report
-                *ngFor="let report of reportsLoaded.value | limitTo : 5"
-                [report]="report"
-                headingLvl="h4"></adapt-list-item-report>
-            </ng-container>
-
-            <ng-template #noReports>
-              <p class="usa-prose" *ngIf="!loadingReports" aria-live="polite">No Reports have been created</p>
-            </ng-template>
-          </ng-container>
-        </ng-container>
-      </div>
-
-      <div
-        aria-label="Data views list"
-        role="region"
-        class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
-        <div *ngIf="(pageSections[1]?.sub_sections)![1]" class="usa-prose">
-          <!-- Data Views -->
-          <h3>{{ pageSections[1].sub_sections![1].title }}</h3>
-          <p [innerHtml]="pageSections[1].sub_sections![1].description"></p>
-        </div>
-        <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
-          <a
-            class="usa-button usa-button--outline"
-            [routerLink]="['data-management']"
-            aria-label="View all data views">
-            <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
-            View all
-          </a>
-          <button
-            *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
-            class="usa-button usa-button--outline"
-            (click)="dataViewModal && dataViewModal.open()">
-            <i aria-hidden="true" class="fal fa-plus" role="img" alt=""></i>
-            Create new data view
-          </button>
-        </div>
-
-        <div class="display-flex flex-column margin-top-1 gap-1 width-full">
-          <ng-container *ngIf="$dataViews | loading : 'Data views have loaded' | async as viewsLoaded">
-            <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="viewsLoaded.loading">
+          @if ($reports | loading : 'Reports have loaded' | async; as reportsLoaded) {
+            <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reportsLoaded.loading">
               <div class="display-flex flex-align-center gap-1">
                 <div class="loader"></div>
-                <p class="usa-prose" i18n>Loading data views...</p>
+                <p class="usa-prose" i18n>Loading reports...</p>
               </div>
             </div>
-
-            <ng-container *ngIf="viewsLoaded.value">
-              <ng-container *ngIf="viewsLoaded.value.length; else noViews">
-                <span class="visually-hidden" aria-live="polite" id="views-load-notifier">Data views have loaded</span>
-                <adapt-list-item-data
-                  [$reports]="$reports"
-                  [dataViewModal]="dataViewModal"
-                  [reportModal]="reportModal"
-                  *ngFor="let view of viewsLoaded.value | limitTo : 5"
-                  [view]="view"
-                  [headingLvl]="'h4'"></adapt-list-item-data>
-
-              </ng-container>
-
-              <ng-template #noViews>
-                <p class="usa-prose" aria-live="polite" *ngIf="!loadingDataViews">No data views have been created</p>
-              </ng-template>
-            </ng-container>
-          </ng-container>
+            @if (reportsLoaded.value) {
+              @if (reportsLoaded.value.length) {
+                <span class="visually-hidden" aria-live="polite" id="report-load-notifier">Reports have loaded</span>
+                @for (report of reportsLoaded.value | limitTo : 5; track report.reportID) {
+                  <adapt-list-item-report
+                    [report]="report"
+                  headingLvl="h4"></adapt-list-item-report>
+                }
+              } @else {
+                @if (!loadingReports) {
+                  <p class="usa-prose" aria-live="polite">No Reports have been created</p>
+                }
+              }
+            }
+          }
+        </div>
+        <div
+          aria-label="Data views list"
+          role="region"
+          class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
+          @if ((pageSections[1]?.sub_sections)![1]) {
+            <div class="usa-prose">
+              <!-- Data Views -->
+              <h3>{{ pageSections[1].sub_sections![1].title }}</h3>
+              <p [innerHtml]="pageSections[1].sub_sections![1].description"></p>
+            </div>
+          }
+          <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
+            <a
+              class="usa-button usa-button--outline"
+              [routerLink]="['data-management']"
+              aria-label="View all data views">
+              <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
+              View all
+            </a>
+            <button
+              *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
+              class="usa-button usa-button--outline"
+              (click)="dataViewModal && dataViewModal.open()">
+              <i aria-hidden="true" class="fal fa-plus" role="img" alt=""></i>
+              Create new data view
+            </button>
+          </div>
+          <div class="display-flex flex-column margin-top-1 gap-1 width-full">
+            @if ($dataViews | loading : 'Data views have loaded' | async; as viewsLoaded) {
+              <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="viewsLoaded.loading">
+                <div class="display-flex flex-align-center gap-1">
+                  <div class="loader"></div>
+                  <p class="usa-prose" i18n>Loading data views...</p>
+                </div>
+              </div>
+              @if (viewsLoaded.value) {
+                @if (viewsLoaded.value.length) {
+                  <span class="visually-hidden" aria-live="polite" id="views-load-notifier">Data views have loaded</span>
+                  @for (view of viewsLoaded.value | limitTo : 5; track view.dataViewID) {
+                    <adapt-list-item-data
+                      [$reports]="$reports"
+                      [dataViewModal]="dataViewModal"
+                      [reportModal]="reportModal"
+                      [view]="view"
+                    [headingLvl]="'h4'"></adapt-list-item-data>
+                  }
+                } @else {
+                  @if (!loadingDataViews) {
+                    <p class="usa-prose" aria-live="polite">No data views have been created</p>
+                  }
+                }
+              }
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+}
 <adapt-data-view-modal #dataViewModal></adapt-data-view-modal>
 <adapt-report-modal #reportModal></adapt-report-modal>

@@ -11,13 +11,12 @@ import { API_URL, SettingsService } from '../../index';
 export class GlossaryService {
   // private $glossary = signal<{ [lang: string]: { [key: string]: IGlossaryTerm } }>({});
   api: string;
-  private glossaryResource = resource({
-    request: () => ({
+  private glossaryResource = resource<{ [lang: string]: { [key: string]: IGlossaryTerm } }, { settings: AdaptSettings }>({
+    params: () => ({
       settings: this.settings.getSettingsSignal()(),
     }),
-    loader: async ({ request, abortSignal }) => {
-      const { settings } = request;
-      const langs = settings.supportedLanguages || ['en'];
+    loader: async ({ params }) => {
+      const langs = params.settings.supportedLanguages || ['en'];
       const glossarySet: { [lang: string]: { [key: string]: IGlossaryTerm } } = {};
       for (const lang of langs) {
         glossarySet[lang] = await this.getGlossaryFromApi(this.api, lang);

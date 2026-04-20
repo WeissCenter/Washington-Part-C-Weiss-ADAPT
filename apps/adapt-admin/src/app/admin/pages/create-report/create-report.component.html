@@ -15,112 +15,127 @@
         <div class="grid-col-12 margin-top-3">
           <label class="usa-label margin-top-0" for="name"
             >Report name <span class="text-red text-heavy">*</span></label
-          >
-          <div class="usa-hint margin-top-05" id="nameHint">Create a friendly and unique name.</div>
-          <input
-            type="text"
-            id="name"
-            formControlName="name"
-            [ngClass]="{ 'border-red': name?.invalid && (name?.dirty || name?.touched) }"
-            class="usa-input"
-            aria-describedby="nameHint" />
-          <div aria-live="polite" *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="visually-hidden">
-            <p *ngIf="name?.errors?.['required']" class="visually-hidden" i18n>Report name is required.</p>
-          </div>
-        </div>
-
-        <lib-adapt-combo-box
-          class="grid-col-12 margin-top-3 desktop:grid-col-6"
-          formControlName="template"
-          comboID="template"
-          label="Report template"
-          [required]="true"
-          [items]="reportTemplates | async"
-          itemLabel="label"
-          itemAccessor="value">
-          <ng-container hint>
-            <p class="usa-hint margin-top-05">Select a template to build your report from.</p>
-          </ng-container>
-
-          <ng-container errors>
-            <div
-              *ngIf="template?.invalid && (template?.dirty || template?.touched)"
-              class="form-errors margin-top-1 text-emergency">
-              <div *ngIf="template?.errors?.['required']" i18n>Report Template is required.</div>
-            </div>
-          </ng-container>
-        </lib-adapt-combo-box>
-      </div>
-
-      <div class="display-flex width-full flex-1 gap-2">
-        <ng-container formArrayName="dataViews" *ngIf="templateDataViews | async as views">
-          <lib-adapt-combo-box
-            *ngFor="let view of views; let i = index"
-            class="grid-col-12 margin-top-3 desktop:grid-col-6"
-            [formControlName]="i"
-            comboID="dataSet"
-            [label]="view"
-            [required]="true"
-            [items]="$dataViews | async"
-            itemLabel="name">
-            <ng-container hint>
-              <!-- <p class="usa-hint margin-top-05">What data will drive report tab {{view}}?</p> -->
-            </ng-container>
-            <ng-container errors>
-              <div
-                *ngIf="dataSet?.invalid && (dataSet?.dirty || dataSet?.touched)"
-                class="form-errors margin-top-1 text-emergency">
-                <div *ngIf="dataSet?.errors?.['required']">Data View is required.</div>
+            >
+            <div class="usa-hint margin-top-05" id="nameHint">Create a friendly and unique name.</div>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              [ngClass]="{ 'border-red': name?.invalid && (name?.dirty || name?.touched) }"
+              class="usa-input"
+              aria-describedby="nameHint" />
+            @if (name && name.invalid && (name.dirty || name.touched)) {
+              <div aria-live="polite" class="visually-hidden">
+                @if (name.errors?.['required']) {
+                  <p class="visually-hidden" i18n>Report name is required.</p>
+                }
               </div>
+            }
+          </div>
+
+          <lib-adapt-combo-box
+            class="grid-col-12 margin-top-3 desktop:grid-col-6"
+            formControlName="template"
+            comboID="template"
+            label="Report template"
+            [required]="true"
+            [items]="reportTemplates | async"
+            itemLabel="label"
+            itemAccessor="value">
+            <ng-container hint>
+              <p class="usa-hint margin-top-05">Select a template to build your report from.</p>
+            </ng-container>
+
+            <ng-container errors>
+              @if (template && template.invalid && (template.dirty || template.touched)) {
+                <div
+                  class="form-errors margin-top-1 text-emergency">
+                  @if (template.errors?.['required']) {
+                    <div i18n>Report Template is required.</div>
+                  }
+                </div>
+              }
             </ng-container>
           </lib-adapt-combo-box>
-        </ng-container>
-      </div>
-
-      <fieldset class="usa-fieldset margin-top-3 display-flex flex-column gap-2">
-        <legend class="usa-legend usa-legend margin-bottom-1" i18n>Select report visibility</legend>
-        <div class="usa-radio flex-align-self-start">
-          <input
-            formControlName="visibility"
-            class="usa-radio__input"
-            id="external-report"
-            type="radio"
-            value="external"
-            checked="checked" />
-          <label class="usa-radio__label" for="external-report">Externally visible report</label>
         </div>
-        <div class="usa-radio flex-align-self-start">
-          <input
-            formControlName="visibility"
-            class="usa-radio__input"
-            id="internal-report"
-            type="radio"
-            value="internal" />
-          <label class="usa-radio__label" for="internal-report">Internal only report</label>
+
+        <div class="display-flex width-full flex-1 gap-2">
+          @if (templateDataViews | async; as views) {
+            <ng-container formArrayName="dataViews">
+              @for (view of views; track view; let i = $index) {
+                <lib-adapt-combo-box
+                  class="grid-col-12 margin-top-3 desktop:grid-col-6"
+                  [formControlName]="i"
+                  comboID="dataSet"
+                  [label]="view"
+                  [required]="true"
+                  [items]="$dataViews | async"
+                  itemLabel="name">
+                  <ng-container hint>
+                    <!-- <p class="usa-hint margin-top-05">What data will drive report tab {{view}}?</p> -->
+                  </ng-container>
+                  <ng-container errors>
+                    @if (dataSet && dataSet.invalid && (dataSet.dirty || dataSet.touched)) {
+                      <div
+                        class="form-errors margin-top-1 text-emergency">
+                        @if (dataSet.errors?.['required']) {
+                          <div>Data View is required.</div>
+                        }
+                      </div>
+                    }
+                  </ng-container>
+                </lib-adapt-combo-box>
+              }
+            </ng-container>
+          }
         </div>
-      </fieldset>
-    </form>
-  </div>
 
-  <div
-    class="bg-accent-warm-light display-flex flex-justify flex-align-center padding-y-1 padding-x-105"
-    *ngIf="viewPreview">
-    <h2 class="font-md margin-0" i18n>Live report preview</h2>
+        <fieldset class="usa-fieldset margin-top-3 display-flex flex-column gap-2">
+          <legend class="usa-legend usa-legend margin-bottom-1" i18n>Select report visibility</legend>
+          <div class="usa-radio flex-align-self-start">
+            <input
+              formControlName="visibility"
+              class="usa-radio__input"
+              id="external-report"
+              type="radio"
+              value="external"
+              checked="checked" />
+            <label class="usa-radio__label" for="external-report">Externally visible report</label>
+          </div>
+          <div class="usa-radio flex-align-self-start">
+            <input
+              formControlName="visibility"
+              class="usa-radio__input"
+              id="internal-report"
+              type="radio"
+              value="internal" />
+            <label class="usa-radio__label" for="internal-report">Internal only report</label>
+          </div>
+        </fieldset>
+      </form>
+    </div>
 
-    <!-- <button class="usa-button usa-button--unstyled"
-            style="--usa-button-icon-size:var(--usa-spacing-2);--usa-button-color: var(--usa-ink); text-decoration: none;"
-            i18n (click)="toTop()">
-            <span class="visually-hidden">To Top</span>
-            <i class="fas fa-arrow-to-top" aria-hidden="true"></i>
-        </button> -->
-  </div>
+    @if (viewPreview) {
+      <div
+        class="bg-accent-warm-light display-flex flex-justify flex-align-center padding-y-1 padding-x-105"
+        >
+        <h2 class="font-md margin-0" i18n>Live report preview</h2>
+        <!-- <button class="usa-button usa-button--unstyled"
+        style="--usa-button-icon-size:var(--usa-spacing-2);--usa-button-color: var(--usa-ink); text-decoration: none;"
+        i18n (click)="toTop()">
+        <span class="visually-hidden">To Top</span>
+        <i class="fas fa-arrow-to-top" aria-hidden="true"></i>
+      </button> -->
+    </div>
+  }
 
-  <adapt-report
-    (templateUpdate)="onTemplateUpdates($event)"
-    [previewSuppress]="previewSuppress"
-    *ngIf="viewPreview"
-    [report]="createReportForm.getRawValue()"
+  @if (viewPreview) {
+    <adapt-report
+      (templateUpdate)="onTemplateUpdates($event)"
+      [previewSuppress]="previewSuppress"
+      [report]="createReportForm.getRawValue()"
     [preview]="true"></adapt-report>
+  }
 
   <div
     class="report-save-controls display-flex gap-1 border-top-05 margin-top-5 margin-bottom-2 border-base-lighter padding-y-105 bg-body">

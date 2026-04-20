@@ -4,10 +4,14 @@
     }} {{ dataRepService.filterOrSuppress(content, filtered, suppressed) }}</lib-adapt-h-element>
   <p class="insight measure-4" [id]="id + '-insight'" [innerHTML]="insight"></p>
   <div class="action-bar">
-    <ul *ngIf="!noData">
+    @if (!noData) {
+    <ul>
       <li>
         <button (click)="togglePlainLanguage()" #explanationSwitch [attr.aria-controls]="id + '-explanation-region'"
-                aria-pressed="false" [id]="id + '-explanation-switch'">
+                [attr.aria-expanded]="dataRepSettings.showPlainLanguage"
+                [attr.aria-pressed]="dataRepSettings.showPlainLanguage"
+                [attr.aria-label]="(content?.actions?.['explain'] || 'Explain') + ' (show plain-language summary)'"
+                [id]="id + '-explanation-switch'">
           <i class="far" [ngClass]="{
               'fa-toggle-off': !dataRepSettings.showPlainLanguage,
               'fa-toggle-on': dataRepSettings.showPlainLanguage
@@ -17,7 +21,9 @@
       </li>
       <li>
         <button (click)="toggleGlossary()" #glossarySwitch [attr.aria-controls]="glossaryIdsString"
-                [attr.aria-pressed]="dataRepSettings.showGlossary" [id]="id + '-glossary-switch'">
+                [attr.aria-pressed]="dataRepSettings.showGlossary"
+                [attr.aria-label]="(content?.actions?.['glossary'] || 'Glossary') + ' (show definitions)'"
+                [id]="id + '-glossary-switch'">
           <i class="far"
              [ngClass]="{ 'fa-toggle-off': !dataRepSettings.showGlossary, 'fa-toggle-on': dataRepSettings.showGlossary }"
              aria-hidden="true" role="img" alt=""></i>
@@ -26,7 +32,11 @@
         </button>
       </li>
       <li>
-        <button #dataModalSwitch [id]="id + '-data-modal-button'" (click)="openDataModal()">
+        <button #dataModalSwitch [id]="id + '-data-modal-button'" (click)="openDataModal()"
+                [attr.aria-controls]="id + '-data-modal'"
+                [attr.aria-expanded]="isDataModalOpen"
+                aria-haspopup="dialog"
+                [attr.aria-label]="(content?.actions?.['data'] || 'Data') + ' (open data details dialog)'">
           <i class="far fa-table" aria-hidden="true" role="img" alt=""></i>
           {{content?.actions?.['data'] || 'Data'}}
         </button>
@@ -36,9 +46,11 @@
             Share
         </button> -->
     </ul>
+    }
   </div>
-  <div class="plain-language" #explainationRegion [attr.aria-pressed]="dataRepSettings.showPlainLanguage"
-       [attr.aria-expanded]="dataRepSettings.showPlainLanguage"
+  <div class="plain-language" #explainationRegion [id]="id + '-explanation-region'"
+       [attr.aria-live]="shouldAnnouncePlainLanguage ? 'polite' : null"
+       [attr.aria-atomic]="shouldAnnouncePlainLanguage ? 'true' : null"
        [hidden]="dataRepSettings.showPlainLanguage === true ? undefined : true" tabindex="-1">
     <div class="display-flex flex-column tablet:flex-row gap-205 width-full">
       <div class="width-full display-flex flex-column">
@@ -57,182 +69,188 @@
 
   </div>
   <div class="display-flex width-full gap-1">
-    <ol *ngIf="!noData" #bars class="series width-full">
-      <div class="full-width display-flex gap-205">
-        <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
-                             ngClass="display-none tablet:display-flex margin-0 width-full"
-                             [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem1Label }}</lib-adapt-h-element>
-        <lib-adapt-h-element [id]="id+'-comparison-item-2-label'"
-                             ngClass="plain-language-title margin-0 width-full display-none tablet:display-flex"
-                             [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem2Label }}</lib-adapt-h-element>
-      </div>
-      <ng-container *ngFor="let item of comparisonItem1Data; index as index;last as last">
+    @if (!noData) {
+      <ol #bars class="series width-full">
+        <div class="full-width display-flex gap-205">
+          <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
+                               ngClass="display-none tablet:display-flex margin-0 width-full"
+                               [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem1Label }}</lib-adapt-h-element>
+          <lib-adapt-h-element [id]="id+'-comparison-item-2-label'"
+                               ngClass="plain-language-title margin-0 width-full display-none tablet:display-flex"
+                               [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem2Label }}</lib-adapt-h-element>
+        </div>
+        @for (item of comparisonItem1Data; track $index; let index = $index; let last = $last) {
 
-        <li tabindex="0" [id]="id + '-series-item-' + index">
-          <div class="display-flex flex-column tablet:flex-row gap-205 width-full"
-               [ngClass]="{'padding-bottom-205 tablet:padding-bottom-0': !last}">
-            <div class="display-flex flex-column gap-1 width-full"
-                 [attr.aria-labelledby]="id + '-comparison-item-1-label'">
-              <span class="content">
-                <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
-                                     ngClass="display-flex tablet:display-none margin-0 width-full font-sm text-medium text-base-dark"
-                                     [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem1Label }}</lib-adapt-h-element>
-                <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
-                                     [level]="dataRepService.mapHeadingLvl(headingLvl3)">{{ item[comparisonItem1Raw.chart.xAxisLabel] |
-                  glossary : 'label' :
-                  lang | async }}</lib-adapt-h-element>
-                <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                   [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
-                  <span [innerHTML]="item[comparisonItem1Raw.chart.xAxisLabel] | glossary : 'definition' : lang | async"></span>
-                </p>
-              </span>
-              <div class="bar-wrapper">
-                <div class="bar" [hidden]="item.percentage === 0"
-                     [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': item.flexAmount }" aria-hidden="true"></div>
-                <ul class="details">
-                  <ng-container *ngIf="suppressed; else notSuppressedPct">
-                    <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                      {{ item?.percentage > 0 ?
-                      item.percentage.toLocaleString(
-                        this.localization,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ) + "%" : content?.actions?.['suppressed'] }}
-                    </li>
+          <li tabindex="0" [id]="id + '-series-item-' + index">
+            <div class="display-flex flex-column tablet:flex-row gap-205 width-full"
+                 [ngClass]="{'padding-bottom-205 tablet:padding-bottom-0': !last}">
+              <div class="display-flex flex-column gap-1 width-full"
+                   [attr.aria-labelledby]="id + '-comparison-item-1-label'">
+                <span class="content">
+                  <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
+                                       ngClass="display-flex tablet:display-none margin-0 width-full font-sm text-medium text-base-dark"
+                                       [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem1Label }}</lib-adapt-h-element>
+                  <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
+                                       [level]="dataRepService.mapHeadingLvl(headingLvl3)">{{ item[comparisonItem1Raw.chart.xAxisLabel] |
+                    glossary : 'label' :
+                    lang | async }}</lib-adapt-h-element>
+                  <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
+                     [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
+                    <span [innerHTML]="item[comparisonItem1Raw.chart.xAxisLabel] | glossary : 'definition' : lang | async"></span>
+                  </p>
+                </span>
+                <div class="bar-wrapper">
+                  <div class="bar" [hidden]="item.percentage === 0"
+                       [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': item.flexAmount }" aria-hidden="true"></div>
+                  <ul class="details">
+                    @if (suppressed) {
+                      <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                        {{ item?.percentage > 0 ?
+                        item.percentage.toLocaleString(
+                          this.localization,
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        ) + "%" : content?.actions?.['suppressed'] }}
+                      </li>
 
-                    <li class="value" [id]="id + '-series-item-value-' + index">
-                      {{item[comparisonItem1Raw.chart.yAxisValue] > 0 ?
-                      item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }) : content?.actions?.['suppressed']}}
-                    </li>
-                  </ng-container>
-
-                  <ng-template #notSuppressedPct>
-                    <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                      {{item.percentage?.toLocaleString(this.localization, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}}%
-                    </li>
-                    <li class="value" [id]="id + '-series-item-value-' + index">
-                      {{item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}}
-                    </li>
-                  </ng-template>
-                </ul>
-              </div>
-            </div>
-            <div class="display-flex flex-column gap-1 width-full"
-                 [attr.aria-labelledby]="id + '-comparison-item-2-label'">
-              <span class="content">
-                <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
-                                     ngClass="display-flex tablet:display-none margin-0 width-full font-sm text-medium text-base-dark"
-                                     [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem2Label }}</lib-adapt-h-element>
-                <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
-                                     [level]="dataRepService.mapHeadingLvl(headingLvl3)">{{
-                    comparisonItem2Data[index][comparisonItem2Raw.chart.xAxisLabel] |
-                      glossary : 'label' :
-                  lang | async }}</lib-adapt-h-element>
-                <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                   [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
-                  <span
-                    [innerHTML]="comparisonItem2Data[index][comparisonItem2Raw.chart.xAxisLabel] | glossary : 'definition' : lang | async"></span>
-                </p>
-              </span>
-              <div class="bar-wrapper">
-                <div class="bar"
-                     [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': comparisonItem2Data[index].flexAmount }"
-                     aria-hidden="true"></div>
-                <ul class="details">
-                  <ng-container *ngIf="suppressed; else notSuppressedPct2">
-                    <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                      {{ comparisonItem2Data[index]?.percentage > 0 ?
-                      comparisonItem2Data[index].percentage.toLocaleString(
-                        this.localization,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ) + "%" : content?.actions?.['suppressed'] }}
-                    </li>
-
-                    <li class="value" [id]="id + '-series-item-value-' + index">
-                      {{comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue] > 0 ?
-                      comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue].toLocaleString(this.localization,
-                        {
+                      <li class="value" [id]="id + '-series-item-value-' + index">
+                        {{item[comparisonItem1Raw.chart.yAxisValue] > 0 ?
+                        item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,
                         }) : content?.actions?.['suppressed']}}
-                    </li>
-                  </ng-container>
-
-                  <ng-template #notSuppressedPct2>
-                    <li class="percentage" [id]="id + '-series-item-percentage-' + index">
-                      {{comparisonItem2Data[index].percentage?.toLocaleString(this.localization, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}}%
-                    </li>
-                    <li class="value" [id]="id + '-series-item-value-' + index">
-                      {{comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue].toLocaleString(this.localization,
-                      {
+                      </li>
+                    } @else {
+                      <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                        {{item.percentage?.toLocaleString(this.localization, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}}%
+                      </li>
+                      <li class="value" [id]="id + '-series-item-value-' + index">
+                        {{item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
                       })}}
-                    </li>
-                  </ng-template>
-                </ul>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+              <div class="display-flex flex-column gap-1 width-full"
+                   [attr.aria-labelledby]="id + '-comparison-item-2-label'">
+                <span class="content">
+                  <lib-adapt-h-element [id]="id+'-comparison-item-1-label'"
+                                       ngClass="display-flex tablet:display-none margin-0 width-full font-sm text-medium text-base-dark"
+                                       [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ comparisonItem2Label }}</lib-adapt-h-element>
+                  <lib-adapt-h-element class="label" [id]="id + '-series-item-label-' + index"
+                                       [level]="dataRepService.mapHeadingLvl(headingLvl3)">{{
+                      comparisonItem2Data[index][comparisonItem2Raw.chart.xAxisLabel] |
+                        glossary : 'label' :
+                    lang | async }}</lib-adapt-h-element>
+                  <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
+                     [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
+                    <span
+                      [innerHTML]="comparisonItem2Data[index][comparisonItem2Raw.chart.xAxisLabel] | glossary : 'definition' : lang | async"></span>
+                  </p>
+                </span>
+                <div class="bar-wrapper">
+                  <div class="bar"
+                       [ngStyle]="{ '--usa-data-rep-series-item-flex-amount': comparisonItem2Data[index].flexAmount }"
+                       aria-hidden="true"></div>
+                  <ul class="details">
+                    @if (suppressed) {
+                      <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                        {{ comparisonItem2Data[index]?.percentage > 0 ?
+                        comparisonItem2Data[index].percentage.toLocaleString(
+                          this.localization,
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        ) + "%" : content?.actions?.['suppressed'] }}
+                      </li>
+
+                      <li class="value" [id]="id + '-series-item-value-' + index">
+                        {{comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue] > 0 ?
+                        comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue].toLocaleString(this.localization,
+                          {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          }) : content?.actions?.['suppressed']}}
+                      </li>
+                    } @else {
+                      <li class="percentage" [id]="id + '-series-item-percentage-' + index">
+                        {{comparisonItem2Data[index].percentage?.toLocaleString(this.localization, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}}%
+                      </li>
+                      <li class="value" [id]="id + '-series-item-value-' + index">
+                        {{comparisonItem2Data[index][comparisonItem2Raw.chart.yAxisValue].toLocaleString(this.localization,
+                        {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}}
+                      </li>
+                    }
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-        </li>
-      </ng-container>
-    </ol>
+          </li>
+        }
+      </ol>
+    }
   </div>
 
 
-  <div *ngIf="noData" class="no-data-warning display-flex gap-2 bg-accent-warm-lighter margin-2 padding-2">
-    <div class="errors-icon">
-      <i class="fal font-xl fa-exclamation-circle"></i>
-    </div>
-    <div class="errors-body display-flex flex-column gap-2">
-      <strong>This Section is Unavailable.</strong>
+  @if (noData) {
+    <div class="no-data-warning display-flex gap-2 bg-accent-warm-lighter margin-2 padding-2">
+      <div class="errors-icon">
+        <i class="fal font-xl fa-exclamation-circle"></i>
+      </div>
+      <div class="errors-body display-flex flex-column gap-2">
+        <strong>This Section is Unavailable.</strong>
 
-      <p class="usa-prose">
-        "We apologize for the inconvenience, but the way we collected this data doesn't allow us to display it with the
-        current filters.
-      </p>
+        <p class="usa-prose">
+          "We apologize for the inconvenience, but the way we collected this data doesn't allow us to display it with the
+          current filters.
+        </p>
+      </div>
     </div>
-  </div>
+  }
   <div class="display-flex width-full flex-column tablet:flex-row" tabindex="0">
-    <p *ngIf="!noData" class="total margin-top-2 width-full" [id]="id + 'total'">
-      <span class="font-sm">{{ comparisonItem1Label }}<br> </span>
-      {{content?.actions?.['total_label'] || 'Total'}}:
-      <strong>{{this.comparisonItem1Total.toLocaleString(this.localization, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      })}}</strong>
-    </p>
-    <p *ngIf="!noData" class="total margin-top-2 width-full" [id]="id + 'total'">
-      <span class="font-sm">{{ comparisonItem2Label }}<br> </span>
-      {{content?.actions?.['total_label'] || 'Total'}}:
-      <strong>{{this.comparisonItem2Total.toLocaleString(this.localization, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      })}}</strong>
-    </p>
+    @if (!noData) {
+      <p class="total margin-top-2 width-full" [id]="id + 'total'">
+        <span class="font-sm">{{ comparisonItem1Label }}<br> </span>
+        {{content?.actions?.['total_label'] || 'Total'}}:
+        <strong>{{this.comparisonItem1Total.toLocaleString(this.localization, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })}}</strong>
+      </p>
+    }
+    @if (!noData) {
+      <p class="total margin-top-2 width-full" [id]="id + 'total'">
+        <span class="font-sm">{{ comparisonItem2Label }}<br> </span>
+        {{content?.actions?.['total_label'] || 'Total'}}:
+        <strong>{{this.comparisonItem2Total.toLocaleString(this.localization, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })}}</strong>
+      </p>
+    }
   </div>
 
-  <p class="font-xs padding-x-205 margin-top-105 line-height-3" *ngIf="noDataItemCount > 0 && !suppressed">
-    Categories with values of zero: {{ noDataSummary }}
-  </p>
+  @if (noDataItemCount > 0 && !suppressed) {
+    <p class="font-xs padding-x-205 margin-top-105 line-height-3">
+      Categories with values of zero: {{ noDataSummary }}
+    </p>
+  }
 </article>
 
 <article [id]="id + '-data-modal'" cdkTrapFocus="{{!dataModal.hidden}}" class="modal" role="dialog" aria-modal="true"
@@ -249,9 +267,11 @@
     </div>
 
     <p class="description" [innerHTML]="insight"></p>
-    <p *ngIf="suppressed" class="redaction-note">
-      <strong>{{content?.actions?.['note']}}</strong> {{content?.sections?.[4]?.description}}
-    </p>
+    @if (suppressed) {
+      <p class="redaction-note">
+        <strong>{{content?.actions?.['note']}}</strong> {{content?.sections?.[4]?.description}}
+      </p>
+    }
     <div [id]="id + '-data-modal-legend'"
          class="display-flex width-full gap-3 flex-wrap usa-prose flex-align-start">
       <p class="margin-0" [id]="id + '-item1-def'">
@@ -282,94 +302,88 @@
       </tr>
       </thead>
       <tbody>
-      <tr tabindex="0" class="flex-row" *ngFor="let item of comparisonItem1Data; index as index">
+      @for (item of comparisonItem1Data; track $index; let index = $index) {
+        <tr tabindex="0" class="flex-row">
 
-          <th scope="row" class="td label">{{ item[comparisonItem1Raw.chart.xAxisLabel] | glossary : 'label' : lang | async }}
-          </th>
+            <th scope="row" class="td label">{{ item[comparisonItem1Raw.chart.xAxisLabel] | glossary : 'label' : lang | async }}
+            </th>
 
 
-        <td class="td value">
-          <ng-container *ngIf="suppressed; else notSuppressed">
-            {{item[comparisonItem1Raw.chart.yAxisValue] > 0 ?
-            item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
+          <td class="td value">
+            @if (suppressed) {
+              {{item[comparisonItem1Raw.chart.yAxisValue] > 0 ?
+              item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }) : content!.actions!['suppressed'] || 'Suppressed'}}
+            } @else {
+              {{item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }) : content!.actions!['suppressed'] || 'Suppressed'}}
-          </ng-container>
-
-          <ng-template #notSuppressed>
-            {{item[comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}}
-          </ng-template>
-        </td>
-
-        <td class="td percentage">
-          <ng-container *ngIf="suppressed; else notSuppressedPct">
-            {{ item?.percentage > 0 ? item.percentage.toLocaleString(
-            this.localization,
-            {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+            })}}
             }
-          ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
-          </ng-container>
+          </td>
 
-          <ng-template #notSuppressedPct>
-            {{item.percentage.toLocaleString(
-            this.localization,
-            {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+          <td class="td percentage">
+            @if (suppressed) {
+              {{ item?.percentage > 0 ? item.percentage.toLocaleString(
+              this.localization,
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
+            } @else {
+              {{item.percentage.toLocaleString(
+              this.localization,
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )
+
+              }}%
             }
-          )
+          </td>
 
-            }}%
-          </ng-template>
-        </td>
-
-        <td class="td value">
-          <ng-container *ngIf="suppressed; else notSuppressed2">
-            {{comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue] > 0 ?
-            comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
+          <td class="td value">
+            @if (suppressed) {
+              {{comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue] > 0 ?
+              comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }) : content!.actions!['suppressed'] || 'Suppressed'}}
+            } @else {
+              {{comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }) : content!.actions!['suppressed'] || 'Suppressed'}}
-          </ng-container>
-
-          <ng-template #notSuppressed2>
-            {{comparisonItem2Data[index][comparisonItem1Raw.chart.yAxisValue].toLocaleString(this.localization, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}}
-          </ng-template>
-        </td>
-
-        <td class="td percentage">
-          <ng-container *ngIf="suppressed; else notSuppressedPct2">
-            {{ comparisonItem2Data[index]?.percentage > 0 ? comparisonItem2Data[index].percentage.toLocaleString(
-            this.localization,
-            {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+            })}}
             }
-          ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
-          </ng-container>
+          </td>
 
-          <ng-template #notSuppressedPct2>
-            {{comparisonItem2Data[index].percentage.toLocaleString(
-            this.localization,
-            {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+          <td class="td percentage">
+            @if (suppressed) {
+              {{ comparisonItem2Data[index]?.percentage > 0 ? comparisonItem2Data[index].percentage.toLocaleString(
+              this.localization,
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            ) + "%" : content!.actions!['suppressed'] || 'Suppressed' }}
+            } @else {
+              {{comparisonItem2Data[index].percentage.toLocaleString(
+              this.localization,
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )
+
+              }}%
             }
-          )
-
-            }}%
-          </ng-template>
-        </td>
-      </tr>
+          </td>
+        </tr>
+      }
       </tbody>
       <tfoot>
       <tr class="footer-row" tabindex="0">

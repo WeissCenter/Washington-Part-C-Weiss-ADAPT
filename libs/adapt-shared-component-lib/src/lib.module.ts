@@ -3,7 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { A11yModule } from '@angular/cdk/a11y';
 import { RouterModule } from '@angular/router';
-import { GlossaryPipe, PaginatePipe } from './lib/pipes';
+import { GlossaryPipe, OkinaPipe, PaginatePipe } from './lib/pipes';
 import { EditableDirective } from './lib/directive';
 import { DataRepGroupedComponent } from './lib/report-components/data-rep-grouped/data-rep-grouped.component';
 import { ModalComponent } from './lib/components/modal/modal.component';
@@ -84,6 +84,7 @@ import { FilterMissingPropertyPipe } from './lib/pipes/filter-missing-property.p
     DataRepComponent,
     GridViewComponent,
     GlossaryPipe,
+    OkinaPipe,
     FilterMissingPropertyPipe,
     DataRepGroupedComponent,
     PaginationComponent,
@@ -135,6 +136,7 @@ import { FilterMissingPropertyPipe } from './lib/pipes/filter-missing-property.p
     DataRepComponent,
     QuickSummaryComponent,
     GlossaryPipe,
+    OkinaPipe,
     FilterMissingPropertyPipe,
     GridViewComponent,
     EditableDirective,

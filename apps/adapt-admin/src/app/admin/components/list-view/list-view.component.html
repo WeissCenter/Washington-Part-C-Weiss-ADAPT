@@ -4,22 +4,24 @@
   class="adapt-list-view display-flex flex-column gap-1 width-full">
   <div
     class="display-flex flex-column tablet:flex-row flex-justify flex-align-start tablet:flex-align-center width-full margin-bottom-3 gap-2">
-    <h2 #recordsDisplay class="font-family-body font-sm line-height-5 text-normal" id="showing" *ngIf="dataListTap | async | paginate : page : pageSize as items" aria-live="polite">
-      Showing up to
-      <select
-        [(ngModel)]="pageSize"
-        (ngModelChange)="onPageSizeChange()"
-        aria-labelledby="showing"
-        class="usa-select margin-x-1 width-auto display-inline"
-        name="options"
-        id="options">
-        <option [value]="5">5</option>
-        <option [value]="10">10</option>
-        <option [value]="25">25</option>
-        <option [value]="50">50</option>
-      </select>
-      of {{ totalItems }} items
-    </h2>
+    @if (dataListTap | async | paginate : page : pageSize; as items) {
+      <h2 #recordsDisplay class="font-family-body font-sm line-height-5 text-normal" id="showing" aria-live="polite">
+        Showing up to
+        <select
+          [(ngModel)]="pageSize"
+          (ngModelChange)="onPageSizeChange()"
+          aria-labelledby="showing"
+          class="usa-select margin-x-1 width-auto display-inline"
+          name="options"
+          id="options">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+        of {{ totalItems }} items
+      </h2>
+    }
 
     <div class="display-flex gap-2 flex-wrap flex-align-center">
       <button
@@ -29,10 +31,12 @@
         <i class="fal {{ icon() }}" aria-hidden="true" role="img" alt=""></i>
         {{ listViewContent ? listViewContent.actions[0] : 'Sort' }}
       </button>
-      <button type="button" *ngIf="currentList === 'views'" (click)="toggleFilterPanel()" id="filterPanelButton" class="usa-button usa-button--outline shadow-none width-auto align-self-start flex-column">
-        <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
-        {{ listViewContent ? listViewContent.actions[1] : 'Filter' }}
-      </button>
+      @if (currentList === 'views') {
+        <button type="button" (click)="toggleFilterPanel()" id="filterPanelButton" class="usa-button usa-button--outline shadow-none width-auto align-self-start flex-column">
+          <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
+          {{ listViewContent ? listViewContent.actions[1] : 'Filter' }}
+        </button>
+      }
       <button
         class="usa-button width-auto align-self-start"
         (click)="createButtonClick.emit()"
@@ -60,7 +64,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="dataList | loading : 'Data list has been loaded' | async as dataListLoaded">
+  @if (dataList | loading : 'Data list has been loaded' | async; as dataListLoaded) {
     <ng-container>
       <div
         id="contentLoadingIndicator"
@@ -68,41 +72,40 @@
         aria-live="polite"
         [attr.aria-busy]="dataListLoaded.loading">
         <ng-content select="[loading]"></ng-content>
-        <ng-container *ngIf="loadingRef" [ngTemplateOutlet]="loadingRef"></ng-container>
+        @if (loadingRef) {
+          <ng-container [ngTemplateOutlet]="loadingRef"></ng-container>
+        }
       </div>
     </ng-container>
-
-    <ng-container *ngIf="dataListLoaded.value">
-      <ng-container [ngSwitch]="currentList">
-        <ng-container *ngSwitchCase="'users'">
-          <adapt-list-item-user
-            [user]="item"
-            [confirmEdit]="confirm"
-            [confirmModal]="confirmModal"
-            *ngFor="
-              let item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize;
-              trackBy: identify
-            "></adapt-list-item-user>
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
-          <adapt-list-item-data
-            [listType]="currentList"
-            [$reports]="$reports"
-            [$dataViews]="$dataViews"
-            [dataSourceModal]="dataSourceModal"
-            [dataViewModal]="dataViewModal"
-            [reportModal]="reportModal"
-            *ngFor="
-              let item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize;
-              trackBy: identify
-            "
-            [view]="item"
+    @if (dataListLoaded.value) {
+      @switch (currentList) {
+        @case ('users') {
+          @for (
+            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize; track identify(item, 'username')) {
+            <adapt-list-item-user
+              [user]="item"
+              [confirmEdit]="confirm"
+              [confirmModal]="confirmModal"
+            ></adapt-list-item-user>
+          }
+        }
+        @default {
+          @for (
+            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize; track identify(item)) {
+            <adapt-list-item-data
+              [listType]="currentList"
+              [$reports]="$reports"
+              [$dataViews]="$dataViews"
+              [dataSourceModal]="dataSourceModal"
+              [dataViewModal]="dataViewModal"
+              [reportModal]="reportModal"
+              [view]="item"
             [headingLvl]="'h3'"></adapt-list-item-data>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-  </ng-container>
+          }
+        }
+      }
+    }
+  }
 
   <lib-adapt-pagination [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
 </section>

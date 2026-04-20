@@ -94,9 +94,9 @@ export class SecuritySettingsComponent implements OnInit, OnDestroy {
     if (!group) return null;
 
     const { warningMinutes, timeoutMinutes } = (group as FormGroup).controls;
-
-    if (warningMinutes.value > timeoutMinutes.value)
+    if (Number(warningMinutes.value) > Number(timeoutMinutes.value)) {
       return { timeout: 'Warning minutes must be lower than timeout minutes' };
+    }
 
     return null;
   }

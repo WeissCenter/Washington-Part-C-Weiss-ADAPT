@@ -1,5 +1,5 @@
 <!-- {page: contentResult?.pages?.resources, shared: contentResult.shared } as ctn -->
-<ng-container *ngIf="$resourcesContent()">
+@if ($resourcesContent()) {
   <section class="resources-page-container grid-container gap-4 display-flex flex-column">
     <section [attr.aria-label]="$resourcesContent()?.heading?.sectionLabel" role="region"
       class="resources-page-banner width-full display-flex gap-2 flex-column">
@@ -10,14 +10,14 @@
         </p>
       </div>
     </section>
-
     <lib-adapt-secondary-navigation>
-      <lib-adapt-secondary-navigation-item *ngFor="let item of $resourcesContent()?.secondaryNavigation?.links"
+      @for (item of $resourcesContent()?.secondaryNavigation?.links; track item.name) {
+        <lib-adapt-secondary-navigation-item
         [queryParams]="item.queryParams" [name]="item.name"></lib-adapt-secondary-navigation-item>
+      }
     </lib-adapt-secondary-navigation>
-
-    <ng-container [ngSwitch]="navigation | async">
-      <ng-container *ngSwitchCase="'useful-links'">
+    @switch (navigation | async) {
+      @case ('useful-links') {
         <div class="display-flex flex-column width-full gap-4" id="useful-links-panel">
           <section role="region" [attr.aria-label]="$resourcesContent()?.usefulLinks?.headerSectionLabel"
             class="usa-prose">
@@ -27,77 +27,79 @@
 
           <section role="region" class="grid-row grid-gap-sm accessibility-layout"
             [attr.aria-label]="$resourcesContent()?.usefulLinks?.listSectionLabel">
-            <div *ngFor="let link of $resourcesContent()?.usefulLinks?.links || [] | fieldLengthSort : 'description'"
-              class="useful-link-wrapper tablet:grid-col-6">
+            @for (link of $resourcesContent()?.usefulLinks?.links || []; track link.name) {
               <div
-                class="bg-white padding-2 desktop:padding-3 margin-1 gap-1 border-2px display-flex flex-column border-base-lighter tablet:radius-lg">
-                <div class="usa-prose">
-                  <h3>
-                    <a class="usa-link display-flex flex-align-center gap-1" target="_blank"
-                      [attr.aria-label]="link.name + ' (' + $sharedContent()?.accessibility?.newWindow + ')'"
-                      [href]="link.link">{{ link.name }} <i aria-hidden="true"
-                        class="fal fa-external-link font-xs" role="img" alt=""></i></a>
-                  </h3>
-                  <p>{{ link.description }}</p>
+                class="useful-link-wrapper display-flex tablet:grid-col-6">
+                <div
+                  class="bg-white padding-2 desktop:padding-3 margin-1 gap-1 border-2px display-flex flex-column border-base-lighter tablet:radius-lg">
+                  <div class="usa-prose">
+                    <h3>
+                      <a class="usa-link display-flex flex-align-center gap-1" target="_blank"
+                        [attr.aria-label]="link.name + ' (' + $sharedContent()?.accessibility?.newWindow + ')'"
+                        [href]="link.link"><span [innerHtml]="link.name | okina"></span><i aria-hidden="true"
+                      class="fal fa-external-link font-xs" role="img" alt=""></i></a>
+                    </h3>
+                    <p [innerHtml]="link.description | okina"></p>
+                  </div>
                 </div>
               </div>
-            </div>
+            }
           </section>
         </div>
-
-      </ng-container>
-      <ng-container *ngSwitchCase="'frequently-asked-questions'">
+      }
+      @case ('frequently-asked-questions') {
         <div class="display-flex flex-column width-full gap-4" id="frequently-asked-questions-panel">
           <section [attr.aria-label]="$resourcesContent()?.frequentlyAskedQuestions?.headingSectionLabel"
             class="usa-prose">
             <h2>{{ $sharedContent()?.frequentlyAskedQuestions?.title }}</h2>
             <p>{{ $sharedContent()?.frequentlyAskedQuestions?.description }}</p>
           </section>
-
-          <section *ngIf="fragment | async as frag" role="region"
-            class="faq-section-layout display-flex gap-2"
-            [attr.aria-label]="$resourcesContent()?.frequentlyAskedQuestions?.listSectionLabel">
-            <aside #navigation class="usa-in-page-nav bg-base-lightest margin-left-0 margin-top-0"
-              data-scroll-offset="0" data-root-margin="-999999px 0px -999999px 0px" data-threshold="1">
-              <nav aria-label="FAQ Categories:" class="usa-in-page-nav__nav margin-0 bg-base-lightest">
-                <h3 class="usa-in-page-nav__heading" tabindex="0">
+          @if (fragment | async; as frag) {
+            <section role="region"
+              class="faq-section-layout display-flex gap-2"
+              [attr.aria-label]="$resourcesContent()?.frequentlyAskedQuestions?.listSectionLabel">
+              <aside #navigation class="usa-in-page-nav bg-base-lightest margin-left-0 margin-top-0"
+                data-scroll-offset="0" data-root-margin="-999999px 0px -999999px 0px" data-threshold="1">
+                <nav aria-label="FAQ Categories:" class="usa-in-page-nav__nav margin-0 bg-base-lightest">
+                  <h3 class="usa-in-page-nav__heading" tabindex="0">
                   {{$sharedContent()?.frequentlyAskedQuestions?.tableHeading}}</h3>
-                <ul class="usa-in-page-nav__list border-base-light">
-                  <li [attr.aria-current]="frag === link.fragment"
-                    class="usa-in-page-nav__item usa-in-page-nav__item--primary"
-                    *ngFor="let link of $sharedContent()?.frequentlyAskedQuestions?.categories">
-                    <button type="button"
-                      [ngClass]="{ 'usa-current': frag === link.fragment }"
-                      (click)="navigateToSection(link.fragment)"
-                      class="usa-in-page-nav__link">{{ link.name }}</button>
-                  </li>
-                </ul>
-              </nav>
-            </aside>
-
-
-
-
-            <ng-container *ngFor="let category of $sharedContent()?.frequentlyAskedQuestions?.categories">
-              <div class="faq-content-wrapper display-flex flex-column gap-2" *ngIf="frag === category?.fragment">
-                <h3 class="margin-0" [id]="'heading-' + category.fragment">{{ category.name }}</h3>
-
-                <div class="frequently-asked-questions-list">
-                  <ul class="usa-list display-flex flex-column gap-1 usa-list--unstyled">
-                    <li
-                      class="padding-2 bg-white radius-lg border-base-lighter display-flex flex-column gap-1 border-2px"
-                      *ngFor="let faq of category.questions">
-                      <h4 class="margin-0">{{ faq.question }}</h4>
-                      <p class="usa-prose">{{ faq.answer }}</p>
-                    </li>
+                  <ul class="usa-in-page-nav__list border-base-light">
+                    @for (link of $sharedContent()?.frequentlyAskedQuestions?.categories; track link.fragment) {
+                      <li [attr.aria-current]="frag === link.fragment"
+                        class="usa-in-page-nav__item usa-in-page-nav__item--primary"
+                        >
+                        <button type="button"
+                          [ngClass]="{ 'usa-current': frag === link.fragment }"
+                          (click)="navigateToSection(link.fragment)"
+                          class="usa-in-page-nav__link">{{ link.name }}</button>
+                      </li>
+                    }
                   </ul>
-                </div>
-              </div>
-            </ng-container>
-          </section>
+                </nav>
+              </aside>
+              @for (category of $sharedContent()?.frequentlyAskedQuestions?.categories; track category.fragment) {
+                @if (frag === category?.fragment) {
+                  <div class="display-flex flex-column gap-2">
+                    <h3 class="margin-0">{{ category.name }}</h3>
+                    <div class="frequently-asked-questions-list">
+                      <ul class="usa-list display-flex flex-column gap-1 usa-list--unstyled">
+                        @for (faq of category.questions; track faq.question) {
+                          <li
+                            class="padding-2 bg-white radius-lg border-base-lighter display-flex flex-column gap-1 border-2px"
+                            >
+                            <h4 class="margin-0">{{ faq.question }}</h4>
+                            <p class="usa-prose">{{ faq.answer }}</p>
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                }
+              }
+            </section>
+          }
         </div>
-
-      </ng-container>
-    </ng-container>
+      }
+    }
   </section>
-</ng-container>
+}

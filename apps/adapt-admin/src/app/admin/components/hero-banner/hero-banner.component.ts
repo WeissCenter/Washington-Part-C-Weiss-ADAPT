@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 export class HeroBannerComponent {
   @Input() name: string | null = 'User Name';
   @Input() role: string | null = 'User Role';
-  @Input() organization: string | null = 'User Organization';
+  @Input() organization: string = 'User Organization';
 
   public logoStyleClass = `${environment.logoStyleClass ?? 'width-card'}`;
   public logoURL = `${environment.logoPath ?? 'assets/logos/generic'}/state-hero-logo.${environment.logoExtension ?? 'svg'}`;

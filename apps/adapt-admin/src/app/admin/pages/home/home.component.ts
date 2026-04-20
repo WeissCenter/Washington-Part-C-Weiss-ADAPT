@@ -30,17 +30,16 @@ export class HomeComponent implements OnInit {
   public $reports: Observable<IReportModel[]>;
 
   private $reportsSorted: any[] = [];
-  private $dataViewsSorted: any[] = [];
+  private dataViews: DataViewModel[] = [];
 
   loadingReports = true;
   loadingDataViews = true;
 
   private reportSubscription: Subscription;
-  private dataViewSubscription: Subscription;
 
   public recentActivity = this.recent.history;
 
-  organization = environment.organizationName || 'Your Organization';
+  organization = environment?.organizationName || 'Your Organization';
 
   // Input signal
   $pageContentSignal: Signal<PageContentText | null>; // = this.pagesContentService.getPageContentSignal('home', 'en');
@@ -73,19 +72,15 @@ export class HomeComponent implements OnInit {
     this.reportSubscription = this.$reports.subscribe((reports) => {
       this.loadingReports = false;
       // sort by updated field, latest at top
-      this.$reportsSorted = reports.sort((a, b) => {
+      this.$reportsSorted = [...reports].sort((a, b) => {
         const updatedA = parseInt(a.updated, 10); // Convert the string to an integer
         const updatedB = parseInt(b.updated, 10);
         return updatedB - updatedA;
       });
     });
-    this.dataViewSubscription = this.$dataViews.subscribe((views) => {
+    this.$dataViews.subscribe((views) => {
       this.loadingDataViews = false;
-      // sort by created field, latest at top
-      this.$dataViewsSorted = views.sort((a, b) => {
-
-        return new Date(b.created).getTime() - new Date(a.created).getTime();
-      });
+      this.dataViews = [...views];
     });
 
     this.route.params.subscribe((params) => {
@@ -104,12 +99,11 @@ export class HomeComponent implements OnInit {
   }
 
   public getImpactAnalysisForSource(source: DataSource) {
-    const dataViewsSorted = this.$dataViewsSorted.filter((item: DataSet) =>
-      item?.dataSources?.some((dataSourceItem) => dataSourceItem.dataSource === source.dataSourceID)
-    );
+    const dataViews = this.dataViews.filter((item) => item.data?.dataSource === source.dataSourceID);
+
     return {
-      dataViewCount: dataViewsSorted.length,
-      reportCount: this.$reportsSorted.filter((report) => dataViewsSorted.some((dataset) => dataset.dataSetID === report.dataSetID))
+      dataViewCount: dataViews.length,
+      reportCount: this.$reportsSorted.filter((report) => dataViews.some((view) => view.dataViewID === report.dataView))
         .length,
     };
     //

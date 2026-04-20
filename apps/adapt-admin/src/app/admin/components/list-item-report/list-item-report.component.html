@@ -6,113 +6,119 @@
         [queryParams]="{ version: report.version }"
         [routerLink]="navPath"
         >{{ report.template.title || report.name }}</a
-      >
-    </lib-adapt-h-element>
+        >
+      </lib-adapt-h-element>
 
-    <p class="text-normal font-sm line-height-5 text-ink" *ngIf="report.template.description">
-      {{ report.template.description }}
-    </p>
-    <p class="text-normal font-sm line-height-5 text-ink">
-      Last updated on {{ report.updated | date : 'MM/dd/yyyy' }} at {{ report.updated | date : 'hh:mm a' }}, Created by
-      {{ report.author }}
-    </p>
-    <div class="display-flex flex-align-start accessibility-layout flex-column gap-105">
-      <div class="display-flex gap-1">
-        <lib-adapt-tag [status]="report.version">
-          <!-- <ng-container [ngSwitch]="report.version">
-                        <ng-container *ngSwitchCase="'draft'">
-                            <i class="fal fa-pencil" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'finalized'">
-                            <i class="fal fa-check" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'pending approval'">
-                            <i class="fal fa-thumbtack" role="img" aria-hidden="true"></i>
-                        </ng-container>
-                        <ng-container *ngSwitchDefault></ng-container>
-                    </ng-container> -->
+      @if (report.template.description) {
+        <p class="text-normal font-sm line-height-5 text-ink">
+          {{ report.template.description }}
+        </p>
+      }
+      <p class="text-normal font-sm line-height-5 text-ink">
+        Last updated on {{ report.updated | date : 'MM/dd/yyyy' }} at {{ report.updated | date : 'HH:mm a' }}, Created by
+        {{ report.author }}
+      </p>
+      <div class="display-flex flex-align-start accessibility-layout flex-column gap-105">
+        <div class="display-flex gap-1">
+          <lib-adapt-tag [status]="report.version">
+            <!-- <ng-container [ngSwitch]="report.version">
+            <ng-container *ngSwitchCase="'draft'">
+              <i class="fal fa-pencil" role="img" aria-hidden="true"></i>
+            </ng-container>
+            <ng-container *ngSwitchCase="'finalized'">
+              <i class="fal fa-check" role="img" aria-hidden="true"></i>
+            </ng-container>
+            <ng-container *ngSwitchCase="'pending approval'">
+              <i class="fal fa-thumbtack" role="img" aria-hidden="true"></i>
+            </ng-container>
+            <ng-container *ngSwitchDefault></ng-container>
+          </ng-container> -->
           {{ report.version | titlecase }}
         </lib-adapt-tag>
         <lib-adapt-tag [status]="report.visibility">
           {{ report.visibility | titlecase }}
         </lib-adapt-tag>
-        <lib-adapt-tag *ngIf="report.reportingLevel" [status]="report.reportingLevel">
-          {{ report.reportingLevel }}
-        </lib-adapt-tag>
-<!--        {{report.version + ', status: ' + report.status}}-->
-        <lib-adapt-tag *ngIf="(report.version === 'draft') && (report.status && report.status.toLowerCase() !== 'unpublished')" [status]="report.status">
-          {{ report.status | titlecase }}
-        </lib-adapt-tag>
+        @if (report.reportingLevel) {
+          <lib-adapt-tag [status]="report.reportingLevel">
+            {{ report.reportingLevel }}
+          </lib-adapt-tag>
+        }
+        <!--        {{report.version + ', status: ' + report.status}}-->
+        @if ((report.version === 'draft') && (report.status && report.status.toLowerCase() !== 'unpublished')) {
+          <lib-adapt-tag [status]="report.status">
+            {{ report.status | titlecase }}
+          </lib-adapt-tag>
+        }
       </div>
 
       <!-- <div class="display-flex flex-column gap-1">
-                <p class="text-normal font-sm line-height-4 text-ink">Categories:</p>
-                <div class="display-flex gap-1 flex-wrap">
-                    <span class="usa-tag margin-0 bg-base-lightest text-ink">{{
-                        report.approval | titlecase
-                        }}</span>
-                    <span class="usa-tag margin-0 bg-base-lightest text-ink">{{
-                        report.visibility | titlecase
-                        }}</span>
-                </div>
-            </div> -->
-    </div>
+      <p class="text-normal font-sm line-height-4 text-ink">Categories:</p>
+      <div class="display-flex gap-1 flex-wrap">
+        <span class="usa-tag margin-0 bg-base-lightest text-ink">{{
+          report.approval | titlecase
+        }}</span>
+        <span class="usa-tag margin-0 bg-base-lightest text-ink">{{
+          report.visibility | titlecase
+        }}</span>
+      </div>
+    </div> -->
   </div>
-  <div action-content>
-    <div class="display-flex flex-wrap margin-top-2 gap-1 width-full">
-      <button
-        type="button"
-        [id]="'view_' + report.reportID + '_btn'"
-        class="usa-button"
-        [queryParams]="{ version: report.version }"
-        [routerLink]="navPath">
-        <i class="fal fa-eye" role="img" aria-hidden="true"></i>
-        View
-      </button>
-      <!-- <button adaptPreviewCategory="editReport" adaptPreview
-                adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
-                Edit
-            </button> -->
-      <!-- <button
-        (click)="publishReport()"
+</div>
+<div action-content>
+  <div class="display-flex flex-wrap margin-top-2 gap-1 width-full">
+    <button
+      type="button"
+      [id]="'view_' + report.reportID + '_btn'"
+      class="usa-button"
+      [queryParams]="{ version: report.version }"
+      [routerLink]="navPath">
+      <i class="fal fa-eye" role="img" aria-hidden="true"></i>
+      View
+    </button>
+    <!-- <button adaptPreviewCategory="editReport" adaptPreview
+    adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
+    Edit
+  </button> -->
+  <!-- <button
+  (click)="publishReport()"
         *adaptAccessControl="
           'Data Views';
           behavior: 'hide';
           action: 'Write';
           extraCondition: report.version === 'draft' && report.visibility === 'external'
         "
-        [id]="'publish_' + report.reportID + '_btn'"
-        type="button"
-        class="usa-button usa-button--outline shadow-none">
-        <i class="fal fa-file" role="img" aria-hidden="true"></i>
-        Publish
-      </button> -->
+  [id]="'publish_' + report.reportID + '_btn'"
+  type="button"
+  class="usa-button usa-button--outline shadow-none">
+  <i class="fal fa-file" role="img" aria-hidden="true"></i>
+  Publish
+</button> -->
 
-      <!-- <button
-        (click)="unPublish.emit()"
+<!-- <button
+(click)="unPublish.emit()"
         *adaptAccessControl="
           'Data Views';
           behavior: 'hide';
           action: 'Write';
           extraCondition: report.version === 'finalized' && report.visibility === 'external'
         "
-        [id]="'publish_' + report.reportID + '_btn'"
-        type="button"
-        class="usa-button usa-button--outline shadow-none">
-        <i class="fal fa-file" role="img" aria-hidden="true"></i>
-        Un-Publish
-      </button> -->
+[id]="'publish_' + report.reportID + '_btn'"
+type="button"
+class="usa-button usa-button--outline shadow-none">
+<i class="fal fa-file" role="img" aria-hidden="true"></i>
+Un-Publish
+</button> -->
 
-      <!-- <button adaptPreviewCategory="shareReport" [id]="'share_' + report.reportID + '_btn'" adaptPreview
-                adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
-                <i class="fal fa-share" role="img" aria-hidden="true"></i>
-                Share
-            </button> -->
-      <!-- <button adaptPreviewCategory="removeReport" [id]="'remove_' + report.reportID + '_btn'" adaptPreview
-                adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
-                <i class="fal fa-folder" role="img" aria-hidden="true"></i>
-                Archive
-            </button> -->
-    </div>
-  </div>
+<!-- <button adaptPreviewCategory="shareReport" [id]="'share_' + report.reportID + '_btn'" adaptPreview
+adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
+<i class="fal fa-share" role="img" aria-hidden="true"></i>
+Share
+</button> -->
+<!-- <button adaptPreviewCategory="removeReport" [id]="'remove_' + report.reportID + '_btn'" adaptPreview
+adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
+<i class="fal fa-folder" role="img" aria-hidden="true"></i>
+Archive
+</button> -->
+</div>
+</div>
 </lib-adapt-expandable-list-item>

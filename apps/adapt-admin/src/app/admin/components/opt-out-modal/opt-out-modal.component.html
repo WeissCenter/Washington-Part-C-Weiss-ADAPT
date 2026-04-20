@@ -20,12 +20,11 @@
           </div>
 
           <div class="display-flex margin-top-2">
-            <ng-container *ngIf="contentTemplate; else textContentBlock">
+            @if (contentTemplate) {
               <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
-            </ng-container>
-            <ng-template #textContentBlock>
+            } @else {
               <p class="usa-prose">{{ textContent }}</p>
-            </ng-template>
+            }
           </div>
           <div class="usa-checkbox margin-top-3">
             <input class="usa-checkbox__input" id="doNotShowCheck" type="checkbox" [(ngModel)]="doNotShow" />

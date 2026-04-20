@@ -1,6 +1,6 @@
 import { SettingsService } from '@adapt/adapt-shared-component-lib';
-import { DOCUMENT } from '@angular/common';
-import { computed, effect, Inject, Injectable, signal, WritableSignal } from '@angular/core';
+
+import { computed, effect, Inject, Injectable, signal, WritableSignal, DOCUMENT } from '@angular/core';
 import {WeissAccessibilityCenterService} from 'weiss-accessibility-center'
 
 @Injectable({

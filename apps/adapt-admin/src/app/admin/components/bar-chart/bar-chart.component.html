@@ -1,40 +1,34 @@
 <section #container class="report-bar-chart-section bg-white width-full padding-3 border-base-lighter border">
-  <ng-container *ngIf="content">
+  @if (content) {
     <!-- <ng-container *ngIf="content['caption'] as caption">
-                <bar-chart [accessibility]="{'executiveSummary': caption, 'elementsAreInterface': true}" [data]="filterSubjectObservable | async" [width]="width" [height]="height" [subTitle]="content['subtitle']" [mainTitle]="content['title']" [yAxis]="{'label': content.chart.yAxisLabel, 'format': '0,0', visible: true}" [xAxis]="{'label': content.chart.xAxisLabel, 'format': '0,0', visible: true}" [valueAccessor]="content.chart.yAxisValue" [ordinalAccessor]="content.chart.xAxisValue"></bar-chart>
-                
-                
-                
-                <p aria-hidden="true" class="usa-prose">{{caption}}</p>
-            </ng-container> -->
-
-    <!-- [valueAccessor]="content.chart.yAxisValue" [ordinalAccessor]="content.chart.xAxisValue" -->
-
-    <div class="report-bar-chart-heading">
-      <div class="report-bar-chart-heading-text">
-        <h3 class="font-sans-lg margin-0">{{ content['title'] }}</h3>
-        <p class="usa-prose">{{ content['description'] }}</p>
-      </div>
-
-      <div class="report-vertical-bar-chart controls"></div>
+    <bar-chart [accessibility]="{'executiveSummary': caption, 'elementsAreInterface': true}" [data]="filterSubjectObservable | async" [width]="width" [height]="height" [subTitle]="content['subtitle']" [mainTitle]="content['title']" [yAxis]="{'label': content.chart.yAxisLabel, 'format': '0,0', visible: true}" [xAxis]="{'label': content.chart.xAxisLabel, 'format': '0,0', visible: true}" [valueAccessor]="content.chart.yAxisValue" [ordinalAccessor]="content.chart.xAxisValue"></bar-chart>
+    <p aria-hidden="true" class="usa-prose">{{caption}}</p>
+  </ng-container> -->
+  <!-- [valueAccessor]="content.chart.yAxisValue" [ordinalAccessor]="content.chart.xAxisValue" -->
+  <div class="report-bar-chart-heading">
+    <div class="report-bar-chart-heading-text">
+      <h3 class="font-sans-lg margin-0">{{ content['title'] }}</h3>
+      <p class="usa-prose">{{ content['description'] }}</p>
     </div>
-
-    <figure aria-label="Chart" class="report-bar-chart-container display-flex flex-column margin-0">
-      <div tabindex="0" class="report-bar-chart-bar-wrapper" *ngFor="let item of filterSubjectObservable | async">
+    <div class="report-vertical-bar-chart controls"></div>
+  </div>
+  <figure aria-label="Chart" class="report-bar-chart-container display-flex flex-column margin-0">
+    @for (item of filterSubjectObservable | async; track $index) {
+      <div tabindex="0" class="report-bar-chart-bar-wrapper">
         <h4>{{ item[content.chart.xAxisLabel] | glossary | async }}</h4>
-
         <div class="report-bar-chart-bar-container display-flex">
-          <div
-            *ngIf="item.percentage"
-            [ngStyle]="{ flex: item.flex }"
+          @if (item.percentage) {
+            <div
+              [ngStyle]="{ flex: item.flex }"
             class="report-bar-chart-bar bg-primary-dark"></div>
+          }
           <div class="report-bar-chart-info display-flex flex-column flex-align-center">
             <span class="usa-tag bg-base-lightest text-ink">{{ item.percentage }}%</span>
-
             <p class="margin-0 text-bold font-sans-lg">{{ item[content.chart.yAxisValue] | number }}</p>
           </div>
         </div>
       </div>
-    </figure>
-  </ng-container>
+    }
+  </figure>
+}
 </section>

@@ -1,12 +1,13 @@
-<div
-*ngIf="alert"
-  class="usa-alert usa-alert--{{ alert.type }}"
-  role="alert"
-  aria-live="assertive">
-  <div class="usa-alert__body">
-    <h3 class="usa-alert__heading">{{ alert.title }}</h3>
-    <p class="usa-alert__text">
-      {{ alert.body }}
-    </p>
+@if (alert) {
+  <div
+    class="usa-alert usa-alert--{{ alert.type }}"
+    role="alert"
+    aria-live="assertive">
+    <div class="usa-alert__body">
+      <h3 class="usa-alert__heading">{{ alert.title }}</h3>
+      <p class="usa-alert__text">
+        {{ alert.body }}
+      </p>
+    </div>
   </div>
-</div>
+}

@@ -1,3 +1,5 @@
-<div aria-live="assertive" *ngIf="action === 'redirect'" class="redirect">
-  <p>Redirecting from Cognito sign-in...</p>
-</div>
+@if (action === 'redirect') {
+  <div aria-live="assertive" class="redirect">
+    <p>Redirecting from Cognito sign-in...</p>
+  </div>
+}

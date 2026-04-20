@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { focusElement } from '../../util/focus-management.util';
 
 @Component({
   selector: 'lib-adapt-side-panel',
@@ -11,6 +12,7 @@ export class SidePanelComponent {
 
   public show = false;
   @ViewChild('sidePanel') panel!: ElementRef;
+  @ViewChild('panelHeading') panelHeading?: ElementRef<HTMLHeadingElement>;
   @ViewChild(CdkTrapFocus) trap?: CdkTrapFocus;
   private opener: HTMLElement | null = null;
 
@@ -49,7 +51,7 @@ export class SidePanelComponent {
           return;
         }
       }
-      this.trap?.focusTrap?.focusInitialElementWhenReady();
+      focusElement(this.panelHeading?.nativeElement ?? null, { preventScroll: true, removeTabindexOnBlur: false });
     });
   }
 

@@ -1,5 +1,5 @@
 <div class="branding-settings-content-wrapper display-flex flex-column gap-2">
-  <ng-container *ngIf="!outlet.isActivated">
+  @if (!outlet.isActivated) {
     <section
       class="branding-settings-banner border-top-2px border-base-lighter width-full display-flex gap-1 usa-prose flex-column">
       <h1 class="margin-0" i18n>Branding</h1>
@@ -7,7 +7,6 @@
         Customize your adapt instance to your organization's branding needs.
       </p>
     </section>
-
     <section class="branding-settings-options display-flex flex-column gap-2">
       <div
         class="branding-settings-option text-no-underline display-flex flex-column gap-2 bg-white padding-2 border-2px radius-lg border-base-lighter">
@@ -16,35 +15,32 @@
             <h2 class="margin-0 font-xl text-no-underline">Logo</h2>
             <p class="text-black usa-prose measure-4 text-no-underline">Configure your logo.</p>
           </div>
-
           <div class="branding-settings-option-controls">
             <button (click)="editLogo = !editLogo" class="usa-button usa-button--outline">
               {{ editLogo ? 'Close' : 'Edit' }}
             </button>
           </div>
         </div>
-
-        <div *ngIf="editLogo" class="branding-settings-option-edit border-top-2px padding-top-2 border-base-light">
-          <form
-            (ngSubmit)="onSave()"
-            [formGroup]="brandingForm"
-            class="branding-settings-logo-form display-flex flex-column gap-2">
-            <div class="current-logo-preview border-bottom-2px padding-bottom-2 border-base-light">
-              <h3>Logo Preview</h3>
-              <img class="height-10" [src]="logoPreviewURL" alt="ADAPT logo preview" />
-            </div>
-
-            <adapt-file-input
-              formControlName="logo"
-              label="Select a logo file for upload"
-              hint="Only PNG and JPG files are allowed"
+        @if (editLogo) {
+          <div class="branding-settings-option-edit border-top-2px padding-top-2 border-base-light">
+            <form
+              (ngSubmit)="onSave()"
+              [formGroup]="brandingForm"
+              class="branding-settings-logo-form display-flex flex-column gap-2">
+              <div class="current-logo-preview border-bottom-2px padding-bottom-2 border-base-light">
+                <h3>Logo Preview</h3>
+                <img class="height-10" [src]="logoPreviewURL" alt="ADAPT logo preview" />
+              </div>
+              <adapt-file-input
+                formControlName="logo"
+                label="Select a logo file for upload"
+                hint="Only PNG and JPG files are allowed"
               accept=".png,.jpg,.jpeg"></adapt-file-input>
-
-            <button class="usa-button flex-align-self-start">Save</button>
-          </form>
-        </div>
+              <button class="usa-button flex-align-self-start">Save</button>
+            </form>
+          </div>
+        }
       </div>
-
       <div
         class="branding-settings-option text-no-underline flex-column display-flex bg-white padding-2 border-2px radius-lg border-base-lighter gap-05">
         <div class="branding-settings-option-wrapper display-flex flex-justify gap-05">
@@ -54,26 +50,25 @@
               Configure your footer with the right information your users need.
             </p>
           </div>
-
           <div class="branding-settings-option-controls">
             <button (click)="editCopyright = !editCopyright" class="usa-button usa-button--outline">
               {{ editCopyright ? 'Close' : 'Edit' }}
             </button>
           </div>
         </div>
-
-        <div *ngIf="editCopyright" class="branding-settings-option-edit border-top-2px padding-top-2 border-base-light">
-          <form
-            (ngSubmit)="onSave()"
-            [formGroup]="brandingForm"
-            class="branding-settings-logo-form display-flex flex-column gap-2">
-            <lib-adapt-text-input formControlName="copyright" label="Copyright"></lib-adapt-text-input>
-
-            <button class="usa-button flex-align-self-start">Save</button>
-          </form>
-        </div>
+        @if (editCopyright) {
+          <div class="branding-settings-option-edit border-top-2px padding-top-2 border-base-light">
+            <form
+              (ngSubmit)="onSave()"
+              [formGroup]="brandingForm"
+              class="branding-settings-logo-form display-flex flex-column gap-2">
+              <lib-adapt-text-input formControlName="copyright" label="Copyright"></lib-adapt-text-input>
+              <button class="usa-button flex-align-self-start">Save</button>
+            </form>
+          </div>
+        }
       </div>
     </section>
-  </ng-container>
+  }
   <router-outlet #outlet="outlet"></router-outlet>
 </div>

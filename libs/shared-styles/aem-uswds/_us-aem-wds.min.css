@@ -14065,7 +14065,7 @@ template {
   --usa-reverse-white-black: var(--usa-color-global-white);
   --usa-reverse-black-white: var(--usa-color-global-black);
   --usa-body-background: var(--usa-white);
-  --usa-focus-color: var(--usa-color-mint-vivid-40);
+  --usa-focus-color: var(--usa-color-magenta-vivid-50);
   --usa-base-ink: var(--usa-color-gray-90);
   --usa-base-darkest: var(--usa-color-gray-90);
   --usa-base-darker: var(--usa-color-gray-cool-70);
@@ -17171,9 +17171,9 @@ article.data-rep-wrapper .total {
   font-weight: var(--usa-data-rep-insight-font-weight);
   line-height: 1.35;
   line-height: var(--usa-data-rep-insight-line-height);
-  margin: 0;
-  padding: 0 24px;
-  padding: 0 var(--usa-data-rep-padding-x);
+  margin: 0 var(--usa-data-rep-padding-x);
+  padding: 0;
+  align-self: flex-start;
 }
 article.data-rep-wrapper .action-bar {
   border-bottom: 2px solid #dfe1e2;

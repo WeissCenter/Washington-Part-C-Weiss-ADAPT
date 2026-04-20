@@ -1,35 +1,31 @@
-<section *ngIf="$content()" class="reports-container grid-container gap-4 display-flex flex-column">
-  <header class="reports-banner width-full display-flex usa-prose flex-column">
-    <!-- TODO: This heading/description needs to dynamically change when the view is updated. Options are Draft Reports/Finalized Reports -->
-    <h1 class="margin-0">{{$content()?.pages.reports?.header}}</h1>
-    <p class="measure-4 usa-prose margin-bottom-0">{{$content()?.pages.reports?.body}}</p>
-  </header>
-
-  <!-- <div class="reports-filtering bg-white width-full padding-3 margin-top-4 border-base-lighter border">
-          <h2 class="margin-0">Filters</h2>
-      </div> -->
-
+@if ($content()) {
+  <section class="reports-container grid-container gap-4 display-flex flex-column">
+    <header class="reports-banner width-full display-flex usa-prose flex-column">
+      <!-- TODO: This heading/description needs to dynamically change when the view is updated. Options are Draft Reports/Finalized Reports -->
+      <h1 class="margin-0">{{$content()?.pages.reports?.header}}</h1>
+      <p class="measure-4 usa-prose margin-bottom-0">{{$content()?.pages.reports?.body}}</p>
+    </header>
+    <!-- <div class="reports-filtering bg-white width-full padding-3 margin-top-4 border-base-lighter border">
+    <h2 class="margin-0">Filters</h2>
+  </div> -->
   <section
     role="tabpanel"
     id="reports"
     aria-label="list of available reports"
     class="reports-table display-flex flex-column gap-1 width-full">
-    <ng-container *ngIf="$reports | loading : 'Reports have loaded' | async as reportsLoaded">
+    @if ($reports | loading : 'Reports have loaded' | async; as reportsLoaded) {
       <div
         class="data-management-table-header display-flex flex-column tablet:flex-row flex-justify flex-align-start tablet:flex-align-center width-full margin-bottom-3 gap-2">
         <!-- <span *ngIf="reports | async | paginate: page: pageSize as items" class="font-family-body font-xs" #recordsDisplay
-          aria-live="polite">Displaying {{items.length > 0 ? ((page - 1) * pageSize) + 1 : 0}} to {{Math.min(page *
-          pageSize, items.length)}} of {{items.length}} records</span> -->
-
+        aria-live="polite">Displaying {{items.length > 0 ? ((page - 1) * pageSize) + 1 : 0}} to {{Math.min(page *
+      pageSize, items.length)}} of {{items.length}} records</span> -->
+      @if (reportsLoaded.value | paginate : page : pageSize; as items) {
         <h2
           class="font-family-body font-sm line-height-5 text-normal"
           id="showing"
-          *ngIf="reportsLoaded.value | paginate : page : pageSize as items"
           #recordsDisplay
           aria-live="polite">
-
           {{$content()?.shared.paginator.showingUpTo}}
-
           <select
             [(ngModel)]="pageSize"
             (ngModelChange)="onPageSizeChange()"
@@ -44,61 +40,60 @@
           </select>
           {{$content()?.shared.paginator.of}} {{ totalItems }}   {{$content()?.shared.paginator.items}}
         </h2>
-
-        <div class="display-flex gap-2 flex-wrap flex-align-center">
-          <button
-            (click)="doSort('updated')"
-            (keydown.enter)="doSort('updated')"
-            id="sortButton"
-            type="button"
-            class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
-            <i
-              class="fal {{ publishedSortDirection === 'asc' ? 'fa-sort-amount-up-alt' : 'fa-sort-amount-down-alt' }}"
-              aria-hidden="true" role="img" alt=""></i>
-            {{$content()?.shared.listControls.sort}}
-          </button>
-
-          <!-- <button
-            (click)="doSort('alpha')"
-            (keydown.enter)="doSort('alpha')"
-            id="sortButton"
-            type="button"
-            class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
-            <i
-              class="fal {{ alphaSortDirection === 'asc' ? 'fa-sort-alpha-up' : 'fa-sort-alpha-down' }}"
-              aria-hidden="true" role="img" alt=""></i>
-            Sort
-          </button> -->
-
-          <!-- <button
-              (click)="toggleFilterPanel()"
-              id="filterPanelButton"
-              type="button"
-              class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
-              <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
-              Filter
-            </button> -->
-        </div>
-      </div>
-
-      <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reportsLoaded.loading">
-        <div class="display-flex flex-align-center gap-1">
-          <div class="loader"></div>
-          <p class="usa-prose" i18n>{{$content()?.pages.reports?.loading}}</p>
-        </div>
-      </div>
-
-      <ng-container *ngIf="reportsLoaded.value as reports">
-        <span *ngIf="reports.length" class="visually-hidden" aria-live="polite" id="report-load-notifier"
-          >{{$content()?.pages.reports?.loaded}}</span
-        >
-        <lib-adapt-expandable-list-item [expandable]="false" *ngFor="let report of reports | paginate : page : pageSize">
-          <div visible-content>
-            <h3 class="usa-prose margin-0">
-              <a
-                class="text-primary hover:primary-dark text-semibold text-underline display-inline-flex width-auto"
-                [routerLink]="[report.slug]"
-                >{{ report.template.title }}</a
+      }
+      <div class="display-flex gap-2 flex-wrap flex-align-center">
+        <button
+          (click)="doSort('updated')"
+          (keydown.enter)="doSort('updated')"
+          id="sortButton"
+          type="button"
+          class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
+          <i
+            class="fal {{ publishedSortDirection === 'asc' ? 'fa-sort-amount-up-alt' : 'fa-sort-amount-down-alt' }}"
+          aria-hidden="true" role="img" alt=""></i>
+          {{$content()?.shared.listControls.sort}}
+        </button>
+        <!-- <button
+        (click)="doSort('alpha')"
+        (keydown.enter)="doSort('alpha')"
+        id="sortButton"
+        type="button"
+        class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
+        <i
+          class="fal {{ alphaSortDirection === 'asc' ? 'fa-sort-alpha-up' : 'fa-sort-alpha-down' }}"
+        aria-hidden="true" role="img" alt=""></i>
+        Sort
+      </button> -->
+      <!-- <button
+      (click)="toggleFilterPanel()"
+      id="filterPanelButton"
+      type="button"
+      class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
+      <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
+      Filter
+    </button> -->
+  </div>
+</div>
+<div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reportsLoaded.loading">
+  <div class="display-flex flex-align-center gap-1">
+    <div class="loader"></div>
+    <p class="usa-prose" i18n>{{$content()?.pages.reports?.loading}}</p>
+  </div>
+</div>
+@if (reportsLoaded.value; as reports) {
+  @if (reports.length) {
+    <span class="visually-hidden" aria-live="polite" id="report-load-notifier"
+      >{{$content()?.pages.reports?.loaded}}</span
+      >
+    }
+    @for (report of reports | paginate : page : pageSize; track report.reportID) {
+      <lib-adapt-expandable-list-item [expandable]="false">
+        <div visible-content>
+          <h3 class="usa-prose margin-0">
+            <a
+              class="text-primary hover:primary-dark text-semibold text-underline display-inline-flex width-auto"
+              [routerLink]="[report.slug]"
+              >{{ report.template.title }}</a
               >
             </h3>
             <p class="text-normal font-sm margin-bottom-1 text-ink">
@@ -106,40 +101,42 @@
             </p>
             <div class="display-flex flex-column width-full gap-1">
               <p class="text-normal font-sm text-ink">
-                <time [attr.datetime]="report.published | date : 'YYYY-MM-dd'">
+                <time [attr.datetime]="report.published | date : 'yyyy-MM-dd'">
                   {{ report.published | date }}
                 </time>
               </p>
             </div>
           </div>
           <!-- <div action-content>
-            <div class="display-flex flex-wrap gap-1 width-full">
-              <button class="usa-button"><i class="fal fa-eye" role="img" aria-hidden="true"></i>View</button>
-              <button class="usa-button usa-button--outline">
-                <i class="fal fa-share" aria-hidden="true"></i>Share
-              </button>
-              <button class="usa-button usa-button--outline">
-                <i class="fal fa-table" role="img" aria-hidden="true"></i>Data
-              </button>
-            </div>
-          </div> -->
-        </lib-adapt-expandable-list-item>
-
-        <!-- <ng-template #noReports>
-          <p *ngIf="!reportsLoaded.loading" class="usa-prose" aria-live="polite">No Reports have been created</p>
-        </ng-template> -->
-      </ng-container>
-    </ng-container>
-
-    <div class="reports-table-pagination padding-top-2">
-      <lib-adapt-pagination [page]="page" [maxPages]="maxPages" [previous]="$content().shared?.paginator?.previous" [next]="$content().shared?.paginator?.next"></lib-adapt-pagination>
-    </div>
-  </section>
+          <div class="display-flex flex-wrap gap-1 width-full">
+            <button class="usa-button"><i class="fal fa-eye" role="img" aria-hidden="true"></i>View</button>
+            <button class="usa-button usa-button--outline">
+              <i class="fal fa-share" aria-hidden="true"></i>Share
+            </button>
+            <button class="usa-button usa-button--outline">
+              <i class="fal fa-table" role="img" aria-hidden="true"></i>Data
+            </button>
+          </div>
+        </div> -->
+      </lib-adapt-expandable-list-item>
+    }
+    <!-- <ng-template #noReports>
+    <p *ngIf="!reportsLoaded.loading" class="usa-prose" aria-live="polite">No Reports have been created</p>
+  </ng-template> -->
+}
+}
+<div class="reports-table-pagination padding-top-2">
+  <lib-adapt-pagination [page]="page" [maxPages]="maxPages" [previous]="$content().shared?.paginator?.previous" [next]="$content().shared?.paginator?.next"></lib-adapt-pagination>
+</div>
 </section>
+</section>
+}
 
 <!-- <div aria-live="polite" id="filterStateMessage" *ngIf="filterStateMessage" class="visually-hidden">
-    {{ filterStateMessage }}
-  </div> -->
-<div aria-live="polite" id="filterStatusMessage" *ngIf="filterStatusMessage" class="visually-hidden">
-  {{ filterStatusMessage }}
-</div>
+{{ filterStateMessage }}
+</div> -->
+@if (filterStatusMessage) {
+  <div aria-live="polite" id="filterStatusMessage" class="visually-hidden">
+    {{ filterStatusMessage }}
+  </div>
+}

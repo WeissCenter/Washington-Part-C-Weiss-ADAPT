@@ -1,19 +1,23 @@
 <div #fileInputContainer class="full-width">
   <label class="usa-label margin-y-0" [ngStyle]="labelStyle" [for]="fieldID"
-    ><strong>{{ label }}</strong> <span *ngIf="required" class="text-red text-heavy">*</span>
-  </label>
-  <p class="usa-hint margin-top-05" *ngIf="hint && hint !== ''" id="file-input-specific-hint">{{ hint }}</p>
-  <input
-    #input
-    (change)="onChange(value)"
-    [id]="fieldID"
-    class="usa-file-input"
-    type="file"
-    [name]="fieldID"
-    [attr.aria-describedby]="'file-input-specific-hint' + '-' + fieldID"
-    [accept]="accept" />
+    ><strong>{{ label }}</strong> @if (required) {
+    <span class="text-red text-heavy">*</span>
+  }
+</label>
+@if (hint && hint !== '') {
+  <p class="usa-hint margin-top-05" id="file-input-specific-hint">{{ hint }}</p>
+}
+<input
+  #input
+  (change)="onChange(value)"
+  [id]="fieldID"
+  class="usa-file-input"
+  type="file"
+  [name]="fieldID"
+  [attr.aria-describedby]="'file-input-specific-hint' + '-' + fieldID"
+  [accept]="accept" />
 
-  <div aria-live="polite" class="usa-combo-box-errors">
-    <ng-content select="[errors]"></ng-content>
-  </div>
+<div aria-live="polite" class="usa-combo-box-errors">
+  <ng-content select="[errors]"></ng-content>
+</div>
 </div>
