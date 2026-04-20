@@ -1,0 +1,307 @@
+{
+  "pages": {
+    "home": {
+      "brandingHeader": {
+        "heading": "Departamento de la Niñez, la Juventud y las Familias (DCYF)",
+        "subHeading": "Informe público de Washington IDEA Parte C"
+      },
+      "headingCard": {
+        "heading": "Acerca de IDEA Reports",
+        "body": "Aquí hay una lista de acciones comunes que puede realizar, lo que facilita el acceso rápido y la administración de sus tareas rutinarias."
+      },
+      "latestReports": {
+        "title": "Últimos informes",
+        "description": " A continuación se muestra una lista de los últimos informes que su Estado ha puesto a disposición del público. Para ver todos los informes, visite la página Informes.",
+        "button_text": "Ver más informes",
+        "viewButton": "Ver",
+        "shareButton": "Compartir",
+        "dataButton": "Datos"
+      }
+    },
+    "resources": {
+      "heading": {
+        "header": "Recursos",
+        "sectionLabel": "Encabezado de página de recursos",
+        "description": "Explore estos recursos para obtener una valiosa orientación sobre promoción, leyes educativas, redes de apoyo y preguntas frecuentes (FAQs)."
+      },
+      "secondaryNavigation": {
+        "links": [
+          {
+            "name": "Enlaces útiles",
+            "queryParams": {
+              "navigation": "useful-links"
+            }
+          },
+          {
+            "name": "Preguntas frecuentes",
+            "queryParams": {
+              "navigation": "frequently-asked-questions"
+            }
+          }
+        ]
+      },
+      "usefulLinks": {
+        "header": "Enlaces útiles para padres y estudiantes",
+        "headerSectionLabel": "Encabezado de enlaces útiles",
+        "listSectionLabel": "Lista de enlaces útiles",
+        "description": "Encontrar recursos valiosos y apoyo para niños con discapacidad. Estos enlaces ofrecen información, promoción y asistencia adaptadas a sus necesidades.",
+        "links": [
+          {
+            "name": "Marco de transformación de sistemas para preescolares equitativos (STEP Award with Data) - Tendencias infantiles",
+            "description": "El Marco de Transformación del Sistema para Preescolares Equitativos (STEP Forward with Data) está diseñado para ayudar a los líderes del sistema preescolar a utilizar los datos para promover una mayor equidad en cada paso del sistema preescolar. Al usar este Marco, los líderes comprenderán mejor las experiencias de los niños, las familias o los miembros de la fuerza laboral dentro de sus sistemas para comenzar a identificar posibles inequidades y examinar las causas profundas que podrían abordarse.",
+            "link": "https://www.childtrends.org/publications/system-transformation-equitable-preschools-step-forward-data-framework"
+          },
+          {
+            "name": "Centro de Datos IDEA (IDC)",
+            "description": "El Centro de Datos IDEA (IDC) apoya a los estados mientras trabajan para mejorar la recopilación y el reporting de sus datos IDEA y a medida que analizan y utilizan estos datos para realizar mejoras programáticas.",
+            "link": "https://ideadata.org/"
+          },
+          {
+            "name": "Centro para la Integración de Datos IDEA (CIID)",
+            "description": "El Centro para la Integración de Datos IDEA (CIID) brinda asistencia técnica a las agencias educativas estatales para aumentar la capacidad de reportar datos de alta calidad requeridos bajo la Ley de Educación de Individuos con Discapacidades (IDEA) Parte B Secciones 616 y 618.",
+            "link": "https://ciidta.communities.ed.gov/#program"
+          },
+          {
+            "name": "El Centro de Sistemas de Datos de la Primera Infancia (DaSy) IDEA",
+            "description": "El Centro DaSy es un centro nacional de asistencia técnica que trabaja con los estados para apoyar los programas estatales de intervención temprana y educación especial en la primera infancia de IDEA en la construcción de sistemas de datos de alta calidad y el uso de datos para mejorar los resultados para los niños pequeños con discapacidades y sus familias.",
+            "link": "https://dasycenter.org/"
+          },
+          {
+            "name": "Centro de Asistencia Técnica para la Primera Infancia (ECTA)",
+            "description": "El Centro ECTA apoya los programas estatales IDEA Parte C y Parte B, Sección 619 en el desarrollo de sistemas estatales y locales de alta calidad, efectivos y sostenibles, para implementar acceso equitativo, servicios y apoyos para los niños con discapacidades y sus familias que den como resultado resultados positivos no relacionados con la raza, el idioma, los ingresos u otros datos demográficos.",
+            "link": "https://ectacenter.org/"
+          },
+          {
+            "name": "Protección de la privacidad de los estudiantes - Centro de Asistencia Técnica de Privacidad (PTAC)",
+            "description": "El Centro de Asistencia Técnica de Privacidad (PTAC) es un recurso único para que las partes interesadas de la educación aprendan sobre privacidad, confidencialidad y prácticas de seguridad relacionadas con los sistemas de datos a nivel de los estudiantes y otros usos de los datos de los estudiantes.",
+            "link": "https://studentprivacy.ed.gov/"
+          }
+        ]
+      },
+      "frequentlyAskedQuestions": {
+        "headingSectionLabel": "Encabezado de preguntas frecuentes",
+        "listSectionLabel": "Lista de preguntas frecuentes",
+        "description": "Encontrar recursos valiosos y apoyo para niños con discapacidad. Estos enlaces ofrecen información, promoción y asistencia adaptadas a sus necesidades."
+      }
+    },
+    "reports": {
+      "header": "Informes Públicos",
+      "body": "Ver una lista de los informes publicados.",
+      "loading": "Cargando informes.",
+      "loaded": "Los informes se han cargado.",
+      "sortApplied": "Se ha aplicado la clasificación.",
+      "filterApplied": "Se han aplicado filtros."
+    },
+    "report": {
+      "suppressionWarning": {
+        "heading": "¿Cómo protegemos la privacidad de los niños?",
+        "description": "Se han suprimido datos específicos para proteger la privacidad de las personas de acuerdo con las directrices de la FERPA. No se dan a conocer detalles que podrían conducir a la identificación de individuos en pequeños grupos poblacionales. "
+      },
+      "quickSummary": {
+        "header": "Resumen rápido"
+      },
+      "filterPopup": {
+        "header": "Filtros aplicados",
+        "description": "Hay {{filter_count}} filtros aplicados en {{category_count}} categorías."
+      },
+      "dataRepModal": {
+        "description": "Se han suprimido datos específicos para proteger la privacidad de las personas de acuerdo con las directrices de la FERPA. No se dan a conocer detalles que podrían conducir a la identificación de individuos en pequeños grupos poblacionales."
+      },
+      "actions": {
+        "close_button": "Cerrar",
+        "explain": "Explicar",
+        "glossary": "Glosario",
+        "success": "Éxito",
+        "share": "compartir",
+        "percent": "Porcentaje (%)",
+        "download_csv": "Descargar CSV",
+        "download_excel": "Descargar Excel (XLSX)",
+        "value_label": "Valor",
+        "filter": "Filtro",
+        "note": "Nota:",
+        "section_unavailable": "Esta sección no está disponible.",
+        "of": "de",
+        "verified": "Verificado",
+        "selected": "seleccionado",
+        "filter_description": "Haz tus selecciones de filtrado y pulsa Aplicar.",
+        "filter_controls_description": "Pulse Aplicar para guardar los cambios.",
+        "apply_and_close": "Aplicar y cerrar",
+        "reset": "Restablecer",
+        "cancel": "Cancelar",
+        "open_filter_panel": "Abrir panel de filtro",
+        "reset_all_filters": "Restablecer todos los filtros",
+        "plain_language_summary": "Resumen en lenguaje sencillo",
+        "data": "Datos",
+        "preset_hint": "Tenga en cuenta: Debido a la forma en que se organizan los datos, el filtrado personalizado se limita a las opciones preestablecidas que se proporcionan a continuación.",
+        "filter_groups": "Elija uno de los grupos de filtros preestablecidos a continuación para personalizar su informe.",
+        "suppressed": "suprimido",
+        "filtered": "Filtrado",
+        "close": "Cerrar",
+        "total_label": "Total",
+        "report-filter-no-data": "En su estado no se recopilan datos para esta categoría."
+      }
+    },
+    "error": {
+      "header": "404: No se encontró la página",
+      "description": "Lo sentimos, pero la página que buscas no parece existir. Verifique la dirección URL e inténtelo de nuevo.",
+      "return": "Volver a la página de inicio"
+    }
+  },
+  "shared": {
+    "sidebar": {
+      "openMenu": "Abrir menú",
+      "resources": "Recursos",
+      "reports": "Reportes",
+      "home": "Inicio",
+      "open": "Abrir",
+      "menu": "Menú",
+      "collapse": "Colapso",
+      "languageAccess": "Idioma",
+      "accessibility": "Accesibilidad"
+    },
+    "breadcrumb": {
+      "home": "Inicio",
+      "resources": "Recursos",
+      "reports": "Reportes"
+    },
+    "footer": {
+      "technologyBy": "Tecnología por"
+    },
+    "frequentlyAskedQuestions": {
+      "title": "Preguntas frecuentes",
+      "listAria": "Lista de preguntas frecuentes",
+      "tableHeading": "En esta página",
+      "description": "Las preguntas frecuentes (FAQs) que aparecen a continuación proporcionan información útil sobre temas clave relacionados con los informes, ofreciendo una mejor comprensión de los datos, su importancia y cómo pueden afectarle.",
+      "footNote": "Para obtener información más detallada y preguntas adicionales, visite la página Recursos.",
+      "button_text": "Ver más preguntas frecuentes",
+      "categories": [
+        {
+          "name": "Comprensión general",
+          "fragment": "general-understanding",
+          "questions": [
+            {
+              "addToLanding": true,
+              "question": "¿Qué es la Ley de Educación para Individuos con Discapacidades (IDEA)?",
+              "answer": "IDEA es una ley federal que garantiza servicios a niños con discapacidad en todo el país. Se rige la forma en que los estados y organismos públicos brindan intervención temprana, educación especial y servicios relacionados."
+            },
+            {
+              "addToLanding": true,
+              "question": "¿Qué son la Parte C y la Parte B de IDEA?",
+              "answer": "La Parte C de IDEA cubre los servicios de intervención temprana para infantes y niños pequeños (desde el nacimiento hasta los 2 años) con discapacidades. La Parte B cubre la educación especial y los servicios conexos para niños y jóvenes (edades 3-21) con discapacidad."
+            },
+            {
+              "addToLanding": true,
+              "question": "¿Cuál es el propósito de estos informes?",
+              "answer": "Estos informes ayudan a rastrear el progreso y la efectividad de los programas de educación especial, asegurando que los niños con discapacidades reciban los servicios adecuados."
+            },
+            {
+              "addToLanding": false,
+              "question": "¿Con qué frecuencia se publican estos informes?",
+              "answer": "Estos informes suelen ser publicados anualmente por la Agencia Educativa de cada Estado o la Agencia principal."
+            },
+            {
+              "addToLanding": false,
+              "question": "¿Qué es la supresión de datos?",
+              "answer": "La supresión de datos consiste en ocultar o eliminar datos a propósito para evitar que se identifique información sobre individuos específicos. Esto ayuda a garantizar que los datos personales se mantengan privados cuando podrían identificarse en los datos debido al pequeño número de personas representadas."
+            }
+          ]
+        },
+        {
+          "name": "Sobre ADAPT",
+          "fragment": "about-adapt",
+          "questions": [
+            {
+              "addToLanding": true,
+              "question": "¿Qué es ADAPT (Herramienta de Análisis y Publicación de Datos Accesibles)?",
+              "answer": "ADAPT es un acrónimo de Accesible Data Analysis and Publishing Tool. Es una herramienta de código abierto disponible públicamente que tiene como objetivo proporcionar informes IDEA accesibles a todos los usuarios. ADAPT cumple con las Pautas de Accesibilidad al Contenido Web (WCAG) 2.2 AA. Nos esforzamos por cumplir con el cumplimiento WCAG 2.2 AAA donde sea posible."
+            },
+            {
+              "addToLanding": true,
+              "question": "¿Cómo incorpora ADAPT la accesibilidad?",
+              "answer": "ADAPT fue diseñado pensando en la accesibilidad. Para garantizar que nuestros diseños funcionaran en escenarios de la vida real, realizamos estudios de usabilidad con diversos grupos de usuarios, incluidos aquellos con discapacidades visuales, discapacidades cognitivas y de aprendizaje y usuarios neurodivergentes. Incorporamos un componente de configuración de accesibilidad, que permite a las personas adaptar su experiencia ajustando el tamaño del texto, el contraste de color y la densidad del contenido. Este componente es compatible con lectores de pantalla, pantallas braille y otros dispositivos de asistencia."
+            },
+            {
+              "addToLanding": true,
+              "question": "¿Cuáles son las características clave de ADAPT?",
+              "answer": "ADAPT hace que los datos de IDEA sean fáciles de acceder y comprender. Incluye informes públicos accesibles con los que los usuarios pueden interactuar para ver un segmento de los datos. También hay disponible una página de recursos útiles, con preguntas frecuentes y enlaces útiles para obtener más información sobre los datos de IDEA."
+            }
+          ]
+        },
+        {
+          "name": "Acceso a los informes",
+          "fragment": "accessing-the-reports",
+          "questions": [
+            {
+              "question": "¿Dónde puedo encontrar estos informes?",
+              "answer": "En la navegación de la izquierda encontrarás una pestaña Informes, que cuando se selecciona te llevará a la página Informes. En la página Informes encontrará una lista de todos los informes que su estado ha puesto a disposición del público."
+            },
+            {
+              "question": "¿Qué tipo de información se incluye en estos informes?",
+              "answer": "Nuestros informes brindan información sobre los datos recopilados para niños con discapacidad. Cada informe incluye una función de glosario que, cuando está habilitada, ofrece definiciones de lenguaje sencillo para los términos utilizados en todo el informe. Esto hace que la información sea más accesible para todos los usuarios. Además, hemos incluido una función de explicación que proporciona una descripción en lenguaje sencillo de los datos que se presentan, lo que ayuda a los usuarios a comprender mejor el contexto y el significado de los datos."
+            }
+          ]
+        }
+      ]
+    },
+    "accessibility": {
+      "newWindow": "Se abre en una ventana nueva",
+      "language": {
+        "selectorTitle": "Selección de idioma",
+        "selectorDescription": "Personaliza tu experiencia de idioma para ADAPT aquí:",
+        "selectorClose": "Cerrar",
+        "supportedLanguages": [
+          {
+            "langLabel": "English",
+            "translatedLabel": "Inglés",
+            "langCode": "en"
+          },
+          {
+            "langLabel": "Español",
+            "translatedLabel": "Español",
+            "langCode": "es-MX"
+          }
+        ]
+      }
+    },
+    "paginator": {
+      "showingUpTo": "Mostrando hasta",
+      "of": "de",
+      "items": "artículos",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "listControls": {
+      "sort": "Ordenar"
+    },
+    "a11yCenterContent": {
+      "title": "Configuración de accesibilidad",
+      "description": "Ajusta las siguientes opciones para personalizar la apariencia de este sitio.",
+      "closeLabel": "Cerrar",
+      "resetAllLabel": "Restablecer todos los ajustes",
+      "resetStatusMessage": "Los ajustes se han restablecido",
+      "fontSizeTitle": "Tamaño de texto",
+      "fontSizeDescription": "Ajusta el tamaño del texto de la interfaz.",
+      "fontSizeOptionSmaller": "Disminuir al 85%",
+      "fontSizeOptionDefault": "Predeterminado al 100%",
+      "fontSizeOptionLarge": "Aumentar al 125%",
+      "fontSizeOptionLarger": "Aumentar al 150%",
+      "fontSizeOptionLargest": "Aumentar al 200%",
+      "themeTitle": "Tema de color",
+      "themeDescription": "Cambia la paleta de colores del sitio.",
+      "themeOptionDefault": "Claro predeterminado",
+      "themeOptionDynamicDark": "Oscuro predeterminado",
+      "themeOptionHighContrast": "Alto contraste",
+      "themeOptionMonochrome": "Monocromo",
+      "spacingTitle": "Espaciado",
+      "spacingDescription": "Ajusta el espacio entre los elementos.",
+      "spacingOptionCompact": "Espaciado compacto",
+      "spacingOptionDefault": "Espaciado cómodo",
+      "spacingOptionComfort": "Espaciado confortable",
+      "spacingOptionExtraComfort": "Espaciado extra confortable",
+      "layoutTitle": "Diseño",
+      "layoutDescription": "Cambia cómo se organiza el contenido en la pantalla.",
+      "layoutOptionDefault": "Diseño predeterminado",
+      "layoutOptionMobile": "Una sola columna"
+    }
+  }
+}
