@@ -1,0 +1,277 @@
+{
+  "pages": {
+    "home": {
+      "brandingHeader": {
+        "heading": "Department of Children, Youth, and Families (DCYF)",
+        "subHeading": "Washington IDEA Part C Public Reporting"
+      },
+      "headingCard": {
+        "heading": "About IDEA Reports",
+        "body": "Here is a list of common actions you can perform, making it easy to quickly access and manage your routine tasks."
+      },
+      "latestReports": {
+        "title": "Latest Reports",
+        "description": " Below is a list of the latest reports that your State has made publicly available. To view all the reports, please visit the Reports page.",
+        "button_text": "View More Reports",
+        "viewButton": "View",
+        "shareButton": "Share",
+        "dataButton": "Data"
+      }
+    },
+    "resources": {
+      "heading": {
+        "header": "Resources",
+        "sectionLabel": "Resources Page Heading",
+        "description": "Explore these resources for valuable guidance on advocacy, education laws, support networks, and Frequently Asked Questions (FAQs.)"
+      },
+      "secondaryNavigation": {
+        "links": [
+          {
+            "name": "Useful links",
+            "queryParams": {
+              "navigation": "useful-links"
+            }
+          },
+          {
+            "name": "Frequently Asked Questions",
+            "queryParams": {
+              "navigation": "frequently-asked-questions"
+            }
+          }
+        ]
+      },
+      "usefulLinks": {
+        "header": "Useful links for parents and students",
+        "headerSectionLabel": "Useful Links Heading",
+        "listSectionLabel": "Useful Links List",
+        "description": "Find valuable resources and support for children with disabilities. These links offer information, advocacy, and assistance tailored to your needs.",
+        "links": [
+          {
+            "name": "System Transformation for Equitable Preschools (STEP Forward with Data) Framework - Child Trends",
+            "description": "The System Transformation for Equitable Preschools (STEP Forward with Data) Framework is designed to help preschool system leaders use data to promote greater equity at every step of the preschool system. In using this Framework, leaders will better understand the experiences of children, families, or workforce members within their systems to begin identifying potential inequities and examine root causes that could be addressed.",
+            "link": "https://www.childtrends.org/publications/system-transformation-equitable-preschools-step-forward-data-framework"
+          },
+          {
+            "name": "IDEA Data Center (IDC)",
+            "description": "The IDEA Data Center (IDC) supports states as they work to improve the collection and reporting of their IDEA data and as they analyze and use these data to make programmatic improvements.",
+            "link": "https://ideadata.org/"
+          },
+          {
+            "name": "Center for Integration of IDEA Data (CIID)",
+            "description": "The Center for the Integration of IDEA Data (CIID) provides technical assistance to state education agencies to increase the capacity to report high quality data required under the Individuals with Disabilities Education Act (IDEA) Part B Sections 616 and 618.",
+            "link": "https://ciidta.communities.ed.gov/#program"
+          },
+          {
+            "name": "The Center for IDEA Early Childhood Data Systems (DaSy)",
+            "description": "The DaSy Center is a national technical assistance center that works with states to support IDEA early intervention and early childhood special education state programs in building high quality data systems and using data to improve results for young children with disabilities and their families.",
+            "link": "https://dasycenter.org/"
+          },
+          {
+            "name": "Early Childhood Technical Assistance Center (ECTA)",
+            "description": "The ECTA Center supports state IDEA Part C and Part B, Section 619 programs in developing high-quality, effective, and sustainable state and local systems, to implement equitable access, services, and supports for children with disabilities and their families that result in positive outcomes not related to race, language, income, or other demographics.",
+            "link": "https://ectacenter.org/"
+          },
+          {
+            "name": "Protecting Student Privacy - Privacy Technical Assistance Center (PTAC)",
+            "description": "The Privacy Technical Assistance Center (PTAC) is a one-stop resource for education stakeholders to learn about privacy, confidentiality, and security practices related to student-level data systems and other uses of student data.",
+            "link": "https://studentprivacy.ed.gov/"
+          }
+        ]
+      },
+      "frequentlyAskedQuestions": {
+        "headingSectionLabel": "Frequently Asked Questions Heading",
+        "listSectionLabel": "Frequently Asked Questions List",
+        "description": "Find valuable resources and support for children with disabilities. These links offer information, advocacy, and assistance tailored to your needs."
+      }
+    },
+    "reports": {
+      "header": "Public Reports",
+      "body": "View a list of the published reports.",
+      "loading": "Loading reports.",
+      "loaded": "Reports have loaded.",
+      "sortApplied": "Sort has been applied.",
+      "filterApplied": "Filters have been applied."
+    },
+    "report": {
+      "suppressionWarning": {
+        "heading": "How are we protecting the children’s privacy?",
+        "description": "Specific data has been suppressed to protect the privacy of individuals in accordance with FERPA guidelines. Details that could lead to the identification of individuals in small population groups are not disclosed. "
+      },
+      "quickSummary": {
+        "header": "Quick Summary"
+      },
+      "filterPopup": {
+        "header": "Filters Applied",
+        "description": "There are {{filter_count}} filters applied across {{category_count}} categories."
+      },
+      "dataRepModal": {
+        "description": "Specific data has been suppressed to protect the privacy of individuals in accordance with FERPA guidelines. Details that could lead to the identification of individuals in small population groups are not disclosed."
+      },
+      "actions": {
+        "close_button": "Close",
+        "explain": "Explain",
+        "glossary": "Glossary",
+        "success": "Success",
+        "share": "share",
+        "percent": "Percent (%)",
+        "download_csv": "Download CSV",
+        "download_excel": "Download Excel (XLSX)",
+        "value_label": "Value",
+        "filter": "Filter",
+        "note": "Note:",
+        "section_unavailable": "This Section is Unavailable.",
+        "of": "of",
+        "verified": "Verified",
+        "selected": "selected",
+        "filter_description": "Make your filtering selections and hit apply.",
+        "filter_controls_description": "Hit apply to save your changes.",
+        "apply_and_close": "Apply And Close",
+        "reset": "Reset",
+        "cancel": "Cancel",
+        "open_filter_panel": "Open Filter Panel",
+        "reset_all_filters": "Reset All Filters",
+        "plain_language_summary": "Plain language summary",
+        "data": "Data",
+        "preset_hint": "Please note: Due to how the data is organized, custom filtering is limited to the preset options provided below.",
+        "filter_groups": "Choose from the preset filter groups below to customize your report.",
+        "suppressed": "Suppressed",
+        "filtered": "Filtered",
+        "close": "Close",
+        "total_label": "Total",
+        "report-filter-no-data": "Data is not collected for this category in your State."
+      }
+    },
+    "error": {
+      "header": "404: Page Not Found",
+      "description": "Sorry, but the page you’re looking for doesn’t seem to exist. Please verify the URL and try again.",
+      "return": "Return To Home Page"
+    }
+  },
+  "shared": {
+    "sidebar": {
+      "openMenu": "Open Menu",
+      "resources": "Resources",
+      "reports": "Reports",
+      "home": "Home",
+      "open": "Open",
+      "menu": "Menu",
+      "collapse": "Collapse",
+      "languageAccess": "Languages",
+      "accessibility": "Accessibility"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "resources": "Resources",
+      "reports": "Reports"
+    },
+    "footer": {
+      "technologyBy": "Technology by"
+    },
+    "frequentlyAskedQuestions": {
+      "title": "Frequently asked questions",
+      "listAria": "Frequently asked questions list",
+      "tableHeading": "On this page",
+      "description": "The frequently asked questions (FAQs) below provide helpful information on key topics related to the reports, offering a better understanding of the data, its significance, and how it may impact you.",
+      "footNote": "For more in-depth information and additional questions, please visit the Resources page.",
+      "button_text": "View More FAQs",
+      "categories": [
+        {
+          "name": "General Understanding",
+          "fragment": "general-understanding",
+          "questions": [
+            {
+              "addToLanding": true,
+              "question": "What is the Individuals with Disabilities Education Act (IDEA)?",
+              "answer": "IDEA is a federal law ensuring services to children with disabilities throughout the nation. It governs how states and public agencies provide early intervention, special education, and related services."
+            },
+            {
+              "addToLanding": true,
+              "question": "What are Part C and Part B of IDEA?",
+              "answer": "Part C of IDEA covers early intervention services for infants and toddlers (birth to age 2) with disabilities. Part B covers special education and related services for children and youth (ages 3-21) with disabilities."
+            },
+            {
+              "addToLanding": true,
+              "question": "What is the purpose of these reports?",
+              "answer": "These reports help track the progress and effectiveness of special education programs, ensuring that children with disabilities receive appropriate services."
+            },
+            {
+              "addToLanding": false,
+              "question": "How often are these reports published?",
+              "answer": "These reports are typically published annually by each State’s Education Agency or the Lead Agency."
+            },
+            {
+              "addToLanding": false,
+              "question": "What is data suppression?",
+              "answer": "Data suppression is purposefully hiding or removing data to keep information about specific individuals from being identified. This helps to make sure personal data is kept private when it could be identified in the data because of the small number of individuals represented."
+            }
+          ]
+        },
+        {
+          "name": "About ADAPT",
+          "fragment": "about-adapt",
+          "questions": [
+            {
+              "addToLanding": true,
+              "question": "What is ADAPT (Accessible Data Analysis and Publishing Tool)?",
+              "answer": "ADAPT is an acronym for Accessible Data Analysis and Publishing Tool. It is a publicly available, open-source tool that aims to provide accessible IDEA reports to all users. ADAPT is compliant with Web Content Accessibility Guidelines (WCAG) 2.2 AA. We strive to meet WCAG 2.2 AAA compliance where feasible."
+            },
+            {
+              "addToLanding": true,
+              "question": "How does ADAPT incorporate accessibility?",
+              "answer": "ADAPT was designed with accessibility in mind. To ensure our designs worked in real-life scenarios, we conducted usability studies with diverse user groups, including those with visual impairments, cognitive and learning disabilities, and neurodivergent users. We incorporated an accessibility settings component, which allows individuals to tailor their experience by adjusting the text size, color contrast, and the content density. This component is compatible with screen readers, braille displays, and other assistive device."
+            },
+            {
+              "addToLanding": true,
+              "question": "What are the key features of ADAPT?",
+              "answer": "ADAPT makes IDEA data simple to access and understand. It includes accessible public reports that users can interact with to view a segment of the data. A helpful resource page is also available, featuring FAQs and useful links to learn more about IDEA data."
+            }
+          ]
+        },
+        {
+          "name": "Accessing the Reports",
+          "fragment": "accessing-the-reports",
+          "questions": [
+            {
+              "question": "Where can I find these reports?",
+              "answer": "On the left hand navigation you will find a Reports tab, that when selected will take you to the Reports page. On the Reports page you will find a list of all the reports that your state has made publicly available."
+            },
+            {
+              "question": "What kind of information is included in these reports?",
+              "answer": "Our reports provide information on the data collected for children with disabilities. Each report includes a glossary feature that, when enabled, offers plain language definitions for terms used throughout the report. This makes the information more accessible to all users. Additionally, we’ve included an explain feature that provides a plain language description of the data being presented, helping users better understand the context and meaning of the data."
+            }
+          ]
+        }
+      ]
+    },
+    "accessibility": {
+      "newWindow": "opens in a new window",
+      "language": {
+        "selectorTitle": "Select Language",
+        "selectorDescription": "Customize your language experience for ADAPT here:",
+        "selectorClose": "Close",
+        "supportedLanguages": [
+          {
+            "langLabel": "English",
+            "translatedLabel": "English",
+            "langCode": "en"
+          },
+          {
+            "langLabel": "Español",
+            "translatedLabel": "Spanish",
+            "langCode": "es-MX"
+          }
+        ]
+      }
+    },
+    "paginator": {
+      "showingUpTo": "Showing up to",
+      "of": "of",
+      "items": "items",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "listControls": {
+      "sort": "Sort"
+    }
+  }
+}
