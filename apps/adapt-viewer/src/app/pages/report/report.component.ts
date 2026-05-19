@@ -262,6 +262,7 @@ export class ReportComponent {
   }
 
   public openShareModal() {
+    this.shareCopyStatusMessage = '';
     this.shareModal?.open();
 
     const appliedFilters: any = this.onFilter.value;

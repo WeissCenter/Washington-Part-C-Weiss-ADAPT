@@ -2,7 +2,6 @@ import {
   ICondition,
   IFilter,
   IFilterGroup,
-  IReportModel,
   IReportPreview,
   ISummaryTemplate,
   ITemplate,
@@ -35,10 +34,8 @@ import {
   ReplaySubject,
   Subscription,
   catchError,
-  combineLatest,
   distinctUntilChanged,
   filter,
-  firstValueFrom,
   forkJoin,
   map,
   of,
@@ -53,7 +50,6 @@ import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { AdaptDataService } from '../../../services/adapt-data.service';
-import { RecentActivityService } from '../../../services/recent-activity.service';
 import { FilterPanelService } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/services/filterpanel.service';
 import { TabViewComponent } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/components/tab-view/tab-view.component';
 import { FocusService } from '../../services/focus.service';
@@ -67,8 +63,8 @@ import { ContentService, ModalComponent, SettingsService } from '@adapt/adapt-sh
 import { TemplateService } from '../../../services/template.service';
 import { PagesContentService } from '../../../auth/services/content/pages-content.service';
 import { getFormErrors, uniqueNameValidator } from '../../../util';
+import { ReportResolvedData } from './report.resolver';
 import slugify from 'slugify';
-import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
 import { NGXLogger } from 'ngx-logger';
 interface ReportFilter {
@@ -131,7 +127,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   canDeactivate(isRouter = false, nextState?: RouterStateSnapshot): boolean {
     if (this.user.idleState === IdleStates.TIMED_OUT) return true;
 
-    if (isRouter) this.confirmModal?.open(nextState?.url);
+    if (isRouter && this.mode === PageMode.EDIT && this.editReportForm.dirty) this.confirmModal?.open(nextState?.url);
 
     return !(this.mode === PageMode.EDIT && this.editReportForm.dirty);
   }
@@ -263,9 +259,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
     private location: LocationStrategy,
     private announcer: LiveAnnouncer,
     private adaptDataService: AdaptDataService,
-    private adaptDataViewService: AdaptDataViewService,
     private adaptReportService: AdaptReportService,
-    private recentActivity: RecentActivityService,
     private filterPanelService: FilterPanelService,
     private focusService: FocusService,
     private cd: ChangeDetectorRef,
@@ -650,100 +644,82 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // const data = await firstValueFrom(rawdata);
-    // this.report = data['reportResolver'];
-    this.routeSub = combineLatest([this.route.params, this.route.queryParams]).subscribe(
-      async ([params, queryParams]) => {
+    this.routeSub = this.route.data.subscribe(({ reportResolver: resolvedData }) => {
+      const { reports, dataView } = resolvedData as ReportResolvedData;
 
-        try {
-          this.logger.debug('routeSub getReport: ', params['id'], queryParams['version']);
+      this.logger.debug('routeSub resolved report data');
 
-          const reportData = await firstValueFrom(
-            this.adaptReportService.getReport(params['id'], queryParams['version']).pipe(tap((reports) => {
+      try {
+        const englishReport = reports[0];
 
-              this.logger.debug('reload reports:', reports);
-              reports = reports as IReportModel[];
+        const supportedLangs = this.settings.getSettings().supportedLanguages || ['en'];
+        const maxLength = supportedLangs.length;
 
-                const result = reports[0];
-                this.recentActivity.addRecentActivity(params['id'], 'Report', reports[0]);
+        const texts: any[] = [];
 
-                const supportedLangs = this.settings.getSettings().supportedLanguages || ['en'];
-                const maxLength = supportedLangs.length;
-
-                const texts: any[] = [];
-
-                for (let i = 0; i < maxLength; i++) {
-                  const item = reports[i] || reports[0];
-
-                  const text = {
-                    title: item?.template.title,
-                    description: item?.template.description,
-                    verified: i === 0 || !!item?.translationsVerified,
-                  };
-
-                  texts.push(text);
-                }
-
-                for (const _ of texts) {
-                  const newGrp = this.fb.group({
-                    title: this.fb.control('', [Validators.required], [uniqueNameValidator('Report', this.adaptDataService, PageMode.EDIT)]
-                    ),
-                    description: this.fb.control('', [Validators.required]),
-                    verified: this.fb.control(false, [Validators.requiredTrue]),
-                  });
-
-                  if (result?.visibility === 'internal') newGrp.get('verified')!.disable();
-
-                  this.reportTexts.push(newGrp);
-                }
-
-                const resetVertificationStatuses = this.defaultReportText.valueChanges
-                  .pipe(skip(3))
-                  .subscribe((changes) => {
-                    this.translationsGenerated = false;
-                    this.reportTexts.controls.forEach((ctl, idx) =>
-                      idx !== 0 ? ctl.get('verified')?.setValue(false, { emitEvent: false }) : null
-                    );
-                  });
-
-                this.subscriptions.push(resetVertificationStatuses);
-
-                this.editReportForm.setValue({
-                  reportTexts: texts,
-                  audience: result?.visibility,
-                  slug: result?.slug ?? '',
-                  suppressData: this.fb.control(this.previewSuppress||false),
-                });
-              })
-            )
-          );
-          this.report = (reportData as IReportModel[])[0];
-
-          this.logger.debug('Read report: ', this.report.name);
-
-          this.reportTemplateHasSuppression = Object.keys((reportData as IReportModel[])[0]?.template?.suppression || {}).length !== 0;
-          this.previewSuppress = (reportData as IReportModel[])[0]?.visibility === 'external' && this.reportTemplateHasSuppression;
-
-          this.logger.debug('previewSuppress: ', this.previewSuppress);
-          // resolve data view
-
-          const state = this.location.getState() as any;
-
-          if (state?.['editMode']) this.mode = PageMode.EDIT;
-
-          this.report.dataView = await firstValueFrom(
-            this.adaptDataViewService.getDataViews().pipe(
-              map((views) => views.find((view) => view.dataViewID === this.report.dataView)))
-          );
-
-          this.templateSubject.next(this.report.template);
-
-          this.existingFilters = this.buildExistingFilters();
-        } catch (error) {
-          console.error('Error fetching report data:', error);
+        for (let i = 0; i < maxLength; i++) {
+          const item = reports[i] || reports[0];
+          texts.push({
+            title: item?.template.title,
+            description: item?.template.description,
+            verified: i === 0 || !!item?.translationsVerified,
+          });
         }
+
+        while (this.reportTexts.length) {
+          this.reportTexts.removeAt(0);
+        }
+
+        for (const _ of texts) {
+          const newGrp = this.fb.group({
+            title: this.fb.control('', [Validators.required], [uniqueNameValidator('Report', this.adaptDataService, PageMode.EDIT)]),
+            description: this.fb.control('', [Validators.required]),
+            verified: this.fb.control(false, [Validators.requiredTrue]),
+          });
+
+          if (englishReport?.visibility === 'internal') newGrp.get('verified')!.disable();
+
+          this.reportTexts.push(newGrp);
+        }
+
+        const resetVerificationStatuses = this.defaultReportText.valueChanges
+          .pipe(skip(3))
+          .subscribe((changes) => {
+            this.translationsGenerated = false;
+            this.reportTexts.controls.forEach((ctl, idx) =>
+              idx !== 0 ? ctl.get('verified')?.setValue(false, { emitEvent: false }) : null
+            );
+          });
+
+        this.subscriptions.push(resetVerificationStatuses);
+
+        this.editReportForm.setValue({
+          reportTexts: texts,
+          audience: englishReport?.visibility,
+          slug: englishReport?.slug ?? '',
+          suppressData: this.fb.control(this.previewSuppress || false),
+        });
+
+        this.report = englishReport;
+
+        this.logger.debug('Read report: ', this.report.name);
+
+        this.reportTemplateHasSuppression = Object.keys(englishReport?.template?.suppression || {}).length !== 0;
+        this.previewSuppress = englishReport?.visibility === 'external' && this.reportTemplateHasSuppression;
+
+        this.logger.debug('previewSuppress: ', this.previewSuppress);
+
+        const state = this.location.getState() as any;
+        if (state?.['editMode']) this.mode = PageMode.EDIT;
+
+        this.report.dataView = dataView;
+
+        this.templateSubject.next(this.report.template);
+        this.existingFilters = this.buildExistingFilters();
+      } catch (error) {
+        console.error('Error processing report data:', error);
       }
-    );
+    });
   }
 
   filterSummary = {
@@ -899,7 +875,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
             title: 'Report Un-Publish Success',
             body: 'Report has been un-published.',
           });
-          this.router.navigate(['..', this.report.reportID], {
+          this.router.navigate([], {
             relativeTo: this.route,
             queryParams: { version: 'draft' },
           });
@@ -966,8 +942,9 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.adaptReportService.editReport({ reportID: this.report.reportID, languages: multipleLanguageReports }).subscribe({
       next: (report) => {
+        this.report = report;
 
-        this.logger.debug('Report edits saved');
+        this.logger.debug('Report edits saved', report);
 
         this.alert.add({ type: 'success', title: 'Report Save Complete', body: `Your report edits have been saved` });
         this.mode = PageMode.VIEW;
@@ -983,31 +960,10 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
         this.translationsGenerated = false;
         this.reportTexts.markAsPristine();
 
-        //this.logger.debug('next calling getReport for report: ', JSON.stringify(this.report, null, 4));
-        // we need to load the draft because we remove the finalized version on a successful edit
-        // this.adaptReportService.getReport(this.report.reportID, 'draft').subscribe((reportData) => {
-        //
-        //   this.logger.debug('next getReport response: ', reportData);
-        //   if (reportData && reportData?.length > 0){
-        //     this.report = (reportData as IReportModel[])[0];
-        //   }
-        // });
+        this.templateSubject.next(this.report.template);
 
-        // this.router.navigate(['admin', 'reports', this.report.reportID], {
-        //   queryParams: { version: 'draft' },
-        //   queryParamsHandling: 'merge' // Merges new query params with existing ones
-        // });
-
-        // this.router.navigate([], {
-        //relativeTo: this.route,
-        //   queryParams: { version: 'draft' },
-        //   queryParamsHandling: 'merge' // Merges new query params with existing ones
-        // });
-
-        this.logger.debug('Navigate back to draft version of the report');
-        // Navigate to parent (reports) and pass report id for child (report) and reload the report page for this report
         this.router.navigate(['..', this.report.reportID], {
-          relativeTo: this.route, // need this when navigating from a relative path
+          relativeTo: this.route,
           queryParams: { version: 'draft' },
         });
       },

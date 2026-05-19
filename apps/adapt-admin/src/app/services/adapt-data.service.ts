@@ -149,11 +149,12 @@ export class AdaptDataService {
    * @param type: Report, DataView, DataSet
    * @param name
    * @param field: name or slug
+   * @param ignoreID: when editing an existing item, we want to ignore the name of the current item, so we pass in the id field and value to ignore in the uniqueness check
    */
-  public isNameUnique(type: string, name: string, field = "name") {
-    this.logger.debug('Inside isNameUnique, type: ', type, ', field: ', field, ', name: ', name);
+  public isNameUnique(type: string, name: string, field = "name", ignoreID?: { idField: string, idValue: string }) {
+    this.logger.debug('Inside isNameUnique, type: ', type, ', field: ', field, ', name: ', name, ', ignoreID: ', ignoreID);
 
-    return this.http.post<APIResponse<boolean>>(`${environment.API_URL}unique`, { type, name, field })
+    return this.http.post<APIResponse<boolean>>(`${environment.API_URL}unique`, { type, name, field, ignoreID })
       .pipe(map((result) => result.data));
   }
 
@@ -419,9 +420,10 @@ export class AdaptDataService {
     return this.http.get<APIResponse<T[]>>(`${environment.API_URL}template/${type}`).pipe(map((result) => result.data));
   }
 
-  public getTemplate<T>(type: TemplateType, templateID: string) {
+  public getTemplate<T>(type: TemplateType, templateID: string, reportingYear?: string) {
+    const id = reportingYear ? `${templateID}#YEAR#${reportingYear}` : templateID;
     return this.http
-      .get<APIResponse<T>>(`${environment.API_URL}template/${type}/${encodeURIComponent(templateID)}`)
+      .get<APIResponse<T>>(`${environment.API_URL}template/${type}/${encodeURIComponent(id)}`)
       .pipe(map((result) => result.data));
   }
 

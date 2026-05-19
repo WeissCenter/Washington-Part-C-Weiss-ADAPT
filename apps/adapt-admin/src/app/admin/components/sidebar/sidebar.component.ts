@@ -1,7 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, Input, ViewChild } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UserService } from '../../../auth/services/user/user.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SettingsService } from '@adapt/adapt-shared-component-lib';
 import { ModalComponent } from '@adapt/adapt-shared-component-lib';
 import { environment } from '../../../../environments/environment';
@@ -23,8 +21,6 @@ export class SidebarComponent implements AfterViewInit {
   //     `https://${environment.s3PublicAssetsDomainName}.s3.amazonaws.com/${settingsLogo}`
   //   );
   // });
-  public skipTo: any;
-
   // magnifying glass logo
   collapsedLogo = 'assets/shared/logos/static/sidebar-bottom-logo__collapsed.svg';
   openLogo = 'assets/shared/logos/static/sidebar-bottom-logo__expanded.svg';
@@ -33,19 +29,10 @@ export class SidebarComponent implements AfterViewInit {
   public logoIsSvg = this.logoURL.endsWith('.svg');
 
   constructor(
-    private route: ActivatedRoute,
     public role: RoleService,
-    private router: Router,
-    private sanitzier: DomSanitizer,
     public user: UserService,
     private settings: SettingsService
-  ) {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        (document.querySelector('.skip-to')?.querySelector('button') as HTMLButtonElement)?.focus();
-      }
-    });
-  }
+  ) {}
 
   nav_collapsed = true;
 

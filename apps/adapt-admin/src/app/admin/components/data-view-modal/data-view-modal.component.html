@@ -300,7 +300,7 @@
                                   class="edit-mode-file-information bg-white border-1px padding-1 display-flex flex-column gap-2">
                                   <h4 class="margin-0">Uploaded File:</h4>
 
-                                  <p><strong>File Name:</strong> {{ files.controls[i].value?.name }}</p>
+                                  <p><strong>File Name:</strong> {{ files.controls[i].value?.name ? files.controls[i].value?.name : files.controls[i].value?.location }}</p>
                                 </div>
                               }
 
@@ -412,7 +412,7 @@
                   <ul class="usa-list">
                     <li>
                       <!-- {{ this.typeFields.get(field.id)?.value }} -->
-                      <strong>{{ `${(+(reportingYear.value) - 1)}-${reportingYear.value}`}}</strong>
+                      <strong>{{ reportingYearString(reportingYear.value) }}</strong>
                     </li>
                   </ul>
                 </li>
@@ -603,7 +603,7 @@
                   <li>
                     Fiscal Year
                     <ul class="usa-list">
-                      <li><strong>{{ getFieldOptionLabelForField('reportingYear', reportingYear) }} </strong></li>
+                      <li><strong>{{ reportingYearString(reportingYear.value) }}</strong></li>
                       <!-- <li *ngFor="let field of currentTemplate?.fields">
                         {{ field.shortLabel }}
                         <ul class="usa-list">

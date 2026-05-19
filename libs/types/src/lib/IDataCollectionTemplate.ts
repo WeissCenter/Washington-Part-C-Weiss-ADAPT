@@ -57,6 +57,7 @@ export interface DataParseDefinition {
 export interface DataCollectionFileDefinition {
   id: string;
   name: string;
+  location: string;
   description: string;
   dataViewDescription: string;
   conditions: DataCollectionFileCondition[];

@@ -1,10 +1,15 @@
 <section
   [attr.aria-label]="label"
   class="hero-container shadow-1 display-flex flex-justify-center flex-align-center padding-x-2 tablet:padding-x-4 gap-4 border-top border-bottom border-base-lighter">
-  <lib-adapt-inline-svg
-    [alt]="logoAlt"
-    [src]="logo"
-    svgClass="display-none desktop:display-flex width-card-lg"></lib-adapt-inline-svg>
+  @if (logoIsSvg) {
+    <lib-adapt-inline-svg
+      [alt]="logoAlt"
+      [src]="logo"
+      svgClass="display-none desktop:display-flex {{logoStyleClass}}"></lib-adapt-inline-svg>
+  }
+  @if (!logoIsSvg) {
+    <img [alt]="logoAlt" [src]="logo" class="logo display-none desktop:display-flex {{logoStyleClass}}" />
+  }
   <div class="auth-banner-info display-flex flex-column tablet:flex-row gap-2 padding-y-8">
     <div class="auth-banner-heading-container display-flex gap-1 flex-column">
       <p class="auth-banner-subtitle">{{ messageSubTitle }}</p>

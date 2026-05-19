@@ -84,7 +84,7 @@ export abstract class BaseTemplateService<T extends { id: string }> {
   }
 
   public getTemplatePromise(id: string, year: string) {
-    return firstValueFrom(this.dataService.getTemplate<T>(this.templateType, this.idStr(id, year)));
+    return firstValueFrom(this.dataService.getTemplate<T>(this.templateType, id, year));
   }
 
   public getAllIDs(withLabels: true): { value: string; label: string }[];
