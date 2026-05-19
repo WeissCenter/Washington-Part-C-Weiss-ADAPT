@@ -29,3 +29,11 @@ button {
   min-width: 44px !important;
   min-height: 44px !important;
 }
+
+.skip-to [role='menu'] {
+  min-width: var(--usa-spacing-mobile);
+}
+
+.skip-to button:focus {
+  border-width: 0 var(--usa-spacing-05) var(--usa-spacing-05) var(--usa-spacing-05) !important;
+}

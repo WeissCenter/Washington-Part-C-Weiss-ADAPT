@@ -13,6 +13,7 @@ export interface DataViewModel {
   data: DBDataViewDataCollection;
   lastPull: '';
   pulledBy: '';
+  reportingYear?: string;
 }
 
 export interface DBDataView {

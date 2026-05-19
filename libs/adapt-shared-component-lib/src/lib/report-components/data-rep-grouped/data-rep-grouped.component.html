@@ -70,8 +70,7 @@
       }
     </ul>
   </div>
-  <article class="data-rep-wrapper flex-2" [attr.aria-labelledby]="id + '-title'"
-    [attr.aria-describedby]="id + '-insight' + id + '-total'">
+  <article class="data-rep-wrapper flex-2">
     <lib-adapt-h-element class="title" [level]="mapHeadingLvl(headingLvl)">{{
       $header() | glossary: 'label': lang : $fileSpec() | async
     }} {{ filterOrSuppress }}</lib-adapt-h-element>
@@ -227,7 +226,7 @@
   <span [id]="id + '-data-modal-dismissal'" class="dismissal" aria-hidden="true" (click)="closeModal()"></span>
   <section class="modal-content" role="document">
     <div class="display-flex gap-2 flex-justify">
-      <h2 id="{{ id }}-data-modal-title" class="modal-title">{{ $header() | glossary: 'label': lang | async }} {{
+      <h2 #dataModalHeading id="{{ id }}-data-modal-title" class="modal-title" tabindex="-1">{{ $header() | glossary: 'label': lang | async }} {{
       filterOrSuppress }}</h2>
       <button [id]="id + '-close-modal-button'" #dataModalCloseBtn class="close-modal" (click)="closeModal()">
         Close

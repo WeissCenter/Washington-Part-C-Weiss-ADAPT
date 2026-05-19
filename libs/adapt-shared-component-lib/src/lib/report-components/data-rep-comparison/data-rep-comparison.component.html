@@ -1,4 +1,4 @@
-<article class="data-rep-wrapper" [attr.aria-labelledby]="id + '-title'" [attr.aria-describedby]="id + '-insight'">
+<article class="data-rep-wrapper">
   <p class="usa-prose font-sm margin-0 text-medium padding-x-3">Comparison</p>
   <lib-adapt-h-element [id]="id + '-title'" ngClass="title" [level]="dataRepService.mapHeadingLvl(headingLvl)">{{ header
     }} {{ dataRepService.filterOrSuppress(content, filtered, suppressed) }}</lib-adapt-h-element>

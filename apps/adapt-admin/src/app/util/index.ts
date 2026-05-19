@@ -3,7 +3,7 @@ import { Observable, debounceTime, distinctUntilChanged, first, map, of, switchM
 import { PageMode } from '@adapt/types';
 import { AdaptDataService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data.service';
 
-export function uniqueNameValidator(type: string, adaptDataService: AdaptDataService, pageMode = PageMode.CREATE, field='name') {
+export function uniqueNameValidator(type: string, adaptDataService: AdaptDataService, pageMode = PageMode.CREATE, field='name', ignoreID?: { idField: string, idValue: string }) {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
     if (pageMode === PageMode.VIEW || (pageMode === PageMode.EDIT && !control.dirty)) {
       return of(null);
@@ -12,7 +12,7 @@ export function uniqueNameValidator(type: string, adaptDataService: AdaptDataSer
       debounceTime(400),
       distinctUntilChanged(),
       switchMap((val) =>
-        adaptDataService.isNameUnique(type, val, field).pipe(
+        adaptDataService.isNameUnique(type, val, field, ignoreID).pipe(
           debounceTime(400),
           map((result: boolean) => (!result ? { uniqueName: true } : null))
         )

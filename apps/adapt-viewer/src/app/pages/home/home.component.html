@@ -74,40 +74,6 @@
         </p>
       </div>
       <!--  *ngFor="let report of reports$ | async" -->
-      @if (reportsLoadedComplete) {
-        <div class="home-reports-list display-flex flex-column gap-1">
-          @for (report of listOfAllReports; track report.reportID) {
-            <lib-adapt-expandable-list-item [expandable]="false">
-              @if (report) {
-                <div visible-content class="display-flex gap-105 flex-column">
-                  <lib-adapt-h-element [ngClass]="'usa-prose margin-0'" level="h3">
-                    <a class="text-primary hover:primary-dark text-semibold text-no-underline cursor-pointer display-inline-flex width-auto"
-                    [routerLink]="['reports', report.slug]">{{ report.template.title }}</a>
-                  </lib-adapt-h-element>
-                  <p class="text-normal font-sm line-height-5 text-ink">{{ report.template.description }}</p>
-                  <p class="text-normal font-sm line-height-4 text-ink">
-                    <time [attr.datetime]="report?.published | date : 'yyyy-MM-dd'">
-                      {{ report.published | date }}
-                    </time>
-                  </p>
-                </div>
-              }
-              <!--
-              <div action-content class="display-flex gap-2">
-                <button   [routerLink]="['reports', report.slug]" class="usa-button">
-                  <i class="fal fa-eye" role="img" aria-hidden="true"></i> {{ reportContent.viewButton }}
-                </button>
-                <button class="usa-button usa-button--outline">
-                  <i class="fal fa-share" aria-hidden="true"></i> {{ reportContent.shareButton }}
-                </button>
-                <button class="usa-button usa-button--outline">
-                  <i class="fal fa-table" role="img" aria-hidden="true"></i>{{ reportContent.dataButton }}
-                </button>
-              </div> -->
-            </lib-adapt-expandable-list-item>
-          }
-        </div>
-        <!--  *ngFor="let report of reports$ | async" -->
         @if (reportsLoadedComplete) {
         <div class="home-reports-list display-flex flex-column gap-1">
           @for (report of listOfAllReports; track report.slug) {
@@ -122,7 +88,7 @@
               <p class="text-normal font-sm line-height-5 text-ink">{{ report.template.description }}</p>
 
               <p class="text-normal font-sm line-height-4 text-ink">
-                <time [attr.datetime]="report?.published | date : 'YYYY-MM-dd'">
+                <time [attr.datetime]="report?.published | date : 'yyyy-MM-dd'">
                   {{ report.published | date }}
                 </time>
               </p>
@@ -152,7 +118,6 @@
         </div>
       <!-- </ng-container> -->
     }
-  }
     </div>
   </section>
 }

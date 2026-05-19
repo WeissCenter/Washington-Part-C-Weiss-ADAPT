@@ -4,6 +4,8 @@ import { GlossaryService } from './lib/services/glossary.service';
 
 export * from './lib.module';
 export * from './lib/components/modal/modal.component';
+export * from './lib/components/in-page-navigation/in-page-navigation.component';
+export * from './lib/components/skip-to/skip-to.component';
 export * from './lib/services/alert.service';
 export * from './lib/services/filterpanel.service';
 export * from './lib/services/glossary.service';

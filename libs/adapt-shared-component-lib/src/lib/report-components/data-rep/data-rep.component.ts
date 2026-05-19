@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 
 import { chartExplainTemplateParse, LanguageCode } from '@adapt/types';
 import { xlsx_delete_row } from '../../util';
+import { focusElement } from '../../util/focus-management.util';
 
 @Component({
   selector: 'lib-adapt-data-rep',
@@ -22,6 +23,7 @@ export class DataRepComponent implements OnInit, OnChanges {
   @ViewChild('explainationRegion') explainationRegion!: ElementRef;
   @ViewChild('explanationSwitch') explanationSwitch!: ElementRef;
   @ViewChild('dataModal') dataModal!: ElementRef;
+  @ViewChild('dataModalHeading') dataModalHeading!: ElementRef<HTMLHeadingElement>;
   @ViewChild('dataModalCloseBtn') dataModalCloseBtn!: ElementRef;
   @ViewChild('dataModalSwitch') dataModalSwitch!: ElementRef;
   @ViewChild('bars') barPanel!: ElementRef;
@@ -247,8 +249,7 @@ export class DataRepComponent implements OnInit, OnChanges {
     // ) as NodeListOf<HTMLElement>;
     // this.firstFocusableElement = focusableElements[0];
     // this.lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-    this.dataModalCloseBtn.nativeElement.focus();
+    focusElement(this.dataModalHeading.nativeElement, { preventScroll: true, removeTabindexOnBlur: false });
     this.dataModal.nativeElement.addEventListener('keydown', this.trapTabKey);
     this.isDataModalOpen = true;
     this.dataModalStateChange.emit(true);
@@ -301,7 +302,7 @@ export class DataRepComponent implements OnInit, OnChanges {
         `(${this.content?.actions?.['suppressed']})`
       );
       this.showGlossaryBtn = this.dataRepService.checkForDefinitions(this.data);
-      this.noDataSummary = this.dataRepService.generatePlainLanguageForZeroTotalItems(this.raw, this.lang);
+      this.noDataSummary = this.dataRepService.generatePlainLanguageForZeroTotalItems(this.raw, this.lang, this.content?.actions?.['report-filter-no-data']);
     }
   }
 
@@ -326,8 +327,14 @@ export class DataRepComponent implements OnInit, OnChanges {
 
       this.noData = totalSelectTotalIsZero && totalSelectHasNoData;
     } else {
-      const select = this.raw.chart.data[0].value || this.raw.chart.data;
-
+      if (
+        (Array.isArray(this.raw.chart.data) && this.raw.chart.data.length === 0) ||
+        (this.raw.chart.data[0].value && Array.isArray(this.raw.chart.data[0].value) && this.raw.chart.data[0].value.length === 0)
+      ) {
+        this.noData = true;
+        return;
+      }
+      const select = this.raw.chart.data[0].value && Array.isArray(this.raw.chart.data[0].value) ? this.raw.chart.data[0].value : this.raw.chart.data;
       this.noData =
         select?.length <= 0 ||
         select.every((item: any) => {
