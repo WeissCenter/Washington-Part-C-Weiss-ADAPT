@@ -326,6 +326,9 @@ export const sum = async function (this: any, sumField: string, ...conditionFiel
   );
 
   const sum = operationResults.find((item) => item.id === sumID);
+  if (sum?.value && sum?.value.toString().split(".").length === 2) {
+    return formatNumber(sum?.value.toFixed(2), 'en-US'); // format to 2 decimal places if there are decimals
+  }
 
   return formatNumber(sum?.value, 'en-US');
 };
@@ -882,8 +885,9 @@ export const max = async function (
   );
 
   const maxResult = result.operationResults.find((item) => item.id === id);
+  const maxResultValue = maxResult?.value?.[index];
 
-  const maxResultValue = maxResult!.value[index];
+  if (!maxResultValue) return ''; // return empty string if there is no value at the index
 
   return `${selectColumns.map((v) => glossary.bind(this)(maxResultValue[v], 'label')).join(' ')}`;
 };

@@ -307,11 +307,18 @@ export class DataRepService {
     );
   }
 
-  generatePlainLanguageForZeroTotalItems(data: any, lang: string): { count: number; summary: string } {
+  generatePlainLanguageForZeroTotalItems(data: any, lang: string, noDataContent: string = 'Data is not collected for this category in your State.'): { count: number; summary: string } {
     // Build a plain language sentence detailing which items have no data to show when suppression is off, but items still have no data
     // Get items with no data
     const noDataItems = data.chart.data.filter((item: { [x: string]: number }) => item[data.chart.yAxisValue] <= 0);
     const noDataItemCount = noDataItems.length;
+    if (data.chart.data.length === 0) {
+      return {
+        count: 0,
+        summary: noDataContent,
+      };
+    }
+
     let noDataSummary = '';
     // Get the plain language label for each item
 
@@ -351,7 +358,7 @@ export class DataRepService {
       fileSpec = formattedReportCodeValue;
 
       // remove leading 'c' character from filespec if present
-      fileSpec = fileSpec.replace(/^[cC]/, '');
+      fileSpec = fileSpec?.replace(/^[cC]/, '');
     } else {
       console.warn('No fileSpec or ReportCode found in content');
     }

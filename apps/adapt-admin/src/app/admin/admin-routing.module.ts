@@ -6,6 +6,7 @@ import { ReportsComponent } from './pages/reports/reports.component';
 import { DataComponent } from './pages/data/data.component';
 import { UploadDataComponent } from './pages/upload-data/upload-data.component';
 import { ReportComponent } from './pages/report/report.component';
+import { reportResolver } from './pages/report/report.resolver';
 import { ViewDataSourceComponent } from './pages/view-data-source/view-data-source.component';
 import { dataSetResolver } from './pages/data-set/data-set.resolver';
 import { DataSetComponent } from './pages/data-set/data-set.component';
@@ -40,6 +41,8 @@ const routes: Routes = [
             path: ':id',
             title: 'ADAPT Admin - Viewing Report',
             component: ReportComponent,
+            resolve: { reportResolver },
+            runGuardsAndResolvers: 'always',
             data: { breadcrumbLabel: 'View Report' },
             canDeactivate: [
               (

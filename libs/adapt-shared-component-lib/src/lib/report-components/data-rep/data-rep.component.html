@@ -1,8 +1,7 @@
-<article class="data-rep-wrapper" [attr.aria-labelledby]="id + '-title'"
-  [attr.aria-describedby]="id + '-insight' + id + '-total'">
+<article class="data-rep-wrapper">
   <lib-adapt-h-element class="title" [level]="dataRepService.mapHeadingLvl(headingLvl)">{{ header }} {{
     dataRepService.filterOrSuppress(content, filtered, suppressed) }}</lib-adapt-h-element>
-  <p class="insight" [innerHTML]="insight"></p>
+  <p class="insight" [innerHTML]="!filtered && noDataSummary.summary ? noDataSummary.summary : insight"></p>
   <div class="action-bar">
     @if (!noData) {
     <ul>
@@ -125,11 +124,13 @@
         <strong>This Section is Unavailable.</strong>
 
         <p class="usa-prose">
-          {{
-          raw.noDataDescription ||
-          "We apologize for the inconvenience, but the way we collected this data doesn't allow us to display it with the
-          current filters. "
-          }}
+          @if (filtered && raw.noDataDescription) {
+           {{ raw.noDataDescription }}
+          } @else if (!filtered && noDataSummary.summary) {
+           {{ noDataSummary.summary}}
+          } @else {
+           "We apologize for the inconvenience, but we don't have data to display for this section at this time."
+          }
         </p>
       </div>
     </div>
@@ -161,7 +162,7 @@
   <span [id]="id + '-data-modal-dismissal'" class="dismissal" aria-hidden="true" (click)="closeModal()"></span>
   <section class="modal-content" role="document">
     <div class="display-flex gap-2 flex-justify">
-      <h2 id="{{ id }}-data-modal-title" class="modal-title">{{ header }} {{ dataRepService.filterOrSuppress(content,
+      <h2 #dataModalHeading id="{{ id }}-data-modal-title" class="modal-title" tabindex="-1">{{ header }} {{ dataRepService.filterOrSuppress(content,
         filtered, suppressed) }}</h2>
       <button [id]="id + '-close-modal-button'" #dataModalCloseBtn class="close-modal" (click)="closeModal()">
         {{content?.actions?.['close']}}

@@ -19,6 +19,7 @@
       "@adapt/adapt-shared-component-lib": ["libs/adapt-shared-component-lib/src/index.ts"],
       "@adapt/types": ["libs/types/src/index.ts"],
       "@adapt/validation": ["libs/validation/src/index.ts"],
+      "@angular/core/testing": ["node_modules/@angular/core/types/testing.d.ts"],
       "@badeball/cypress-cucumber-preprocessor/*": [
         "./node_modules/@badeball/cypress-cucumber-preprocessor/dist/subpath-entrypoints/*"
       ]

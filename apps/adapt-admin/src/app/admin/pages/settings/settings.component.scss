@@ -1,0 +1,12 @@
+.settings-list-item {
+    h3 {
+        &:focus-within {
+            outline: var(--usa-focus-width) var(--usa-focus-style) var(--usa-focus-color);
+            outline-offset: var(--usa-focus-offset);
+        }
+
+        a:focus {
+            --usa-focus-width: 0px;
+        }
+    }
+}

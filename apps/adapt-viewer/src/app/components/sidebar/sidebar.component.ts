@@ -1,6 +1,4 @@
 import { afterNextRender, AfterViewInit, Component, computed, effect, ElementRef, HostBinding, Inject, Injector, Input, PLATFORM_ID, ViewChild, DOCUMENT } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { focusElement, ModalComponent, SettingsService } from '@adapt/adapt-shared-component-lib';
 import { environment } from '../../../environments/environment';
@@ -45,8 +43,6 @@ export class ViewerSidebarComponent implements AfterViewInit {
   public logoURL = `${environment.logoPath ?? 'assets/logos/generic'}/state-nav-logo.${environment.logoExtension ?? 'svg'}`;
   public logoIsSvg = this.logoURL.endsWith('.svg');
 
-  public skipTo: any;
-
   public $sharedContent = this.content.$sharedContent;
   public $sidebar = computed(() => this.$sharedContent()?.sidebar);
 
@@ -64,7 +60,6 @@ export class ViewerSidebarComponent implements AfterViewInit {
 
   constructor(
     public content: ViewerPagesContentService,
-    private router: Router,
     private sanitzier: DomSanitizer,
     private center: WeissAccessibilityCenterService,
     public settings: SettingsService,
@@ -72,12 +67,6 @@ export class ViewerSidebarComponent implements AfterViewInit {
     @Inject(DOCUMENT) private document: Document,
     private injector: Injector
   ) {
-
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        (this.document.querySelector('.skip-to')?.querySelector('button') as HTMLButtonElement)?.focus();
-      }
-    });
 
     this.langModel = this.language.$language();
   }

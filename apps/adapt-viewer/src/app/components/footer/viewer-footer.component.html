@@ -6,17 +6,27 @@
       class="usa-list usa-list--unstyled display-flex gap-4 tablet:flex-row flex-justify-center width-full flex-wrap text-center flex-column flex-wrap flex-align-end">
       <li>
         <div class="display-flex flex-justify-center gap-1 flex-column">
-          <a target="_blank" class="display-flex flex-justify-center" aria-label="External link to Weiss homepage"
+          <a target="_blank" class="display-flex flex-justify-center" aria-label="Rhonda Weiss Center for Accessible IDEA Data, opens in a new tab"
             href="http://weissta.org/">
             <lib-adapt-inline-svg [decorative]="true" [focusable]="false" src="assets/shared/logos/static/footer-logo__left.svg"
               svgClass="display-flex logo height-7"></lib-adapt-inline-svg>
             </a>
           </div>
         </li>
+        @if ($settings()) {
+          @for (footerLink of $settings()?.footerLinks  || [] | filterMissingProperty:'url'; track $index) {
+          <li [hidden]="!footerLink.url || !footerLink.showPublic">
+            <a class="font-xs display-flex flex-align-center text-no-underline text-center"
+              [target]="footerLink.target === 'sameTab' ? '' : '_blank'" [href]="footerLink.url">{{ footerLink.label }}
+              <i *ngIf="footerLink.icon" aria-hidden="true" class="margin-left-05" [ngClass]="footerLink.icon"></i>
+            </a>
+          </li>
+          }
+        }
       <li>
         <div class="display-flex flex-justify-center gap-1 flex-column">
           <p class="font-2xs text-ink line-height-2 text-center">{{$footerContent()?.technologyBy}}</p>
-          <a target="_blank" class="display-flex flex-justify-center" aria-label="External link to AEM's homepage"
+          <a target="_blank" class="display-flex flex-justify-center" aria-label="AEM, opens in a new tab"
             href="https://www.aemcorp.com/">
             <lib-adapt-inline-svg [decorative]="true" [focusable]="false" src="assets/shared/logos/static/footer-logo__right.svg"
               svgClass="display-flex logo height-7"></lib-adapt-inline-svg>

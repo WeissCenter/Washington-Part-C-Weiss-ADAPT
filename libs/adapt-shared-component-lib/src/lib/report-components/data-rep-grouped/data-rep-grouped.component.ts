@@ -18,6 +18,7 @@ import * as XLSX from 'xlsx';
 
 import { chartExplainTemplateParse, handleDynamicVariables, LanguageCode } from '@adapt/types';
 import { xlsx_delete_row } from '../../util';
+import { focusElement } from '../../util/focus-management.util';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { PageContentText } from '@adapt-apps/adapt-admin/src/app/admin/models/admin-content-text.model';
 
@@ -36,6 +37,7 @@ export class DataRepGroupedComponent implements OnInit {
   @ViewChild('explainationRegion') explainationRegion!: ElementRef;
   @ViewChild('explanationSwitch') explanationSwitch!: ElementRef;
   @ViewChild('dataModal') dataModal!: ElementRef;
+  @ViewChild('dataModalHeading') dataModalHeading!: ElementRef<HTMLHeadingElement>;
   @ViewChild('dataModalCloseBtn') dataModalCloseBtn!: ElementRef;
   @ViewChild('dataModalSwitch') dataModalSwitch!: ElementRef;
   @ViewChild('bars') barPanel!: ElementRef;
@@ -454,8 +456,7 @@ export class DataRepGroupedComponent implements OnInit {
     // ) as NodeListOf<HTMLElement>;
     // this.firstFocusableElement = focusableElements[0];
     // this.lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-    this.dataModalCloseBtn.nativeElement.focus();
+    focusElement(this.dataModalHeading.nativeElement, { preventScroll: true, removeTabindexOnBlur: false });
     this.dataModal.nativeElement.addEventListener('keydown', this.trapTabKey);
     this.isDataModalOpen = true;
     this.dataModalStateChange.emit(true);

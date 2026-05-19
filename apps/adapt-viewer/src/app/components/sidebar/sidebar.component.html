@@ -9,7 +9,7 @@
         i18n>
       @if (nav_collapsed) {
 
-        <i aria-hidden="true" class="fal fa-bars" role="img" alt=""></i>
+        <i aria-hidden="true" class="fal fa-bars"></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">{{$sidebar()?.open}}
           </span>{{$sidebar()?.menu}}</span>
       
@@ -17,7 +17,7 @@
 
       @if (!nav_collapsed) {
 
-        <i aria-hidden="true" class="fal fa-arrow-from-right" role="img" alt=""></i>
+        <i aria-hidden="true" class="fal fa-arrow-from-right"></i>
         <span class="font-3xs"><span class="display-none tablet:display-inline">{{$sidebar()?.collapse}}
           </span>{{$sidebar()?.menu}}</span>
       
@@ -40,7 +40,7 @@
             <a role="menuitem" routerLink="/" (click)="closeMenuOnNavigation()"
               routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
               class="usa-icon-list__item site-nav">
-              <i aria-hidden="true" class="fal fa-home" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-home"></i>
               <span id="home"> {{$sidebar()?.home}} </span>
             </a>
           </li>
@@ -48,7 +48,7 @@
             <a role="menuitem" routerLink="reports" (click)="closeMenuOnNavigation()"
               routerLinkActive="active-nav hover:bg-primary-dark " [routerLinkActiveOptions]="{ exact: true }"
               class="usa-icon-list__item site-nav">
-              <i aria-hidden="true" class="fal fa-chart-line" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-chart-line"></i>
               <span> {{$sidebar()?.reports}} </span>
             </a>
           </li>
@@ -56,19 +56,19 @@
             <a role="menuitem" routerLink="resources" (click)="closeMenuOnNavigation()"
               routerLinkActive="active-nav hover:bg-primary-dark" [routerLinkActiveOptions]="{ exact: true }"
               id="resourcesBtn" class="usa-icon-list__item site-nav">
-              <i aria-hidden="true" class="fal fa-file" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-file"></i>
               <span> {{$sidebar()?.resources}} </span>
             </a>
           </li>
           <li role="none">
             <button role="menuitem" (click)="langPanel.open()" class="usa-icon-list__item site-nav width-full">
-              <i aria-hidden="true" class="fal fa-language" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-language"></i>
               <span> {{$sidebar()?.languageAccess}} </span>
             </button>
           </li>
           <li role="none">
             <button role="menuitem" weissA11yToggle class="usa-icon-list__item site-nav width-full">
-              <i aria-hidden="true" class="fal fa-universal-access" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-universal-access"></i>
               <span> {{$sidebar()?.accessibility}} </span>
             </button>
           </li>

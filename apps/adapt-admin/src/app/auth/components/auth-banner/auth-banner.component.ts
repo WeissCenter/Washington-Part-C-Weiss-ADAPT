@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'adapt-auth-banner',
@@ -8,9 +9,15 @@ import { Component, Input } from '@angular/core';
 })
 export class AuthBannerComponent {
   @Input() label = 'Generic Auth Banner';
-  @Input() logo = 'assets/shared/svg/state-hero-logo.svg';
+  @Input() logo = `${environment.logoPath ?? 'assets/logos/generic'}/state-hero-logo.${environment.logoExtension ?? 'svg'}`;
   @Input() logoAlt = 'ADAPT logo';
 
   @Input() message = '[Message]';
   @Input() messageSubTitle = '';
+
+  public logoStyleClass = `${environment.logoStyleClass ?? 'width-card'}`;
+
+  public get logoIsSvg() {
+    return this.logo.toLowerCase().endsWith('.svg');
+  }
 }
