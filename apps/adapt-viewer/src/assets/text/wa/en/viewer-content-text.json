@@ -135,6 +135,36 @@
             "name": "DaSy State of the States",
             "description": "National report describing the status of state early childhood data systems, governance structures, interoperability efforts, and data use practices.",
             "link": "https://dasycenter.org/state-of-the-states-2023/"
+          },
+          {
+            "name": "System Transformation for Equitable Preschools (STEP Forward with Data) Framework - Child Trends",
+            "description": "The System Transformation for Equitable Preschools (STEP Forward with Data) Framework is designed to help preschool system leaders use data to promote greater equity at every step of the preschool system. In using this Framework, leaders will better understand the experiences of children, families, or workforce members within their systems to begin identifying potential inequities and examine root causes that could be addressed.",
+            "link": "https://www.childtrends.org/publications/system-transformation-equitable-preschools-step-forward-data-framework"
+          },
+          {
+            "name": "IDEA Data Center (IDC)",
+            "description": "The IDEA Data Center (IDC) supports states as they work to improve the collection and reporting of their IDEA data and as they analyze and use these data to make programmatic improvements.",
+            "link": "https://ideadata.org/"
+          },
+          {
+            "name": "Center for Integration of IDEA Data (CIID)",
+            "description": "The Center for the Integration of IDEA Data (CIID) provides technical assistance to state education agencies to increase the capacity to report high quality data required under the Individuals with Disabilities Education Act (IDEA) Part B Sections 616 and 618.",
+            "link": "https://ciidta.communities.ed.gov/#program"
+          },
+          {
+            "name": "The Center for IDEA Early Childhood Data Systems (DaSy)",
+            "description": "The DaSy Center is a national technical assistance center that works with states to support IDEA early intervention and early childhood special education state programs in building high quality data systems and using data to improve results for young children with disabilities and their families.",
+            "link": "https://dasycenter.org/"
+          },
+          {
+            "name": "Early Childhood Technical Assistance Center (ECTA)",
+            "description": "The ECTA Center supports state IDEA Part C and Part B, Section 619 programs in developing high-quality, effective, and sustainable state and local systems, to implement equitable access, services, and supports for children with disabilities and their families that result in positive outcomes not related to race, language, income, or other demographics.",
+            "link": "https://ectacenter.org/"
+          },
+          {
+            "name": "Protecting Student Privacy - Privacy Technical Assistance Center (PTAC)",
+            "description": "The Privacy Technical Assistance Center (PTAC) is a one-stop resource for education stakeholders to learn about privacy, confidentiality, and security practices related to student-level data systems and other uses of student data.",
+            "link": "https://studentprivacy.ed.gov/"
           }
         ]
       },

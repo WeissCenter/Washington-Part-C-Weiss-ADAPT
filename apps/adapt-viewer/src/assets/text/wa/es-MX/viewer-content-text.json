@@ -135,6 +135,36 @@
             "name": "Estado de los Estados de DaSy",
             "description": "Informe nacional que describe el estado de los sistemas de datos de la primera infancia de los estados, las estructuras de gobernanza, los esfuerzos de interoperabilidad y las prácticas de uso de datos.",
             "link": "https://dasycenter.org/state-of-the-states-2023/"
+          },
+          {
+            "name": "Marco de transformación de sistemas para preescolares equitativos (STEP Award with Data) - Tendencias infantiles",
+            "description": "El Marco de Transformación del Sistema para Preescolares Equitativos (STEP Forward with Data) está diseñado para ayudar a los líderes del sistema preescolar a utilizar los datos para promover una mayor equidad en cada paso del sistema preescolar. Al usar este Marco, los líderes comprenderán mejor las experiencias de los niños, las familias o los miembros de la fuerza laboral dentro de sus sistemas para comenzar a identificar posibles inequidades y examinar las causas profundas que podrían abordarse.",
+            "link": "https://www.childtrends.org/publications/system-transformation-equitable-preschools-step-forward-data-framework"
+          },
+          {
+            "name": "Centro de Datos IDEA (IDC)",
+            "description": "El Centro de Datos IDEA (IDC) apoya a los estados mientras trabajan para mejorar la recopilación y el reporting de sus datos IDEA y a medida que analizan y utilizan estos datos para realizar mejoras programáticas.",
+            "link": "https://ideadata.org/"
+          },
+          {
+            "name": "Centro para la Integración de Datos IDEA (CIID)",
+            "description": "El Centro para la Integración de Datos IDEA (CIID) brinda asistencia técnica a las agencias educativas estatales para aumentar la capacidad de reportar datos de alta calidad requeridos bajo la Ley de Educación de Individuos con Discapacidades (IDEA) Parte B Secciones 616 y 618.",
+            "link": "https://ciidta.communities.ed.gov/#program"
+          },
+          {
+            "name": "El Centro de Sistemas de Datos de la Primera Infancia (DaSy) IDEA",
+            "description": "El Centro DaSy es un centro nacional de asistencia técnica que trabaja con los estados para apoyar los programas estatales de intervención temprana y educación especial en la primera infancia de IDEA en la construcción de sistemas de datos de alta calidad y el uso de datos para mejorar los resultados para los niños pequeños con discapacidades y sus familias.",
+            "link": "https://dasycenter.org/"
+          },
+          {
+            "name": "Centro de Asistencia Técnica para la Primera Infancia (ECTA)",
+            "description": "El Centro ECTA apoya los programas estatales IDEA Parte C y Parte B, Sección 619 en el desarrollo de sistemas estatales y locales de alta calidad, efectivos y sostenibles, para implementar acceso equitativo, servicios y apoyos para los niños con discapacidades y sus familias que den como resultado resultados positivos no relacionados con la raza, el idioma, los ingresos u otros datos demográficos.",
+            "link": "https://ectacenter.org/"
+          },
+          {
+            "name": "Protección de la privacidad de los estudiantes - Centro de Asistencia Técnica de Privacidad (PTAC)",
+            "description": "El Centro de Asistencia Técnica de Privacidad (PTAC) es un recurso único para que las partes interesadas de la educación aprendan sobre privacidad, confidencialidad y prácticas de seguridad relacionadas con los sistemas de datos a nivel de los estudiantes y otros usos de los datos de los estudiantes.",
+            "link": "https://studentprivacy.ed.gov/"
           }
         ]
       },
