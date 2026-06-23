@@ -3,7 +3,7 @@
     "home": {
       "brandingHeader": {
         "heading": "Department of Children, Youth, and Families (DCYF)",
-        "subHeading": "Washington IDEA Part C Public Reporting"
+        "subHeading": "Washington Early Support for Infants and Toddlers (ESIT) Public Reporting"
       },
       "headingCard": {
         "heading": "About IDEA Reports",
@@ -46,6 +46,96 @@
         "listSectionLabel": "Useful Links List",
         "description": "Find valuable resources and support for children with disabilities. These links offer information, advocacy, and assistance tailored to your needs.",
         "links": [
+          {
+            "name": "Washington State Department of Children, Youth & Families (DCYF)",
+            "description": "DCYF is a cabinet-level agency that works to support children, youth, and families. It oversees the state’s child welfare, juvenile rehabilitation, and early care and education programs.",
+            "link": "https://dcyf.wa.gov/"
+          },
+          {
+            "name": "Data and Public Reporting Resources",
+            "description": "Early Supports for Infants and Toddler Program (ESIT) Data Management System Resources. On this site, you will find public reports, technical documents and DMS training resources.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/dms"
+          },
+          {
+            "name": "Early Support for Infants and Toddlers",
+            "description": "Early support services can make a big difference in a child’s first three years. The ESIT program provides services to children who have disabilities or delays in their development. Services are available from birth to age 3.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit"
+          },
+          {
+            "name": "Policies & Procedures",
+            "description": "Early Supports for Infants and Toddlers (ESIT) Interagency Agreements.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/policies-procedures"
+          },
+          {
+            "name": "Early Supports for Infants and Toddlers (ESIT) Forms & Publications",
+            "description": "Early Supports for Infants and Toddlers (ESIT) Forms, Brochures, Policies and Publications.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/forms-publications"
+          },
+          {
+            "name": "Early Support for Infants and Toddlers (ESIT) Health Care Referral Form",
+            "description": "This is the Department of Children, Youth and Families (DCYF) Health Care Referral Form for the Early Supports for Infants and Toddlers (ESIT) program to be filled out by your health care provider.",
+            "link": "https://www.dcyf.wa.gov/forms?field_number_value=15-005&title"
+          },
+          {
+            "name": "ESIT Child Outcome Summary (COS) Reference Guide",
+            "description": "Guidance for Washington ESIT providers on completing the Child Outcomes Summary process, including rating criteria, decision-making guidance, and examples for the three federal child outcome areas.",
+            "link": "https://www.dcyf.wa.gov/sites/default/files/pdf/esit/COS-Ref-Guide.pdf"
+          },
+          {
+            "name": "ESIT Practice Guidance Webpage",
+            "description": "Central repository of Washington ESIT practice guidance documents, technical assistance resources, and implementation supports for providers and administrators.",
+            "link": "https://www.dcyf.wa.gov/services/child-dev-support-providers/esit/practice-guidance"
+          },
+          {
+            "name": "ESIT Qualified Personnel Guidelines",
+            "description": "Describes qualifications, credentialing requirements, and personnel standards for professionals providing Part C early intervention services in Washington.",
+            "link": "https://www.dcyf.wa.gov/sites/default/files/QualifiedProviderGuidelines_4.2026.pdf"
+          },
+          {
+            "name": "ECTA Part C State Performance Plan/Annual Performance Report (SPP/APR)",
+            "description": "Information and resources related to IDEA Part C accountability, including indicator requirements, reporting guidance, and OSEP resources.",
+            "link": "https://ectacenter.org/partc/partcapr.asp"
+          },
+          {
+            "name": "DaSy SPP/APR Basics: What You Need to Know",
+            "description": "Introductory resource explaining the purpose, structure, and requirements of the IDEA SPP/APR process.",
+            "link": "https://dasycenter.org/spp-apr-basics-what-you-need-to-know/"
+          },
+          {
+            "name": "ECTA State Systemic Improvement Plan (SSIP)",
+            "description": "Resources and guidance on developing, implementing, and evaluating the State Systemic Improvement Plan (SSIP) under IDEA.",
+            "link": "https://ectacenter.org/topics/ssip/"
+          },
+          {
+            "name": "ECTA Effectiveness of Infant and Early Childhood Programs",
+            "description": "Research summaries demonstrating the effectiveness of early intervention and early childhood special education services for children with disabilities and their families.",
+            "link": "https://ectacenter.org/topics/effective/effective.asp"
+          },
+          {
+            "name": "ECTA Long-Term Impacts to Children, Families and Society",
+            "description": "Research on the long-term educational, social, family, and societal benefits associated with high-quality early intervention and early childhood programs.",
+            "link": "https://ectacenter.org/topics/effective/longterm.asp"
+          },
+          {
+            "name": "ECTA Economic Impacts",
+            "description": "Research and evidence regarding the economic benefits and return on investment associated with early intervention and early childhood programs.",
+            "link": "https://ectacenter.org/topics/effective/economic.asp"
+          },
+          {
+            "name": "ECTA Research and Reference Portal",
+            "description": "Searchable collection of research articles, evidence summaries, policy resources, and technical assistance materials related to early intervention and early childhood special education.",
+            "link": "https://ectacenter.org/portal/portal.asp"
+          },
+          {
+            "name": "DaSy EC Data University (EC Data U)",
+            "description": "Self-paced online learning platform focused on early childhood data systems, data quality, governance, analysis, reporting, and data use.",
+            "link": "https://dasycenter.org/ec-data-u/"
+          },
+          {
+            "name": "DaSy State of the States",
+            "description": "National report describing the status of state early childhood data systems, governance structures, interoperability efforts, and data use practices.",
+            "link": "https://dasycenter.org/state-of-the-states-2023/"
+          },
           {
             "name": "System Transformation for Equitable Preschools (STEP Forward with Data) Framework - Child Trends",
             "description": "The System Transformation for Equitable Preschools (STEP Forward with Data) Framework is designed to help preschool system leaders use data to promote greater equity at every step of the preschool system. In using this Framework, leaders will better understand the experiences of children, families, or workforce members within their systems to begin identifying potential inequities and examine root causes that could be addressed.",
@@ -187,7 +277,7 @@
             {
               "addToLanding": true,
               "question": "What are Part C and Part B of IDEA?",
-              "answer": "Part C of IDEA covers early intervention services for infants and toddlers (birth to age 2) with disabilities. Part B covers special education and related services for children and youth (ages 3-21) with disabilities."
+              "answer": "Part C of IDEA covers early intervention services for infants and toddlers (birth through age 2) with disabilities. Part B covers special education and related services for children and youth (ages 3-21) with disabilities."
             },
             {
               "addToLanding": true,

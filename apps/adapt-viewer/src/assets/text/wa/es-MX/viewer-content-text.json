@@ -3,7 +3,7 @@
     "home": {
       "brandingHeader": {
         "heading": "Departamento de la Niñez, la Juventud y las Familias (DCYF)",
-        "subHeading": "Informe público de Washington IDEA Parte C"
+        "subHeading": "Informe público de Apoyo Temprano para Bebés y Niños Pequeños (ESIT) de Washington"
       },
       "headingCard": {
         "heading": "Acerca de IDEA Reports",
@@ -46,6 +46,96 @@
         "listSectionLabel": "Lista de enlaces útiles",
         "description": "Encontrar recursos valiosos y apoyo para niños con discapacidad. Estos enlaces ofrecen información, promoción y asistencia adaptadas a sus necesidades.",
         "links": [
+          {
+            "name": "Departamento de la Niñez, la Juventud y las Familias del Estado de Washington (DCYF)",
+            "description": "El DCYF es una agencia a nivel de gabinete que trabaja para apoyar a los niños, jóvenes y familias. Supervisa los programas estatales de bienestar infantil, rehabilitación juvenil y cuidado y educación temprana.",
+            "link": "https://dcyf.wa.gov/"
+          },
+          {
+            "name": "Recursos de Datos e Informes Públicos",
+            "description": "Recursos del Sistema de Gestión de Datos del Programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT). En este sitio encontrará informes públicos, documentos técnicos y recursos de capacitación del DMS.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/dms"
+          },
+          {
+            "name": "Apoyo Temprano para Bebés y Niños Pequeños",
+            "description": "Los servicios de apoyo temprano pueden marcar una gran diferencia en los primeros tres años de vida de un niño. El programa ESIT brinda servicios a los niños que tienen discapacidades o retrasos en su desarrollo. Los servicios están disponibles desde el nacimiento hasta los 3 años.",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit"
+          },
+          {
+            "name": "Políticas y Procedimientos",
+            "description": "Acuerdos Interinstitucionales del programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT).",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/policies-procedures"
+          },
+          {
+            "name": "Formularios y Publicaciones del programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT)",
+            "description": "Formularios, folletos, políticas y publicaciones del programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT).",
+            "link": "https://dcyf.wa.gov/services/child-dev-support-providers/esit/forms-publications"
+          },
+          {
+            "name": "Formulario de Referencia de Atención Médica del programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT)",
+            "description": "Este es el Formulario de Referencia de Atención Médica del Departamento de la Niñez, la Juventud y las Familias (DCYF) para el programa de Apoyo Temprano para Bebés y Niños Pequeños (ESIT), que debe ser completado por su proveedor de atención médica.",
+            "link": "https://www.dcyf.wa.gov/forms?field_number_value=15-005&title"
+          },
+          {
+            "name": "Guía de Referencia del Resumen de Resultados del Niño (COS) de ESIT",
+            "description": "Orientación para los proveedores de ESIT de Washington sobre cómo completar el proceso del Resumen de Resultados del Niño, incluyendo criterios de calificación, orientación para la toma de decisiones y ejemplos para las tres áreas federales de resultados del niño.",
+            "link": "https://www.dcyf.wa.gov/sites/default/files/pdf/esit/COS-Ref-Guide.pdf"
+          },
+          {
+            "name": "Página web de Orientación de Prácticas de ESIT",
+            "description": "Repositorio central de documentos de orientación de prácticas de ESIT de Washington, recursos de asistencia técnica y apoyos de implementación para proveedores y administradores.",
+            "link": "https://www.dcyf.wa.gov/services/child-dev-support-providers/esit/practice-guidance"
+          },
+          {
+            "name": "Directrices de Personal Calificado de ESIT",
+            "description": "Describe las calificaciones, los requisitos de acreditación y los estándares de personal para los profesionales que brindan servicios de intervención temprana de la Parte C en Washington.",
+            "link": "https://www.dcyf.wa.gov/sites/default/files/QualifiedProviderGuidelines_4.2026.pdf"
+          },
+          {
+            "name": "Plan de Desempeño Estatal/Informe Anual de Desempeño (SPP/APR) de la Parte C de ECTA",
+            "description": "Información y recursos relacionados con la responsabilidad de la Parte C de IDEA, incluyendo los requisitos de los indicadores, la orientación para la presentación de informes y los recursos de OSEP.",
+            "link": "https://ectacenter.org/partc/partcapr.asp"
+          },
+          {
+            "name": "Conceptos Básicos del SPP/APR de DaSy: Lo que Necesita Saber",
+            "description": "Recurso introductorio que explica el propósito, la estructura y los requisitos del proceso SPP/APR de IDEA.",
+            "link": "https://dasycenter.org/spp-apr-basics-what-you-need-to-know/"
+          },
+          {
+            "name": "Plan Estatal de Mejora Sistémica (SSIP) de ECTA",
+            "description": "Recursos y orientación sobre el desarrollo, la implementación y la evaluación del Plan Estatal de Mejora Sistémica (SSIP) bajo IDEA.",
+            "link": "https://ectacenter.org/topics/ssip/"
+          },
+          {
+            "name": "Efectividad de los Programas para Bebés y la Primera Infancia de ECTA",
+            "description": "Resúmenes de investigaciones que demuestran la efectividad de los servicios de intervención temprana y educación especial en la primera infancia para los niños con discapacidades y sus familias.",
+            "link": "https://ectacenter.org/topics/effective/effective.asp"
+          },
+          {
+            "name": "Impactos a Largo Plazo en los Niños, las Familias y la Sociedad de ECTA",
+            "description": "Investigaciones sobre los beneficios educativos, sociales, familiares y sociales a largo plazo asociados con los programas de intervención temprana y de la primera infancia de alta calidad.",
+            "link": "https://ectacenter.org/topics/effective/longterm.asp"
+          },
+          {
+            "name": "Impactos Económicos de ECTA",
+            "description": "Investigaciones y evidencia sobre los beneficios económicos y el retorno de la inversión asociados con los programas de intervención temprana y de la primera infancia.",
+            "link": "https://ectacenter.org/topics/effective/economic.asp"
+          },
+          {
+            "name": "Portal de Investigación y Referencia de ECTA",
+            "description": "Colección consultable de artículos de investigación, resúmenes de evidencia, recursos de políticas y materiales de asistencia técnica relacionados con la intervención temprana y la educación especial en la primera infancia.",
+            "link": "https://ectacenter.org/portal/portal.asp"
+          },
+          {
+            "name": "Universidad de Datos de la Primera Infancia (EC Data U) de DaSy",
+            "description": "Plataforma de aprendizaje en línea a su propio ritmo centrada en los sistemas de datos de la primera infancia, la calidad de los datos, la gobernanza, el análisis, la presentación de informes y el uso de datos.",
+            "link": "https://dasycenter.org/ec-data-u/"
+          },
+          {
+            "name": "Estado de los Estados de DaSy",
+            "description": "Informe nacional que describe el estado de los sistemas de datos de la primera infancia de los estados, las estructuras de gobernanza, los esfuerzos de interoperabilidad y las prácticas de uso de datos.",
+            "link": "https://dasycenter.org/state-of-the-states-2023/"
+          },
           {
             "name": "Marco de transformación de sistemas para preescolares equitativos (STEP Award with Data) - Tendencias infantiles",
             "description": "El Marco de Transformación del Sistema para Preescolares Equitativos (STEP Forward with Data) está diseñado para ayudar a los líderes del sistema preescolar a utilizar los datos para promover una mayor equidad en cada paso del sistema preescolar. Al usar este Marco, los líderes comprenderán mejor las experiencias de los niños, las familias o los miembros de la fuerza laboral dentro de sus sistemas para comenzar a identificar posibles inequidades y examinar las causas profundas que podrían abordarse.",
