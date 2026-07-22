@@ -23,13 +23,13 @@
           <lib-adapt-tag [status]="report.version">
             <!-- <ng-container [ngSwitch]="report.version">
             <ng-container *ngSwitchCase="'draft'">
-              <i class="fal fa-pencil" role="img" aria-hidden="true"></i>
+              <i class="fal fa-pencil" aria-hidden="true"></i>
             </ng-container>
             <ng-container *ngSwitchCase="'finalized'">
-              <i class="fal fa-check" role="img" aria-hidden="true"></i>
+              <i class="fal fa-check" aria-hidden="true"></i>
             </ng-container>
             <ng-container *ngSwitchCase="'pending approval'">
-              <i class="fal fa-thumbtack" role="img" aria-hidden="true"></i>
+              <i class="fal fa-thumbtack" aria-hidden="true"></i>
             </ng-container>
             <ng-container *ngSwitchDefault></ng-container>
           </ng-container> -->
@@ -72,7 +72,7 @@
       class="usa-button"
       [queryParams]="{ version: report.version }"
       [routerLink]="navPath">
-      <i class="fal fa-eye" role="img" aria-hidden="true"></i>
+      <i class="fal fa-eye" aria-hidden="true"></i>
       View
     </button>
     <!-- <button adaptPreviewCategory="editReport" adaptPreview
@@ -90,7 +90,7 @@
   [id]="'publish_' + report.reportID + '_btn'"
   type="button"
   class="usa-button usa-button--outline shadow-none">
-  <i class="fal fa-file" role="img" aria-hidden="true"></i>
+  <i class="fal fa-file" aria-hidden="true"></i>
   Publish
 </button> -->
 
@@ -105,20 +105,29 @@
 [id]="'publish_' + report.reportID + '_btn'"
 type="button"
 class="usa-button usa-button--outline shadow-none">
-<i class="fal fa-file" role="img" aria-hidden="true"></i>
+<i class="fal fa-file" aria-hidden="true"></i>
 Un-Publish
 </button> -->
 
-<!-- <button adaptPreviewCategory="shareReport" [id]="'share_' + report.reportID + '_btn'" adaptPreview
-adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
-<i class="fal fa-share" role="img" aria-hidden="true"></i>
-Share
-</button> -->
-<!-- <button adaptPreviewCategory="removeReport" [id]="'remove_' + report.reportID + '_btn'" adaptPreview
-adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
-<i class="fal fa-folder" role="img" aria-hidden="true"></i>
-Archive
-</button> -->
-</div>
-</div>
+      <!-- <button adaptPreviewCategory="shareReport" [id]="'share_' + report.reportID + '_btn'" adaptPreview
+                adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
+                <i class="fal fa-share" aria-hidden="true"></i>
+                Share
+            </button> -->
+      <!-- <button adaptPreviewCategory="removeReport" [id]="'remove_' + report.reportID + '_btn'" adaptPreview
+                adaptPreviewVersion="1.0.0" type="button" class="usa-button usa-button--outline shadow-none">
+                <i class="fal fa-folder" aria-hidden="true"></i>
+                Archive
+            </button> -->
+      <button
+        *adaptAccessControl="'Reports'; behavior: 'hide'; action: 'Write'"
+        type="button"
+        [id]="'delete_' + report.reportID + '_btn'"
+        [hidden]="!showDeleteAction"
+        class="usa-button usa-button--outline shadow-none text-error border-error hover:text-error-dark hover:border-error-dark"
+        (click)="requestDelete(report)">
+        Delete
+      </button>
+    </div>
+  </div>
 </lib-adapt-expandable-list-item>

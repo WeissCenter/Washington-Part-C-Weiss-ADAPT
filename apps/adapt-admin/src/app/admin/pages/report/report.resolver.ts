@@ -21,17 +21,15 @@ export const reportResolver: ResolveFn<ReportResolvedData> = (
   const id = route.params['id'];
   const version = route.queryParams['version'] ?? 'draft';
 
-  return forkJoin([
-    reportService.getReport(id, version),
-    dataViewService.getDataViews().pipe(take(1)),
-  ]).pipe(
-    map(([reports, dataViews]) => {
-      const report = (reports as IReportModel[])[0];
-      if (report) recentActivity.addRecentActivity(id, 'Report', report);
-      return {
-        reports: reports as IReportModel[],
-        dataView: dataViews.find((view) => view.dataViewID === report?.dataView),
-      };
-    })
-  );
+  return reportService.getReport(id, version)
+    .pipe(
+      map((report) => {
+        const reportItem = (report as IReportModel[])[0];
+        if (reportItem) recentActivity.addRecentActivity(id, 'Report', reportItem);
+        return {
+          reports: report as IReportModel[],
+          dataView: dataViewService.dataViews$$.value().find((view) => view.dataViewID === reportItem?.dataView),
+        };
+      })
+    );
 };

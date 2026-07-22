@@ -30,7 +30,7 @@ export class LanguageSettingsComponent implements OnInit, OnDestroy {
 
   public $supportedLanguages = computed(() => {
     const defaultLang = this.settings.getDefaultLanguageSignal()();
-    const supportedLangs = this.pagesContentService.getSharedContentSignal()()?.languageAccess.supportedLanguages || []
+    const supportedLangs = this.pagesContentService.$sharedContent()?.languageAccess.supportedLanguages || []
     return supportedLangs.filter(lang => lang.value !== defaultLang);
   })
 

@@ -1,10 +1,9 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AdaptDataService } from '../../services/adapt-data.service';
-import { Component } from '@angular/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { Component, computed, signal } from '@angular/core';
 import { IReportModel } from '@adapt/types';
 import { ViewerPagesContentService } from '../../services/content/viewer-pages-content.service';
-import { LanguageService } from '@adapt/adapt-shared-component-lib';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'adapt-viewer-reports',
@@ -13,37 +12,23 @@ import { LanguageService } from '@adapt/adapt-shared-component-lib';
   styleUrl: './reports.component.scss',
 })
 export class ReportsComponent {
-  public pageSize = 5;
-  public totalItems = 0;
-  public maxPages = 0;
-  public page = 1;
-  public alphaSortDirection: 'asc' | 'desc' = 'asc';
+  private queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
+
+  public pageSize = signal(10);
+  public page = computed(() => parseInt(this.queryParams()['page'] || '1'));
+  public publishedSortDirection = computed<'asc' | 'desc'>(() => this.queryParams()['publishSort'] || 'desc');
+  public alphaSortDirection = computed<'asc' | 'desc'>(() => this.queryParams()['alphaSort'] || 'asc');
+  public totalItems = computed(() => this.reports$$().length || 0);
+  public maxPages = computed(() => Math.max(1, Math.ceil(this.reports$$().length / this.pageSize())));
   public filterStatusMessage = '';
-  public publishedSortDirection: 'asc' | 'desc' = 'desc';
   public focusSortBtn = false;
-  activeSort: 'updated' | 'alpha' = 'updated'; // default sort by updated date
+  activeSort = signal<'updated' | 'alpha'>('updated');
 
-  public $reports = this.fetchReports();
-
-  public reportsData: IReportModel[] = [];
-  $content = this.content.$viewerContent;
-
-  constructor(public data: AdaptDataService, private route: ActivatedRoute, private router: Router, public content: ViewerPagesContentService, private lang: LanguageService) {}
-
-  fetchReports() {
-    return this.route.queryParams.pipe(
-      switchMap((params) => {
-        // Extract parameters
-        this.page = parseInt(params['page'] || '1');
-        this.publishedSortDirection = params['publishSort'] || 'desc';
-        this.alphaSortDirection = params['alphaSort'] || 'desc';
-        // if single status or visibility, convert to array
-
-        return this.data.reports.pipe(
-          map((reports) => {
-            // Filter reports based on the status and visibility
-
-            const sorted = reports.toSorted((a: IReportModel, b: IReportModel) => {
+  // public $reports = [];
+  
+  public loadingReports$$ = this.data.reports$$.isLoading;
+  public reports$$ = computed(() => {
+    return this.data.reports$$.value().toSorted((a: IReportModel, b: IReportModel) => {
               const updatedA = parseInt(a.published, 10); // Convert the string to an integer
               const updatedB = parseInt(b.published, 10);
               const alphaA = a.name;
@@ -63,69 +48,35 @@ export class ReportsComponent {
                 }
               };
 
-              let sortResult = this.activeSort === 'updated' ?
-                sort(updatedA, updatedB, 'number', this.publishedSortDirection) :
-                sort(alphaA, alphaB, 'string', this.alphaSortDirection);
+              let sortResult = this.activeSort() === 'updated' ?
+                sort(updatedA, updatedB, 'number', this.publishedSortDirection()) :
+                sort(alphaA, alphaB, 'string', this.alphaSortDirection());
 
               return sortResult;
             });
+  });
 
-            // if (this.focusSortBtn) {
-            //   const sortBtn = document.getElementById('sortButton');
-            //   if (sortBtn) {
-            //     sortBtn.focus();
-            //     sessionStorage.removeItem('focusSortBtn');
-            //   }
-            // }
+  $content = this.content.viewerContent$$.value;
 
-            // Store the processed data for later use
-            this.reportsData = sorted;
+  constructor(public data: AdaptDataService, private route: ActivatedRoute, private router: Router, public content: ViewerPagesContentService) {}
 
-            // Update maxPages for pagination
-            this.maxPages = Math.max(1, Math.ceil(this.reportsData.length / this.pageSize));
-            this.totalItems = this.reportsData.length;
+  public doSort(what: 'alpha' | 'updated') {
+    const newPublishSort: 'asc' | 'desc' = what === 'updated'
+      ? (this.publishedSortDirection() === 'asc' ? 'desc' : 'asc')
+      : this.publishedSortDirection();
+    const newAlphaSort: 'asc' | 'desc' = what === 'alpha'
+      ? (this.alphaSortDirection() === 'asc' ? 'desc' : 'asc')
+      : this.alphaSortDirection();
 
-            return sorted;
-          })
-        );
-      })
-    );
-  }
+    this.activeSort.set(what);
+    this.filterStatusMessage = this.content.$reportsContent()?.sortApplied || '';
+    this.focusSortBtn = true;
 
-  public onPageSizeChange() {
-    this.maxPages = Math.ceil(this.totalItems / this.pageSize);
-  }
-
-  public applyFilters(announce = false) {
     sessionStorage.setItem('focusSortBtn', true.toString());
     this.router.navigate(['./'], {
-      queryParams: {
-        publishSort: this.publishedSortDirection,
-        alphaSort: this.alphaSortDirection,
-      },
+      queryParams: { publishSort: newPublishSort, alphaSort: newAlphaSort },
       relativeTo: this.route,
       queryParamsHandling: 'merge',
     });
-    if (announce) {
-      const content = this.content.$reportsContent();
-
-      this.filterStatusMessage = content?.filterApplied || '';
-    }
-  }
-
-  public doSort(what: 'alpha' | 'updated') {
-    if (what === 'alpha') {
-      this.alphaSortDirection = this.alphaSortDirection === 'asc' ? 'desc' : 'asc';
-    } else if (what === 'updated') {
-      this.publishedSortDirection = this.publishedSortDirection === 'asc' ? 'desc' : 'asc';
-    }
-
-    const content = this.content.$reportsContent();
-
-
-    this.filterStatusMessage = content?.sortApplied || '';
-    this.focusSortBtn = true;
-    this.activeSort = what;
-    this.applyFilters();
   }
 }

@@ -1,29 +1,30 @@
 <adapt-session-reload-banner></adapt-session-reload-banner>
 <adapt-hero-banner [role]="role.role?.description || ''" [name]="user.displayName$ | async" [organization]="organization"></adapt-hero-banner>
 
-<!--@let pageContent = $pageContent();-->
-<!--@let pageSections = $pageSections();-->
+@let pageContent = $pageContent();
+@let pageSections = $pageSections();
 @if (pageContent && pageSections && pageSections[0]) {
+  @let s0 = pageSections[0];
   <section aria-label="Recent activities and common actions" class="padding-top-3 tablet:padding-top-5">
     <div class="grid-container padding-x-0 tablet:padding-x-5">
       <div class="display-flex margin-top-4 width-full padding-x-2 tablet:padding-x-0 flex-column flex-align-start usa-prose">
           <!-- What can you do here? -->
-          <h2>{{ pageSections[0].title }}</h2>
-          <p class="measure-4">{{ pageSections[0].description }}</p>
+          <h2>{{ s0.title }}</h2>
+          <p class="measure-4">{{ s0.description }}</p>
           <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/quickstart/homepage" target="_blank"
             aria-label="Learn More (opens in a new tab)" class="usa-link margin-top-05 display-flex flex-align-center">
-            <span aria-hidden="true" class="font-xs">{{pageContent.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+            <span aria-hidden="true" class="font-xs">{{pageContent.learn_more_link}} <i aria-hidden="true" class="far fa-external-link margin-left-05"></i></span>
           </a>
       </div>
       <div
         class="display-flex flex-align-start flex-column desktop:flex-row accessibility-layout gap-2 margin-top-2 desktop:margin-top-4">
-        @if ((pageSections[0]?.sub_sections)![0]) {
+        @if (s0.sub_sections?.[0]; as sub0) {
           <div
             class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg"
             [hidden]="!recentActivity.length">
             <div class="usa-prose">
-              <h3>{{ pageSections[0].sub_sections![0].title }}</h3>
-              <p>{{ pageSections[0].sub_sections![0].description }}</p>
+              <h3>{{ sub0.title }}</h3>
+              <p>{{ sub0.description }}</p>
             </div>
             <ul class="usa-icon-list margin-top-2">
               @for (activity of recentActivity; track activity.id) {
@@ -34,7 +35,7 @@
                         class="usa-link text-no-underline flex-align-center display-flex gap-05"
                         [routerLink]="['data-view', activity.id]">
                         <div class="usa-icon-list__icon text-primary">
-                          <i class="fal fa-chart-pie" aria-hidden="true" role="img" alt=""></i>
+                          <i class="fal fa-chart-pie" aria-hidden="true"></i>
                         </div>
                         <div class="usa-icon-list__content text-no-underline">
                           {{ activity.item.name }}
@@ -46,7 +47,7 @@
                         class="usa-link text-no-underline flex-align-center display-flex gap-05"
                         [routerLink]="['data-source', activity.id]">
                         <div class="usa-icon-list__icon text-primary">
-                          <i class="fal fa-database" aria-hidden="true" role="img" alt=""></i>
+                          <i class="fal fa-database" aria-hidden="true"></i>
                         </div>
                         <div class="usa-icon-list__content">
                           {{ activity.item.name }}
@@ -58,7 +59,7 @@
                         class="usa-link text-no-underline flex-align-center display-flex gap-05"
                         [routerLink]="['reports', activity.id]">
                         <div class="usa-icon-list__icon text-primary">
-                          <i class="fal fa-chart-line" aria-hidden="true" role="img" alt=""></i>
+                          <i class="fal fa-chart-line" aria-hidden="true"></i>
                         </div>
                         <div class="usa-icon-list__content">
                           {{ activity.item.name }}
@@ -74,9 +75,10 @@
         @if (this.role.hasPermission('Reports', 'Write') || this.role.hasPermission('Data Views', 'Write')) {
           <div
             class="bg-white padding-2 tablet:padding-3 border-2px display-flex flex-column flex-1 border-base-lighter tablet:radius-lg">
+            @let sub1 = s0.sub_sections![1];
             <div class="usa-prose">
-              <h3>{{ pageSections[0].sub_sections![1].title }}</h3>
-              <p>{{ pageSections[0].sub_sections![1].description }}</p>
+              <h3>{{ sub1.title }}</h3>
+              <p>{{ sub1.description }}</p>
             </div>
             <ul class="usa-icon-list margin-top-2">
               @if (this.role.hasPermission('Reports', 'Write')) {
@@ -84,8 +86,8 @@
                   <button
                     class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
                     (click)="reportModal && reportModal.open()">
-                    <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
-                    {{ pageSections[0].sub_sections![1].items![0] }}
+                    <i class="fal fa-plus" aria-hidden="true"></i>
+                    {{ sub1.items![0] }}
                   </button>
                 </li>
               }
@@ -94,8 +96,8 @@
                   <button
                     class="usa-button usa-button--unstyled text-no-underline flex-align-center display-flex"
                     (click)="dataViewModal && dataViewModal.open()">
-                    <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
-                    {{ pageSections[0].sub_sections![1].items![1] }}
+                    <i class="fal fa-plus" aria-hidden="true"></i>
+                    {{ sub1.items![1] }}
                   </button>
                 </li>
               }
@@ -108,13 +110,14 @@
 }
 
 @if (pageSections && pageSections[1]) {
+  @let s1 = pageSections[1];
   <section aria-label="Data Collection" class="padding-y-4 desktop:padding-y-6">
     <div class="grid-container padding-x-0 tablet:padding-x-5">
       <div class="display-flex width-full padding-x-2 tablet:padding-x-0 flex-column">
         <div class="usa-prose">
           <!-- Reports and Data Views -->
-          <h2>{{ pageSections[1].title }}</h2>
-          <p class="measure-4">{{ pageSections[1].description }}</p>
+          <h2>{{ s1.title }}</h2>
+          <p class="measure-4">{{ s1.description }}</p>
         </div>
       </div>
       <div
@@ -123,53 +126,39 @@
           aria-label="Reports list"
           role="region"
           class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
-          @if ((pageSections[1]?.sub_sections)![0]) {
+          @if (s1.sub_sections?.[0]; as rs) {
             <div class="usa-prose">
               <!-- View Reports -->
-              <h3>{{ pageSections[1].sub_sections![0].title }}</h3>
-              <p [innerHtml]="pageSections[1].sub_sections![0].description"></p>
+              <h3>{{ rs.title }}</h3>
+              <p [innerHtml]="rs.description"></p>
             </div>
           }
           <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
             <a class="usa-button usa-button--outline" [routerLink]="['reports']" aria-label="View all reports">
-              <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
+              <i class="fal fa-folder-open" aria-hidden="true"></i>
               View all
             </a>
             <button
               *adaptAccessControl="'Reports'; behavior: 'hide'; action: 'Write'"
               class="usa-button usa-button--outline"
               (click)="reportModal && reportModal.open()">
-              <i class="fal fa-plus" role="img" aria-hidden="true" alt=""></i>
+              <i class="fal fa-plus" aria-hidden="true"></i>
               Create new report
             </button>
           </div>
-          <!-- <div class="display-flex flex-column margin-top-1 gap-1 width-full">
-          <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="loadingReports">
+          @if (reports$$.isLoading()) {
+          <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reports$$.isLoading()">
             <div class="display-flex flex-align-center gap-1">
               <div class="loader"></div>
               <p class="usa-prose" i18n>Loading reports...</p>
             </div>
-          </div> -->
-          @if ($reports | loading : 'Reports have loaded' | async; as reportsLoaded) {
-            <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="reportsLoaded.loading">
-              <div class="display-flex flex-align-center gap-1">
-                <div class="loader"></div>
-                <p class="usa-prose" i18n>Loading reports...</p>
-              </div>
-            </div>
-            @if (reportsLoaded.value) {
-              @if (reportsLoaded.value.length) {
-                <span class="visually-hidden" aria-live="polite" id="report-load-notifier">Reports have loaded</span>
-                @for (report of reportsLoaded.value | limitTo : 5; track report.reportID) {
-                  <adapt-list-item-report
-                    [report]="report"
-                  headingLvl="h4"></adapt-list-item-report>
-                }
-              } @else {
-                @if (!loadingReports) {
-                  <p class="usa-prose" aria-live="polite">No Reports have been created</p>
-                }
-              }
+          </div>
+          } @else {
+            <span class="visually-hidden" aria-live="polite" id="report-load-notifier">Reports have loaded</span>
+            @for (report of reports$$.value() | limitTo : 5; track report.reportID) {
+            <adapt-list-item-report [report]="report" headingLvl="h4"></adapt-list-item-report>
+            } @empty {
+            <p class="usa-prose" aria-live="polite">No Reports have been created</p>
             }
           }
         </div>
@@ -177,11 +166,11 @@
           aria-label="Data views list"
           role="region"
           class="bg-white padding-2 desktop:padding-3 gap-1 border-2px grid-col display-flex flex-column width-full border-base-lighter tablet:radius-lg">
-          @if ((pageSections[1]?.sub_sections)![1]) {
+          @if (s1.sub_sections?.[1]; as dv) {
             <div class="usa-prose">
               <!-- Data Views -->
-              <h3>{{ pageSections[1].sub_sections![1].title }}</h3>
-              <p [innerHtml]="pageSections[1].sub_sections![1].description"></p>
+              <h3>{{ dv.title }}</h3>
+              <p [innerHtml]="dv.description"></p>
             </div>
           }
           <div class="display-flex gap-2 flex-wrap margin-top-2 width-full">
@@ -189,41 +178,31 @@
               class="usa-button usa-button--outline"
               [routerLink]="['data-management']"
               aria-label="View all data views">
-              <i class="fal fa-folder-open" role="img" aria-hidden="true" alt=""></i>
+              <i class="fal fa-folder-open" aria-hidden="true"></i>
               View all
             </a>
             <button
               *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
               class="usa-button usa-button--outline"
               (click)="dataViewModal && dataViewModal.open()">
-              <i aria-hidden="true" class="fal fa-plus" role="img" alt=""></i>
+              <i aria-hidden="true" class="fal fa-plus"></i>
               Create new data view
             </button>
           </div>
           <div class="display-flex flex-column margin-top-1 gap-1 width-full">
-            @if ($dataViews | loading : 'Data views have loaded' | async; as viewsLoaded) {
-              <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="viewsLoaded.loading">
-                <div class="display-flex flex-align-center gap-1">
-                  <div class="loader"></div>
-                  <p class="usa-prose" i18n>Loading data views...</p>
-                </div>
+            @if (dataViews$$.isLoading()) {
+            <div class="loading-wrapper" aria-live="polite" [attr.aria-busy]="dataViews$$.isLoading()">
+              <div class="display-flex flex-align-center gap-1">
+                <div class="loader"></div>
+                <p class="usa-prose" i18n>Loading data views...</p>
               </div>
-              @if (viewsLoaded.value) {
-                @if (viewsLoaded.value.length) {
-                  <span class="visually-hidden" aria-live="polite" id="views-load-notifier">Data views have loaded</span>
-                  @for (view of viewsLoaded.value | limitTo : 5; track view.dataViewID) {
-                    <adapt-list-item-data
-                      [$reports]="$reports"
-                      [dataViewModal]="dataViewModal"
-                      [reportModal]="reportModal"
-                      [view]="view"
-                    [headingLvl]="'h4'"></adapt-list-item-data>
-                  }
-                } @else {
-                  @if (!loadingDataViews) {
-                    <p class="usa-prose" aria-live="polite">No data views have been created</p>
-                  }
-                }
+            </div>
+            } @else {
+              <span class="visually-hidden" aria-live="polite" id="data-views-load-notifier">Data views have loaded</span>
+              @for (view of dataViews$$.value() | limitTo : 5; track view.dataViewID) {
+              <adapt-list-item-data [view]="view" headingLvl="h4"></adapt-list-item-data>
+              } @empty {
+              <p class="usa-prose" aria-live="polite">No data views have been created</p>
               }
             }
           </div>

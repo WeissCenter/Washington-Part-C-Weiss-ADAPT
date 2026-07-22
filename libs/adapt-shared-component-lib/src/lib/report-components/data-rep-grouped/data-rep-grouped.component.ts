@@ -137,7 +137,7 @@ export class DataRepGroupedComponent implements OnInit {
   $glossaryIdsString = computed(() => {
     const glossaryItemIds: string[] = [];
     this.$unsortedData().forEach((item: any, index: any) => {
-      glossaryItemIds.push(this.id + 'series-item-definition-' + index);
+      glossaryItemIds.push(this.id + '-series-item-definition-' + index);
     });
     return glossaryItemIds.join(' ');
   });

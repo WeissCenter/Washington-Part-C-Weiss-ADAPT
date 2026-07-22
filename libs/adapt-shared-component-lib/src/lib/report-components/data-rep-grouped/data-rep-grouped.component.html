@@ -28,7 +28,7 @@
                 [ngClass]="{'border-left-05 text-black ': selected}"
                 (click)="onGroupSelect(filter, index);">
                 {{ sectionHeading | stripQuotes }}
-                <i aria-hidden="true" class="fas" role="img" alt="" [ngClass]="{ 'fa-chevron-down': !optionExpanded, 'fa-chevron-up': optionExpanded }"></i>
+                <i aria-hidden="true" class="fas" [ngClass]="{ 'fa-chevron-down': !optionExpanded, 'fa-chevron-up': optionExpanded }"></i>
               </button>
             }
             <ul [attr.aria-expanded]="optionExpanded" [id]="id + '-quickfilter-list-' + index" role="listbox"
@@ -44,7 +44,7 @@
                   </button>
                   <!-- <p class="font-xs line-height-3 margin-bottom-1 margin-top-05"
                   [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                  [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-quickfilter-item-definition-' + index">
+                  [id]="id + '-quickfilter-item-definition-' + index">
                   <span [innerHTML]="item | glossary : 'definition' : lang"></span>
                 </p> -->
               </li>
@@ -60,7 +60,7 @@
                 </button>
                 <p class="font-xs line-height-3 margin-bottom-1 margin-top-05"
                   [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                  [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-quickfilter-item-definition-' + index">
+                  [id]="id + '-quickfilter-item-definition-' + index">
                   <span [innerHTML]="item | glossary : 'definition' : lang : $fileSpec() | async"></span>
                 </p>
               </li>
@@ -88,7 +88,7 @@
               <i class="far" [ngClass]="{
                   'fa-toggle-off': !dataRepSettings.showPlainLanguage,
                   'fa-toggle-on': dataRepSettings.showPlainLanguage
-                }" aria-hidden="true" role="img" alt=""></i>
+                }" aria-hidden="true"></i>
               {{content.actions!['explain']}}
             </button>
           </li>
@@ -100,7 +100,7 @@
               <i class="far" [ngClass]="{
                   'fa-toggle-off': !dataRepSettings.showGlossary,
                   'fa-toggle-on': dataRepSettings.showGlossary
-                }" aria-hidden="true" role="img" alt=""></i>
+                }" aria-hidden="true"></i>
               {{content.actions!['glossary']}}
             </button>
           </li>
@@ -110,7 +110,7 @@
               [attr.aria-expanded]="isDataModalOpen"
               aria-haspopup="dialog"
               [attr.aria-label]="content.actions!['data'] + ' (open data details dialog)'">
-              <i class="far fa-table" aria-hidden="true" role="img" alt=""></i>
+              <i class="far fa-table" aria-hidden="true"></i>
               {{content.actions!['data']}}
             </button>
           </li>
@@ -140,7 +140,7 @@
                 [level]="mapHeadingLvl(headingLvl2)">{{ item[raw.chart.xAxisLabel] | glossary: 'label': lang : $fileSpec() | async
                 }}</lib-adapt-h-element>
                 <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                  [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
+                  [id]="id + '-series-item-definition-' + index">
                   <span [innerHTML]="item[raw.chart.xAxisLabel] | glossary : 'definition' : lang : $fileSpec() | async"></span>
                 </p>
             </span>
@@ -230,7 +230,7 @@
       filterOrSuppress }}</h2>
       <button [id]="id + '-close-modal-button'" #dataModalCloseBtn class="close-modal" (click)="closeModal()">
         Close
-        <i class="fas fa-times" aria-hidden="true" role="img" alt=""></i>
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
     </div>
     <p class="description" [innerHTML]="$insight()"></p>

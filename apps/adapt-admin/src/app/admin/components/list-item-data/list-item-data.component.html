@@ -41,16 +41,16 @@
             <lib-adapt-tag [status]="view.status">
               <!-- <ng-container [ngSwitch]="view.status">
               <ng-container *ngSwitchCase="'AVAILABLE'">
-                <i class="fal fa-check" role="img" aria-hidden="true"></i>
+                <i class="fal fa-check" aria-hidden="true"></i>
               </ng-container>
               <ng-container *ngSwitchCase="'REQUESTED'">
-                <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
+                <i class="fal fa-list-alt" aria-hidden="true"></i>
               </ng-container>
               <ng-container *ngSwitchCase="'MISSING DATA'">
-                <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
+                <i class="fal fa-exclamation-circle" aria-hidden="true"></i>
               </ng-container>
               <ng-container *ngSwitchCase="'PROCESSING'">
-                <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
+                <i class="fal fa-spinner" aria-hidden="true"></i>
               </ng-container>
               <ng-container *ngSwitchDefault></ng-container>
             </ng-container> -->
@@ -93,8 +93,7 @@
 }
 </div>
 <div collapsed-content>
-  <adapt-impact-analysis (learnMore)="onLearnMore(view)" [inAccordion]="true" [name]="view.name" [reports]="$reports"
-    [dataViews]="$dataViews" [type]="listType === 'views' ? 'DataView' : 'DataSource'"
+  <adapt-impact-analysis (learnMore)="onLearnMore(view)" [inAccordion]="true" [name]="view.name" [type]="listType === 'views' ? 'DataView' : 'DataSource'"
   [id]="view.dataViewID || view.dataSourceID"></adapt-impact-analysis>
 </div>
 <div action-content>
@@ -116,10 +115,15 @@
           class="usa-button usa-button--outline shadow-none" (click)="dataViewModal.open(view, false, 1)">
           Reload Data
         </button>
-        <!-- <button type="button" class="usa-button usa-button--outline shadow-none" adaptPreviewCategory="removeViewBtn"
-        [id]="'remove_' + view.dataViewID + '_btn'" adaptPreview adaptPreviewVersion="1.0.0">
-        Remove
-      </button> -->
+        <button
+            *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
+            type="button"
+            [id]="'delete_' + view.dataViewID + '_btn'"
+            [hidden]="!showDeleteAction"
+            class="usa-button usa-button--outline shadow-none text-error border-error hover:text-error-dark hover:border-error-dark"
+            (click)="requestDelete(view)">
+            Delete
+        </button>
     </div>
   }
   @case ('sources') {

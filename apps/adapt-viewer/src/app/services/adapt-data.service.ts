@@ -1,51 +1,29 @@
 import { LanguageService, SettingsService } from '@adapt/adapt-shared-component-lib';
 import { environment } from '../../environments/environment';
-import { AdaptSettings, IReportModel, Response, ShareReport, ViewerTemplate } from '@adapt/types';
+import { IReportModel, Response, ShareReport, ViewerTemplate } from '@adapt/types';
 import { HttpClient } from '@angular/common/http';
-import { effect, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, ReplaySubject, tap } from 'rxjs';
+import { computed, Injectable, resource, ResourceRef } from '@angular/core';
+import { firstValueFrom, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdaptDataService {
-  private _reports = new BehaviorSubject<IReportModel[]>([]); //ReplaySubject<IReportModel[]>();
-  private $reports = this._reports.asObservable();
+  private _reports$$: ResourceRef<IReportModel[]> = resource({
+    params: () => ({ lang: this.language.$language() }),
+    loader: ({ params }) =>
+      firstValueFrom(
+        this.http
+          .get<Response<IReportModel[]>>(`${environment.API_URL}reports?lang=${params.lang}`)
+          .pipe(map((resp) => resp.data))
+      ),
+    defaultValue: [],
+  });
 
-  constructor(private http: HttpClient, private settings: SettingsService, private language: LanguageService) {
-    effect(() => {
-      const language = this.language.$language();
-      this.getReports(language).subscribe((reports) => {
-        this._reports.next(reports);
-      });
+  public reports$$ = this._reports$$.asReadonly();
 
-    });
-  }
 
-  public getReports(
-    lang: string = 'en',
-    sortBy: 'updated' | 'alpha' = 'updated',
-    sortDirection: 'asc' | 'desc' = 'desc'
-  ) {
-    console.log(`inside getReports with lang=${lang}`);
-    return this.http.get<Response<IReportModel[]>>(`${environment.API_URL}reports?lang=${lang}`).pipe(
-      map((resp) => resp.data),
-      tap((reports) => console.log('fetched reports index 0:', reports[0])),
-      map((reports) =>
-        [...reports].sort((a, b) => {
-          if (sortBy === 'updated') {
-            const updatedA = Number(a.published);
-            const updatedB = Number(b.published);
-            return sortDirection === 'asc' ? updatedA - updatedB : updatedB - updatedA;
-          }
-          if (sortBy === 'alpha') {
-            return sortDirection === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-          }
-          return 0;
-        })
-      )
-    );
-  }
+  constructor(private http: HttpClient, private settings: SettingsService, private language: LanguageService) {}
 
   public getReport(slug: string, lang = 'en') {
     return this.http
@@ -69,14 +47,5 @@ export class AdaptDataService {
     return this.http
       .get<Response<ShareReport>>(`${environment.API_URL}reports/share/${shareSlug}`)
       .pipe(map((result) => result.data));
-  }
-
-  public getReportsListener(): Observable<IReportModel[]> {
-    //this.logger.debug('Inside getReportsListener');
-    return  this._reports.asObservable();  //this.$reports;
-  }
-
-  public get reports() {
-    return this.$reports;
   }
 }

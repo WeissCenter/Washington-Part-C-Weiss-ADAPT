@@ -220,7 +220,7 @@ export class DataRepService {
         item.percentage = isNaN((value / totalNum) * 100) ? '0.00' : (value / totalNum) * 100;
         item.largest = value === largestValue;
         item.flexAmount = value / largestValue;
-        glossaryItemIds.push(id + 'series-item-definition-' + index);
+        glossaryItemIds.push(id + '-series-item-definition-' + index);
         return item;
       }
     );

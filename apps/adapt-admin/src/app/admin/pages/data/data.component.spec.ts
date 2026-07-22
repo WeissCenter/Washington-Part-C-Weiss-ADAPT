@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject, of } from 'rxjs';
@@ -78,7 +78,7 @@ describe('DataComponent', () => {
         {
           provide: AdaptReportService,
           useValue: {
-            getReportsListener: jest.fn(() => of([])),
+            reports$$: { value: signal([]) },
           },
         },
         {

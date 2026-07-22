@@ -10,16 +10,24 @@
     <a href="https://weisscenter.gitbook.io/weisscenter/user-guide/data-views" target="_blank"
       aria-label="Learn More (opens in a new tab)" class="usa-link margin-top-05 display-flex flex-align-center">
       <span aria-hidden="true" class="font-xs">{{pageContent.learn_more_link}}<i aria-hidden="true"
-          class="far fa-external-link margin-left-05" role="img" alt=""></i></span>
+          class="far fa-external-link margin-left-05"></i></span>
     </a>
 
   </section>
   }
 
 
-  <adapt-list-view (createButtonClick)="dataViewModal?.open()" [visibleRef]="visibleViewsRef"
-    [actionRef]="actionViewsRef" [collapsedRef]="collapsedViewsRef" [$reports]="$reports" [$dataViews]="$dataViews"
-    [dataViewModal]="dataViewModal" [dataList]="$currentDataList" currentList="views" [loadingRef]="loadingViewsRef">
+  <adapt-list-view
+    (createButtonClick)="dataViewModal?.open()"
+    (deleteView)="startDeleteDataView($event)"
+    [visibleRef]="visibleViewsRef"
+    [actionRef]="actionViewsRef"
+    [collapsedRef]="collapsedViewsRef"
+    [dataViewModal]="dataViewModal"
+    [dataResource]="dataViews$$"
+    [filterFunc]="filterDataViews()"
+    currentList="views"
+    [loadingRef]="loadingViewsRef">
   </adapt-list-view>
 
   <!-- <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet> -->
@@ -69,16 +77,16 @@
       <lib-adapt-tag [status]="item.status">
         <!-- <ng-container [ngSwitch]="view.status">
           <ng-container *ngSwitchCase="'AVAILABLE'">
-            <i class="fal fa-check" role="img" aria-hidden="true"></i>
+            <i class="fal fa-check" aria-hidden="true"></i>
           </ng-container>
           <ng-container *ngSwitchCase="'REQUESTED'">
-            <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
+            <i class="fal fa-list-alt" aria-hidden="true"></i>
           </ng-container>
           <ng-container *ngSwitchCase="'MISSING DATA'">
-            <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
+            <i class="fal fa-exclamation-circle" aria-hidden="true"></i>
           </ng-container>
           <ng-container *ngSwitchCase="'PROCESSING'">
-            <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
+            <i class="fal fa-spinner" aria-hidden="true"></i>
           </ng-container>
           <ng-container *ngSwitchDefault></ng-container>
         </ng-container> -->
@@ -93,16 +101,16 @@
         }">
       <ng-container [ngSwitch]="item.status">
         <ng-container *ngSwitchCase="'AVAILABLE'">
-          <i class="fal fa-check" role="img" aria-hidden="true"></i>
+          <i class="fal fa-check" aria-hidden="true"></i>
         </ng-container>
         <ng-container *ngSwitchCase="'REQUESTED'">
-          <i class="fal fa-list-alt" role="img" aria-hidden="true"></i>
+          <i class="fal fa-list-alt" aria-hidden="true"></i>
         </ng-container>
         <ng-container *ngSwitchCase="'MISSING DATA'">
-          <i class="fal fa-exclamation-circle" role="img" aria-hidden="true"></i>
+          <i class="fal fa-exclamation-circle" aria-hidden="true"></i>
         </ng-container>
         <ng-container *ngSwitchCase="'PROCESSING'">
-          <i class="fal fa-spinner" role="img" aria-hidden="true"></i>
+          <i class="fal fa-spinner" aria-hidden="true"></i>
         </ng-container>
         <ng-container *ngSwitchDefault></ng-container>
       </ng-container>
@@ -112,7 +120,7 @@
 </ng-template>
 
 <ng-template #collapsedViewsContent let-item>
-  <adapt-impact-analysis [name]="item.name" [reports]="$reports" type="DataView"
+  <adapt-impact-analysis [name]="item.name" type="DataView"
     [id]="item.dataViewID"></adapt-impact-analysis>
 </ng-template>
 
@@ -132,9 +140,13 @@
       class="usa-button usa-button--outline shadow-none" (click)="editDataView(item, 1)">
       Reload Data
     </button>
-    <button type="button" class="usa-button usa-button--outline shadow-none" adaptPreviewCategory="removeViewBtn"
-      [id]="'remove_' + item.dataViewID + '_btn'" adaptPreview adaptPreviewVersion="1.0.0">
-      Remove
+    <button
+      *adaptAccessControl="'Data Views'; behavior: 'hide'; action: 'Write'"
+      type="button"
+      class="usa-button usa-button--outline shadow-none"
+      [id]="'delete_' + item.dataViewID + '_btn'"
+      (click)="startDeleteDataView(item)">
+      Delete
     </button>
   </div>
 </ng-template>
@@ -157,3 +169,24 @@
 </div>
 }
 <adapt-data-view-modal (closed)="onClose($event)"></adapt-data-view-modal>
+
+<lib-adapt-modal closeText="Close" heading="Delete Data View" #deleteDataViewConfirmationModal>
+  <div class="confirm-modal-body display-flex flex-column gap-2">
+    <p class="usa-prose">
+      Deleting this Data View will permanently remove it from the list of Data Views. Do you want to proceed?
+    </p>
+
+    <div class="confirm-modal-footer display-flex gap-2">
+      <button class="usa-button" (click)="confirmDeleteDataView()">Confirm</button>
+      <button class="usa-button usa-button--unstyled" (click)="deleteDataViewConfirmationModal?.close()">Cancel</button>
+    </div>
+  </div>
+</lib-adapt-modal>
+
+<lib-adapt-modal closeText="Close" heading="Delete Data View" #deleteDataViewBlockedModal>
+  <div class="confirm-modal-body display-flex flex-column gap-2">
+    <p class="usa-prose">
+      There are Reports using this Data view. Please select the view button for this Data view to see reports using this Data view. Any reports using this Data view must be deleted first.
+    </p>
+  </div>
+</lib-adapt-modal>

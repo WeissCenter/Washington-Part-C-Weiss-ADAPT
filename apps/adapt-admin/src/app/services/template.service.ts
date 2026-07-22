@@ -70,7 +70,7 @@ export class TemplateService {
 
     const field = select[1];
 
-    const dataView = (await firstValueFrom(this.adaptDataViewService.getDataViews())).find(item => item.dataViewID === context.dataViewID);
+    const dataView = this.adaptDataViewService.dataViews$$.value().find(item => item.dataViewID === context.dataViewID);
 
     if(!dataView){
       throw new Error(`Data view ${context.dataViewID} not found`);

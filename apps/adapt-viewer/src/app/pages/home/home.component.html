@@ -29,8 +29,7 @@
       </div>
     </div>
   </section>
-}
-@if ($content()) {
+
   <section [attr.aria-label]="$content().shared.frequentlyAskedQuestions.title"
     class="padding-y-4 desktop:padding-y-6">
     <div class="grid-container padding-x-0 tablet:padding-x-5">
@@ -55,7 +54,7 @@
         <div class="home-faqs-view-more margin-top-2">
           <a [routerLink]="['resources']" [queryParams]="{'navigation': 'frequently-asked-questions'}"
             class="usa-button usa-button--outline">
-            <i aria-hidden="true" class="fal fa-folder" role="img" alt=""></i>{{ $content().shared.frequentlyAskedQuestions.button_text
+            <i aria-hidden="true" class="fal fa-folder"></i>{{ $content().shared.frequentlyAskedQuestions.button_text
             }}
           </a>
         </div>
@@ -73,10 +72,9 @@
           {{ reportContent.description }}
         </p>
       </div>
-      <!--  *ngFor="let report of reports$ | async" -->
-        @if (reportsLoadedComplete) {
+        @if (!reports$$.isLoading()) {
         <div class="home-reports-list display-flex flex-column gap-1">
-          @for (report of listOfAllReports; track report.slug) {
+          @for (report of latestReports$$(); track report.slug) {
           <lib-adapt-expandable-list-item [expandable]="false">
             @if (report) {
             <div visible-content class="display-flex flex-column">
@@ -97,13 +95,13 @@
             <!--
           <div action-content class="display-flex gap-2">
             <button   [routerLink]="['reports', report.slug]" class="usa-button">
-              <i class="fal fa-eye" role="img" aria-hidden="true"></i> {{ reportContent.viewButton }}
+              <i class="fal fa-eye" aria-hidden="true"></i> {{ reportContent.viewButton }}
             </button>
             <button class="usa-button usa-button--outline">
               <i class="fal fa-share" aria-hidden="true"></i> {{ reportContent.shareButton }}
             </button>
             <button class="usa-button usa-button--outline">
-              <i class="fal fa-table" role="img" aria-hidden="true"></i>{{ reportContent.dataButton }}
+              <i class="fal fa-table" aria-hidden="true"></i>{{ reportContent.dataButton }}
             </button>
           </div> -->
           </lib-adapt-expandable-list-item>
@@ -113,7 +111,7 @@
 
         <div class="home-reports-view-more">
           <a [routerLink]="['reports']" class="usa-button usa-button--outline">
-            <i aria-hidden="true" class="fal fa-folder" role="img" alt=""></i>{{ reportContent.button_text }}
+            <i aria-hidden="true" class="fal fa-folder"></i>{{ reportContent.button_text }}
           </a>
         </div>
       <!-- </ng-container> -->

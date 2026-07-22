@@ -2,15 +2,16 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   EventEmitter,
+  input,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  Resource,
+  signal,
   TemplateRef,
-  ViewChild,
 } from '@angular/core';
 import { Observable, Subject, Subscription, tap } from 'rxjs';
 import { RoleService } from '../../../auth/services/role/role.service';
@@ -35,10 +36,13 @@ import { NGXLogger } from 'ngx-logger';
 })
 export class ListViewComponent implements OnDestroy, OnInit {
   @Output() createButtonClick = new EventEmitter();
+  @Output() deleteView = new EventEmitter();
 
   @Input() $reports!: any;
   @Input() $dataViews!: any;
   @Input() public dataList?: Observable<any[]>;
+  @Input() public dataResource?: Resource<any[]>;
+  filterFunc = input<(item: any) => boolean>(() => true);
   @Input() public loadingText = 'Loading...';
 
   // content refs
@@ -61,16 +65,29 @@ export class ListViewComponent implements OnDestroy, OnInit {
 
   public page = 1;
   public query = '';
-  public maxPages = 1;
-  public pageSize = 5;
+  public maxPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
+  public pageSize = signal(5);
   @Input() sortDirection: 'asc' | 'desc' = 'desc';
   public showFilterPanel = false;
-  public totalItems = 0;
+  public totalItems = computed(() => this.dataResource ? this.filteredDataResourceLength() : this.dataListLength());
   private subscriptions: Subscription[];
-
+  
   public dataListTap?: Observable<any[]>;
-
-  listViewContent: AdaptListViewContentText | null;
+  private dataListLength = signal(0);
+  
+  listViewContent = this.pagesContentService.$listViewContent();
+  filteredDataResource = computed(() => {
+    // Implement your filtering logic here
+    if (!this.dataResource || !this.dataResource.value()) return [];
+    return this.dataResource.value()
+    .filter((item) => {
+      return this.filterFunc()(item);
+    });
+  });
+  private filteredDataResourceLength = computed(() => {
+    if (!this.filteredDataResource || !this.filteredDataResource()) return 0;
+    return this.filteredDataResource().length;
+  });
 
   toggleFilterPanel() {
     this.logger.debug('Inside toggleFilterPanel');
@@ -109,14 +126,9 @@ export class ListViewComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-
-    this.listViewContent = this.pagesContentService.getListViewContentSignal()();
-
     this.dataListTap = this.dataList?.pipe(
       tap((list) => {
-        this.totalItems = list.length;
-        this.maxPages = Math.ceil(list.length / this.pageSize);
-        this.cd.markForCheck();
+        this.dataListLength.set(list.length);
       })
     );
 
@@ -139,7 +151,7 @@ export class ListViewComponent implements OnDestroy, OnInit {
   }
 
   public onPageSizeChange() {
-    this.maxPages = Math.ceil(this.totalItems / this.pageSize);
+    // this.maxPages = Math.ceil(this.totalItems() / this.pageSize);
   }
 
   public doSort() {

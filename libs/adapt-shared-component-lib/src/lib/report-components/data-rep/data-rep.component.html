@@ -15,7 +15,7 @@
               'fa-toggle-off': !dataRepSettings.showPlainLanguage,
               'fa-toggle-on': dataRepSettings.showPlainLanguage
             }"
-            aria-hidden="true" role="img" alt=""></i>
+            aria-hidden="true"></i>
           {{content?.actions?.['explain'] || 'Explain'}}
         </button>
       </li>
@@ -26,7 +26,7 @@
           [id]="id + '-glossary-switch'">
           <i class="far"
             [ngClass]="{ 'fa-toggle-off': !dataRepSettings.showGlossary, 'fa-toggle-on': dataRepSettings.showGlossary }"
-            aria-hidden="true" role="img" alt=""></i>
+            aria-hidden="true"></i>
             {{content?.actions?.['glossary'] || 'Glossary'}}
 
         </button>
@@ -37,7 +37,7 @@
           [attr.aria-expanded]="isDataModalOpen"
           aria-haspopup="dialog"
           [attr.aria-label]="(content?.actions?.['data'] || 'Data') + ' (open data details dialog)'">
-          <i class="far fa-table" aria-hidden="true" role="img" alt=""></i>
+          <i class="far fa-table" aria-hidden="true"></i>
           {{content?.actions?.['data'] || 'Data'}}
         </button>
       </li>
@@ -66,7 +66,7 @@
                 [level]="dataRepService.mapHeadingLvl(headingLvl2)">{{ item[raw.chart.xAxisLabel] | glossary : 'label' :
                 lang : $fileSpec() | async }}</lib-adapt-h-element>
               <p class="definition" [hidden]="dataRepSettings.showGlossary === true ? undefined : true"
-                [attr.aria-expanded]="dataRepSettings.showGlossary" [id]="id + '-series-item-definition-' + index">
+                [id]="id + '-series-item-definition-' + index">
                 <span
                   [innerHTML]="item[raw.chart.xAxisLabel] | glossary : 'definition' : lang : $fileSpec() | async"></span>
               </p>
@@ -166,7 +166,7 @@
         filtered, suppressed) }}</h2>
       <button [id]="id + '-close-modal-button'" #dataModalCloseBtn class="close-modal" (click)="closeModal()">
         {{content?.actions?.['close']}}
-        <i class="fas fa-times" aria-hidden="true" role="img" alt=""></i>
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
     </div>
 

@@ -18,7 +18,7 @@
                 class="usa-button flex-align-self-end width-4 height-4"><i class="fal fa-arrow-left"></i></button>
             }
 
-            <lib-adapt-combo-box [(ngModel)]="$formLang" [label]="$englishReportPageContent()?.sections![0].questions![1].label" (ngModelChange)="getLang()"
+            <lib-adapt-combo-box [(ngModel)]="$formLang" [label]="$englishSection0()?.questions?.[1]?.label || ''" (ngModelChange)="getLang()"
               [items]="$languageOptions()" itemAccessor="value" itemLocalizedLabel="localizedLabel"
               itemLabel="label"></lib-adapt-combo-box>
 
@@ -31,7 +31,7 @@
 
           @if (getLangLabel(1); as label) {
             <button (click)="generateTranslations()" type="button"
-              class="usa-button flex-align-self-start">{{$englishReportPageContent()?.actions!['generate_translations']}}</button>
+              class="usa-button flex-align-self-start">{{$englishActions()?.['generate_translations']}}</button>
           }
 
 
@@ -41,7 +41,7 @@
 
               @let showVerificationErrors = showVerifcationErrors();
               @if (!translationsGenerated && showVerificationErrors) {
-                <p>{{$englishReportPageContent()?.actions!['translation_error']}}</p>
+                <p>{{$englishActions()?.['translation_error']}}</p>
               }
 
 
@@ -89,7 +89,7 @@
                       <div class="report-header-controls display-flex flex-column gap-2">
                         @if (i > 0 && report.visibility === 'external') {
                           <lib-adapt-toggle-switch class="flex-align-self-start"
-                            [unToggledLabel]="$englishReportPageContent()?.actions!['verify_translations']" [toggledLabel]="$englishReportPageContent()?.actions!['verified']"
+                            [unToggledLabel]="$englishActions()?.['verify_translations'] ?? ''" [toggledLabel]="$englishActions()?.['verified'] ?? ''"
                             formControlName="verified"></lib-adapt-toggle-switch>
                         }
 
@@ -200,7 +200,7 @@
 
                     <button *adaptAccessControl="'Reports'; behavior: 'hide'; action: 'Write'" (click)="editReport()"
                       id="editReportBtn" type="button" class="usa-button usa-button--outline">
-                      <i class="fal fa-pencil"  role="img" aria-hidden="true" alt=""></i>
+                      <i class="fal fa-pencil" aria-hidden="true"></i>
                       Edit
                     </button>
 
@@ -236,7 +236,7 @@
                     Reset
                   </button>
                   <button type="submit" class="usa-button usa-button width-auto align-self-start">
-                    <i class="fal fa-check" role="img" aria-hidden="true" alt=""></i>
+                    <i class="fal fa-check" aria-hidden="true"></i>
                     Save
                   </button>
                 }
@@ -262,7 +262,7 @@
           <div class="heading-controls display-flex gap-3 flex-align-self-end flex-wrap">
             @if (editAudience.value === 'external') {
               <div class="flex-column">
-                <label class="usa-label" for="options">{{$englishReportPageContent()?.sections![0].questions![1].label}}</label>
+                <label class="usa-label" for="options">{{$englishSection0()?.questions?.[1]?.label}}</label>
                 <select [(ngModel)]="$reportLang"
                   (ngModelChange)="onReportLangChange($event)" aria-labelledby="options"
                   class="usa-select width-auto display-inline" name="options" id="options">
@@ -289,7 +289,7 @@
             @if (!preview && showFilterButton) {
               <button id="filterPanelButton" (click)="toggleFilterPanel()" type="button"
                 class="usa-button flex-column flex-align-self-end usa-button--unstyled">
-                <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
+                <i class="fal fa-filter" aria-hidden="true"></i>
                 {{content.actions!['filter']}}
               </button>
             }
@@ -300,7 +300,7 @@
           <div [hidden]="!previewSuppress" aria-live="assertive"
             class="display-flex full-width border-left-05 border-error border-bottom-05 padding-x-105 gap-105 padding-y-2 bg-white"
             style="border-bottom-color: var(--usa-base-lighter)" role="alert">
-            <i class="fas fa-users-slash font-md" role="img" aria-hidden="true" alt=""></i>
+            <i class="fas fa-users-slash font-md" aria-hidden="true"></i>
             <div class="display-flex gap-1 flex-column">
               <h3 class="font-md text-semibold line-height-2 margin-0">{{content.sections![1].header}}</h3>
               <p class="measure-3 margin-0 font-sm line-height-3">

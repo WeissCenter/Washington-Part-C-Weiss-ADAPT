@@ -1,21 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReportsComponent } from './reports.component';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 describe('ReportsComponent', () => {
-  let component: ReportsComponent;
-  let fixture: ComponentFixture<ReportsComponent>;
+  const template = readFileSync(join(__dirname, 'reports.component.html'), 'utf8');
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ReportsComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ReportsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  it('uses native button activation for the sort button', () => {
+    expect(template).toContain('(click)="doSort(\'updated\')"');
+    expect(template).not.toContain('(keydown.enter)="doSort(\'updated\')"');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('keeps decorative sort icons hidden without redundant image semantics', () => {
+    const iconMatches = template.match(/<i[^>]*aria-hidden="true"[^>]*>/g) ?? [];
+
+    expect(iconMatches.length).toBeGreaterThan(0);
+    for (const icon of iconMatches) {
+      expect(icon).not.toContain('role="img"');
+      expect(icon).not.toMatch(/\salt(=|\s|>)/);
+    }
   });
 });

@@ -13,8 +13,6 @@
   </section>
 
   <adapt-list-view
-    [$dataViews]="$dataViews"
-    [$reports]="$reports"
     [dataSourceModal]="dataSourceModal"
     recentSortField="updated"
     currentList="sources"
@@ -51,7 +49,7 @@
 
             <div class="metadata-item-tags display-flex gap-1">
               <span class="usa-tag bg-base-lightest text-ink bg-success-light">
-                <!-- <i class="fal fa-check" role="img" aria-hidden="true"></i> Available -->
+                <!-- <i class="fal fa-check" aria-hidden="true"></i> Available -->
               </span>
             </div>
           </div>
@@ -75,9 +73,7 @@
   <ng-template #collapsedSourcesContent let-item>
     <div class="collapsed-wrapper display-flex flex-column gap-2">
       <adapt-impact-analysis
-        [reports]="$reports"
         [name]="item.name"
-        [dataViews]="$dataViews"
         type="DataSource"
       [id]="item.dataSourceID"></adapt-impact-analysis>
     </div>

@@ -2,53 +2,46 @@
 
 @if (content) {
   <div class="impact-analysis-widget display-flex flex-column gap-2">
-    @if (items | async | paginate : page : pageSize; as itemsLoaded) {
+    @if (items() | paginate : page() : pageSize(); as itemsLoaded) {
       <div class="impact-analysis-heading display-flex flex-column gap-2">
         <lib-adapt-h-element [level]="headingLevel"> {{content['title'] || "Impact analysis"}} </lib-adapt-h-element>
 
-        @if (dataViewCount > 0 || reportCount > 0) {
+        @if (dataViewCount() > 0 || reportCount() > 0) {
           @switch (type) {
             @case ('DataSource') {
               <p>
-                {{content['dataSourceCountTemplate'] | parseStringTemplate:  {dataViewCount,
-                  reportCount } }}
-
-                <!-- There are {{ dataViewCount }} data views(s) and {{ reportCount }} report(s) using this data source: -->
+                {{content['dataSourceCountTemplate'] | parseStringTemplate: { dataViewCount: dataViewCount(), reportCount: reportCount() } }}
               </p>
             }
             @case ('DataView') {
               <p>
-                {{content['dataViewCountTemplate'] | parseStringTemplate:  {
-                  reportCount } }}
-                <!-- There are {{ reportCount }} report(s) using this data view: -->
+                {{content['dataViewCountTemplate'] | parseStringTemplate: { reportCount: reportCount() } }}
               </p>
             }
             @case ('Glossary') {
               <p>
-                {{content['glossaryCountTemplate'] | parseStringTemplate:  {
-                  reportCount } }}
-                <!-- There are {{ reportCount }} report(s) using this glossary term: -->
+                {{content['glossaryCountTemplate'] | parseStringTemplate: { reportCount: reportCount() } }}
               </p>
             }
           }
         }
 
-        @if (inAccordion && (reportCount > 0 || dataViewCount > 0)) {
+        @if (inAccordion && (reportCount() > 0 || dataViewCount() > 0)) {
           <button [attr.aria-label]="'learn more about ' + name + ' impact analysis'"
             class="flex-align-self-start usa-button usa-button--unstyled" (click)="learnMore.emit(id)">
             {{content['learnMore'] || "To learn more, please click here."}}
           </button>
         }
 
-        @if (inAccordion && (reportCount <= 0 || dataViewCount <= 0)) {
+        @if (inAccordion && (reportCount() <= 0 || dataViewCount() <= 0)) {
           @switch (type) {
             @case ('DataSource') {
-              @if (dataViewCount <= 0) {
+              @if (dataViewCount() <= 0) {
                 <ng-container *ngTemplateOutlet="noDataViews"></ng-container>
               }
             }
             @case ('DataView') {
-              @if (reportCount <= 0) {
+              @if (reportCount() <= 0) {
                 <ng-container *ngTemplateOutlet="noReports"></ng-container>
               }
             }
@@ -59,18 +52,18 @@
 
       @if (!inAccordion) {
         <div class="impact-analysis-list display-flex flex-column gap-1">
-          @if (totalItems > 0) {
+          @if (totalItems() > 0) {
             <h4 class="font-family-body margin-0 font-sm line-height-5 text-normal" id="showing"
               aria-live="polite">
               Showing up to
-              <select [value]="pageSize" (change)="onPageSizeChange($event)" aria-labelledby="showing"
+              <select [value]="pageSize()" (change)="onPageSizeChange($event)" aria-labelledby="showing"
                 class="usa-select margin-x-1 width-auto display-inline" name="options" id="options">
                 <option [value]="5">5</option>
                 <option [value]="10">10</option>
                 <option [value]="25">25</option>
                 <option [value]="50">50</option>
               </select>
-              of {{ totalItems }} items
+              of {{ totalItems() }} items
             </h4>
           }
 
@@ -124,17 +117,6 @@
               }
             }
             @case ('DataView') {
-              <!-- <div class="impact-analysis-item-heading">
-                    <h4 class="margin-0"><a [routerLink]="['/admin', 'reports', item.reportID]">{{item.name}}</a></h4>
-                    <p *ngIf="item?.description">{{item?.view.description}}</p>
-
-                </div>
-
-                <div class="impact-analysis-item-body">
-                    <p>Created By: {{item.author}}</p>
-                </div>
- -->
-
               @if (itemsLoaded?.length) {
                 <table class="usa-table usa-table--borderless width-full">
                   <thead>
@@ -161,7 +143,7 @@
               }
             }
           }
-          <lib-adapt-pagination (pageChange)="onPageChange($event)" [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
+          <lib-adapt-pagination (pageChange)="onPageChange($event)" [page]="page()" [maxPages]="maxPages()"></lib-adapt-pagination>
         </div>
       }
     }
