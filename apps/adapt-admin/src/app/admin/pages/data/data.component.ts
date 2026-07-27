@@ -2,16 +2,18 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   OnDestroy,
-  OnInit, Signal,
+  OnInit,
+  signal,
+  Signal,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, ReplaySubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { RoleService } from '../../../auth/services/role/role.service';
-import { AdaptDataService } from '../../../services/adapt-data.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FilterPanelService } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/services/filterpanel.service';
 import { AlertService } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/services/alert.service';
@@ -24,6 +26,7 @@ import { NGXLogger } from 'ngx-logger';
 import { PageContentText } from '@adapt-apps/adapt-admin/src/app/admin/models/admin-content-text.model';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
+import { ModalComponent } from '@adapt/adapt-shared-component-lib';
 
 interface DataViewFilter {
   dataSource: string[];
@@ -46,6 +49,8 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
   @ViewChild('recordsDisplay') recordsDisplay!: ElementRef;
 
   @ViewChild('filterPanel') filterPanel!: RightSidePanelComponent;
+  @ViewChild('deleteDataViewConfirmationModal') deleteDataViewConfirmationModal?: ModalComponent;
+  @ViewChild('deleteDataViewBlockedModal') deleteDataViewBlockedModal?: ModalComponent;
 
   public statusFilterItems = [
     { value: 'REQUESTED', label: 'Requested' },
@@ -74,16 +79,11 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
 
   public currentList = 'views';
 
-  loadingViews = true;
   loadingSources = true;
 
-  public $dataViews: Observable<DataViewModel[]>;
-  public $reports: Observable<IReportModel[]>;
-
-  public totalCurrentDataList = new BehaviorSubject<DataViewModel[]>([]);
-
-  public currentDataList = new BehaviorSubject<DataViewModel[]>([]);
-  public $currentDataList = this.currentDataList.asObservable();
+  public dataViews$$ = this.adaptDataViewService.dataViews$$;
+  public reports$$ = this.adaptReportService.reports$$;
+  public selectedDataView?: DataViewModel;
 
   // #### Filter panel toggle service logic ##########
   private subscriptions: Subscription[] = [];
@@ -91,6 +91,16 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
   filterStateMessage = '';
   originalFilters!: DataViewFilter;
   //#########################################
+  
+  private filterStatus = signal<string[]>([]);
+
+  public filterDataViews = computed(() => {
+    const status = this.filterStatus();
+    return (dataView: DataViewModel): boolean => {
+      if (!status?.length) return true;
+      return status.includes(dataView.status);
+    };
+  });
 
   $pageContent: Signal<PageContentText | null> = this.pagesContentService.getPageContentSignal('data');
 
@@ -110,15 +120,13 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
     public role: RoleService,
     private adaptDataViewService: AdaptDataViewService,
     private adaptReportService: AdaptReportService,
+    private alert: AlertService,
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
     private filterPanelService: FilterPanelService,
     public pagesContentService: PagesContentService
   ) {
     this.logger.debug('Inside DataComponent constructor');
-
-    this.$dataViews = this.adaptDataViewService.getDataViews(); //  this.adaptDataService.$dataViews;
-    this.$reports = this.adaptReportService.getReportsListener();
 
     this.viewFilterGroup = this.fb.group({
       status: this.fb.control(''),
@@ -141,25 +149,7 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.logger.debug('Inside DataComponent ngOnInit');
-
-    // We need to check to see if we need to pull the latest data views from the server
-    if (this.adaptDataViewService.isPolling()){
-      this.logger.debug('Polling is ongoing');
-    }
-    else {
-      this.adaptDataViewService.startPollingDataViewStatuses(); // force a refresh of the data views
-    }
-
-    this.adaptDataViewService.getDataViews().subscribe((val) => {
-      this.loadingViews = false;
-    });
-
-    this.outletViewsSub = this.$dataViews.subscribe((views) => {
-      this.originalFilters = this.viewFilterGroup.getRawValue();
-
-      this.currentDataList.next([...views]);
-      this.totalCurrentDataList.next([...views]);
-    });
+    this.originalFilters = this.viewFilterGroup.getRawValue();
 
     // this.outletCreateClickSub = event.createButtonClick.subscribe(evt => this.dataViewModal?.open())
   }
@@ -174,24 +164,13 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
     this.filterPanelService.changeFilterPanelState(this.showFilterPanel);
   }
 
+
   public doFiltering() {
-    let currValue = this.totalCurrentDataList.value;
-    this.toggleFilterPanel(true);
-
-    const views = currValue as DataViewModel[];
-
     const { status } = this.viewFilterGroup.getRawValue();
-
-    if (status?.length <= 0 || status === null) return this.currentDataList.next(currValue);
-
-    currValue = views.filter((val) => status.includes(val.status));
-
-    this.currentDataList.next(currValue);
+    this.filterStatus.set(status ?? []);
+    this.toggleFilterPanel(true);
   }
 
-  private outletSourcesSub?: Subscription;
-  private outletViewsSub?: Subscription;
-  private outletCreateClickSub?: Subscription;
 
   ngAfterViewInit() {
     if (this.dataViewModal) {
@@ -222,17 +201,52 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
     this.logger.debug('Inside onClose');
     if (!view) return;
 
-    this.adaptDataViewService.addDataView(view);
-
     // this.currentDataList.value.push(view as any)
     // this.currentDataList.next(this.currentDataList.value)
   }
 
+  public startDeleteDataView(dataView: DataViewModel) {
+    this.logger.debug('Inside startDeleteDataView');
+
+    this.selectedDataView = dataView;
+
+    if (this.hasAssociatedReports(dataView)) {
+      this.deleteDataViewBlockedModal?.open();
+      return;
+    }
+
+    this.deleteDataViewConfirmationModal?.open();
+  }
+
+  public confirmDeleteDataView() {
+    this.logger.debug('Inside confirmDeleteDataView');
+
+    if (!this.selectedDataView) return;
+
+    const dataViewName = this.selectedDataView.name;
+
+    this.deleteDataViewConfirmationModal?.close();
+    this.adaptDataViewService.deleteDataView(this.selectedDataView.dataViewID).subscribe({
+      next: () => {
+        this.alert.add({
+          type: 'info',
+          title: 'Data View Deleted',
+          body: `${dataViewName} has been deleted.`,
+        });
+        this.selectedDataView = undefined;
+      },
+      error: () => {
+        this.alert.add({
+          type: 'error',
+          title: 'Data View Delete Failed',
+          body: 'Failed to delete data view, please try again later.',
+        });
+      },
+    });
+  }
+
   ngOnDestroy() {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
-    this.outletSourcesSub?.unsubscribe();
-    this.outletViewsSub?.unsubscribe();
-    this.outletCreateClickSub?.unsubscribe();
     this.dataViewModalSubject?.unsubscribe();
   }
 
@@ -256,5 +270,9 @@ export class DataComponent implements OnDestroy, OnInit, AfterViewInit {
 
     }
 
+  }
+
+  private hasAssociatedReports(dataView: DataViewModel) {
+    return this.reports$$.value().some((report) => report.dataView === dataView.dataViewID);
   }
 }

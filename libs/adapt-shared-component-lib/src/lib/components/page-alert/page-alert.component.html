@@ -4,7 +4,14 @@
     role="alert"
     aria-live="assertive">
     <div class="usa-alert__body">
-      <h3 class="usa-alert__heading">{{ alert.title }}</h3>
+      @switch (headingLevel) {
+        @case ('h2') {
+          <h2 class="usa-alert__heading">{{ alert.title }}</h2>
+        }
+        @default {
+          <h3 class="usa-alert__heading">{{ alert.title }}</h3>
+        }
+      }
       <p class="usa-alert__text">
         {{ alert.body }}
       </p>

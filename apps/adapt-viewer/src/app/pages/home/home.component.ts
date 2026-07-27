@@ -14,7 +14,7 @@ import { IReportModel } from '@adapt/types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  $content = this.viewerPagesContentService.$viewerContent;
+  $content = this.viewerPagesContentService.viewerContent$$.value;
 
   $selFreqAskedQuestions = computed(() => {
     const shared = this.viewerPagesContentService.$sharedContent();
@@ -33,15 +33,12 @@ export class HomeComponent implements OnInit {
   });
 
   reportsLoadedComplete: boolean = false;
-  listOfAllReports: IReportModel[] = [];
-  // reports$ = this.adaptDataService.reports.pipe(
-  //   map((reports) => reports.slice(0, 5))
-  // );
+  reports$$ = this.adaptDataService.reports$$;
+  latestReports$$ = computed(() => (this.reports$$.value().sort((a, b) => Number(b.published) - Number(a.published)).slice(0, 5) as IReportModel[]));
 
-  ready = computed(() =>
-    this.$content() !== null && this.$content() !== undefined &&
-    this.$selFreqAskedQuestions() !== null && this.$selFreqAskedQuestions() !== undefined
-  );
+  ready = computed(() => {
+    return !this.viewerPagesContentService.viewerContent$$.isLoading() && !this.reports$$.isLoading();
+  });
 
   constructor(
     public viewerPagesContentService: ViewerPagesContentService,
@@ -51,8 +48,6 @@ export class HomeComponent implements OnInit {
     private zone: NgZone,
     private cdr: ChangeDetectorRef
   ) {
-
-    this.subscribeToReportsListener();
 
     this.route.params.subscribe((params) => {
       if ('slug' in params) {
@@ -468,27 +463,4 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {}
-
-  private subscribeToReportsListener() {
-    //this.logger.debug('Inside subscribeToReportsListener');
-
-    this.setReportsLoadingStatus(false);
-
-    this.adaptDataService.getReportsListener().subscribe((reports) => {
-      //this.logger.debug('Getting notification of updated reports from service', reports?.length);
-      this.zone.run(() => {
-        this.listOfAllReports = reports.slice(0, 5);
-
-        this.setReportsLoadingStatus(true);
-        this.cdr.markForCheck();
-      });
-    });
-  }
-
-  private setReportsLoadingStatus(reportsLoadedStatus: boolean) {
-    //this.logger.debug('Inside setReportsLoadingStatus: ', reportsLoadedStatus);
-    //setTimeout(() => {
-    this.reportsLoadedComplete = reportsLoadedStatus;
-    // }, 1); // Adjust this delay as needed
-  }
 }

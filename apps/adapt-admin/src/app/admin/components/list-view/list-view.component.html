@@ -4,36 +4,34 @@
   class="adapt-list-view display-flex flex-column gap-1 width-full">
   <div
     class="display-flex flex-column tablet:flex-row flex-justify flex-align-start tablet:flex-align-center width-full margin-bottom-3 gap-2">
-    @if (dataListTap | async | paginate : page : pageSize; as items) {
-      <h2 #recordsDisplay class="font-family-body font-sm line-height-5 text-normal" id="showing" aria-live="polite">
-        Showing up to
-        <select
-          [(ngModel)]="pageSize"
-          (ngModelChange)="onPageSizeChange()"
-          aria-labelledby="showing"
-          class="usa-select margin-x-1 width-auto display-inline"
-          name="options"
-          id="options">
-          <option [value]="5">5</option>
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-        of {{ totalItems }} items
-      </h2>
-    }
+    <h2 #recordsDisplay class="font-family-body font-sm line-height-5 text-normal" id="showing" aria-live="polite">
+      Showing up to
+      <select
+        [value]="pageSize()"
+        (change)="pageSize.set(+$any($event.target).value)"
+        aria-labelledby="showing"
+        class="usa-select margin-x-1 width-auto display-inline"
+        name="options"
+        id="options">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+      </select>
+      of {{ totalItems() }} items
+    </h2>
 
     <div class="display-flex gap-2 flex-wrap flex-align-center">
       <button
         (click)="doSort()"
         type="button"
         class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start">
-        <i class="fal {{ icon() }}" aria-hidden="true" role="img" alt=""></i>
+        <i class="fal {{ icon() }}" aria-hidden="true"></i>
         {{ listViewContent ? listViewContent.actions[0] : 'Sort' }}
       </button>
       @if (currentList === 'views') {
         <button type="button" (click)="toggleFilterPanel()" id="filterPanelButton" class="usa-button usa-button--outline shadow-none width-auto align-self-start flex-column">
-          <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
+          <i class="fal fa-filter" aria-hidden="true"></i>
           {{ listViewContent ? listViewContent.actions[1] : 'Filter' }}
         </button>
       }
@@ -64,7 +62,7 @@
     </div>
   </div>
 
-  @if (dataList | loading : 'Data list has been loaded' | async; as dataListLoaded) {
+  @if (dataListTap | loading : 'Data list has been loaded' | async; as dataListLoaded) {
     <ng-container>
       <div
         id="contentLoadingIndicator"
@@ -81,7 +79,7 @@
       @switch (currentList) {
         @case ('users') {
           @for (
-            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize; track identify(item, 'username')) {
+            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize(); track identify(item, 'username')) {
             <adapt-list-item-user
               [user]="item"
               [confirmEdit]="confirm"
@@ -91,7 +89,7 @@
         }
         @default {
           @for (
-            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize; track identify(item)) {
+            item of dataListLoaded.value | sort : sortDirection : recentSortField | paginate : page : pageSize(); track identify(item)) {
             <adapt-list-item-data
               [listType]="currentList"
               [$reports]="$reports"
@@ -99,6 +97,7 @@
               [dataSourceModal]="dataSourceModal"
               [dataViewModal]="dataViewModal"
               [reportModal]="reportModal"
+              (deleteRequested)="deleteView.emit($event)"
               [view]="item"
             [headingLvl]="'h3'"></adapt-list-item-data>
           }
@@ -107,7 +106,48 @@
     }
   }
 
-  <lib-adapt-pagination [page]="page" [maxPages]="maxPages"></lib-adapt-pagination>
+  @if (dataResource) {
+    @if (dataResource.isLoading()) {
+      <div class="display-flex flex-align-center gap-1">
+        <div class="loader"></div>
+        <p class="usa-prose" i18n>{{loadingText}}</p>
+      </div>
+    } @else {
+      @switch (currentList) {
+        @case ('users') {
+          @for (
+            item of filteredDataResource() | sort : sortDirection : recentSortField | paginate : page : pageSize(); track identify(item, 'username')) {
+            <adapt-list-item-user
+              [user]="item"
+              [confirmEdit]="confirm"
+              [confirmModal]="confirmModal"
+            ></adapt-list-item-user>
+          } @empty {
+            <p class="usa-prose" i18n>No users found.</p>
+          }
+        }
+        @default {
+          @for (
+            item of filteredDataResource() | sort : sortDirection : recentSortField | paginate : page : pageSize(); track identify(item)) {
+            <adapt-list-item-data
+              [listType]="currentList"
+              [$reports]="$reports"
+              [$dataViews]="$dataViews"
+              [dataSourceModal]="dataSourceModal"
+              [dataViewModal]="dataViewModal"
+              [reportModal]="reportModal"
+              (deleteRequested)="deleteView.emit($event)"
+              [view]="item"
+            [headingLvl]="'h3'"></adapt-list-item-data>
+          } @empty {
+            <p class="usa-prose" i18n>No data found.</p>
+          }
+        }
+      }
+    }
+  }
+
+  <lib-adapt-pagination [page]="page" [maxPages]="maxPages()"></lib-adapt-pagination>
 </section>
 
 <adapt-report-modal #reportModal></adapt-report-modal>

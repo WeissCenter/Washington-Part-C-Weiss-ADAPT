@@ -1,6 +1,4 @@
-<!--@let pageContent = $pageContentSignal();-->
-<!--@let pageSections = $pageSectionsSignal();-->
-@if (pageSections) {
+@if ($pageSections(); as pageSections) {
   <adapt-full-page-modal>
     @let typOptions = $any(typeOptions());
     @let ryOptions = $any(reportingYearOptions | async);
@@ -493,8 +491,7 @@
               </ul>
 
               @if (mode !== PageMode.CREATE) {
-                <adapt-impact-analysis headingLevel="h4" type="DataView" [dataViews]="dataViews" [reports]="reports"
-                  [id]="$any(currentDataView?.dataViewID)"></adapt-impact-analysis>
+                <adapt-impact-analysis headingLevel="h4" type="DataView" [id]="$any(currentDataView?.dataViewID)"></adapt-impact-analysis>
               }
             </div>
           </adapt-steps-indicator-step>
@@ -679,14 +676,13 @@
               </ul>
             </section>
 
-            <adapt-impact-analysis type="DataView" [dataViews]="dataViews" [reports]="reports"
-              [id]="$any(currentDataView!.dataViewID)"></adapt-impact-analysis>
+            <adapt-impact-analysis type="DataView" [id]="$any(currentDataView!.dataViewID)"></adapt-impact-analysis>
           </div>
         </div>
       }
     </div>
 
-    @if (pageContent) {
+    @if ($pageContent(); as pageContent) {
       <div class="grid-container display-flex flex-justify-center gap-2" footer>
         @if (mode !== PageMode.VIEW) {
           @if (currentStep > 0) {
@@ -721,20 +717,19 @@
   </adapt-full-page-modal>
 }
 
-@if (pageSections) {
+@if ($pageSections(); as pageSections) {
+  @let previewSub = pageSections[1].sub_sections![0];
   <lib-adapt-modal #previewModal [hideClose]="true">
     <div class="preview-modal-heading display-flex flex-justify">
       <div class="preview-modal-heading-body text-left display-flex flex-column gap-2">
-        <h1 class="margin-0">{{ pageSections[1].sub_sections![0].title ? pageSections[1].sub_sections![0].title : 'Data
-          preview'}}</h1>
-
+        <h1 class="margin-0">{{ previewSub.title ? previewSub.title : 'Data preview'}}</h1>
         <strong class="">{{currentTemplate?.files?.[currentPreviewIndex]?.name}}</strong>
       </div>
 
       <div class="preview-modal-heading-controls">
         <button (click)="previewModal.close()" class="usa-button">
-          {{ pageSections[1].sub_sections![0].actions!['close_button'] ?
-          pageSections[1].sub_sections![0].actions!['close_button'] : 'Close Preview'}}</button>
+          {{ previewSub.actions!['close_button'] ? previewSub.actions!['close_button'] : 'Close Preview'}}
+        </button>
       </div>
     </div>
 
@@ -742,7 +737,7 @@
       <div class="preview-modal-table">
         @if (previewData.value) {
           <adapt-table [data]="previewData.value?.[currentPreviewIndex].records"
-            caption="{{ pageSections[1].sub_sections![0].description}}"
+            caption="{{ previewSub.description }}"
             [headers]="source.value === 'database' ? [] : this.currentTemplate?.files?.[currentPreviewIndex]?.previewHeaders || []"></adapt-table>
         }
 

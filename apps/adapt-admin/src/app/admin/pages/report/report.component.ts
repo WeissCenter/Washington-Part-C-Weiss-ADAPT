@@ -9,7 +9,6 @@ import {
   LanguageCode,
   PageMode,
   ReportVersion,
-  SelectFilter,
   cleanObject,
   flattenObject,
 } from '@adapt/types';
@@ -18,7 +17,6 @@ import {
   ChangeDetectorRef,
   Component,
   computed,
-  effect,
   EventEmitter,
   HostListener,
   Input,
@@ -39,9 +37,7 @@ import {
   forkJoin,
   map,
   of,
-  pairwise,
   skip,
-  startWith,
   switchMap,
   tap,
   zip,
@@ -67,6 +63,7 @@ import { ReportResolvedData } from './report.resolver';
 import slugify from 'slugify';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
 import { NGXLogger } from 'ngx-logger';
+import { AdaptDataViewService } from '../../../services/adapt-data-view.service';
 interface ReportFilter {
   [key: string]: any;
 }
@@ -104,7 +101,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showFilters = false;
   public filtered = false;
-  private intialLoad = true;
+  private initialLoad = true;
   public translationsGenerated = false;
   public submitted = false;
 
@@ -138,13 +135,6 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   public templateErrorSubject = new ReplaySubject();
   public $template: Observable<any>;  //Observable<ITemplate | ISummaryTemplate | null>;
 
-
-  // public $templateError = this.$template.pipe(
-  //   catchError((err) => of({ success: false, err })),
-  //   filter((val) => (val as { success: boolean })?.success === false),
-  //   tap((err) => this.loaded.emit(false))
-  // );
-
   @Output() templateUpdate = new EventEmitter<ITemplate | ISummaryTemplate | null>();
 
   // Filter panel toggle service logic
@@ -159,16 +149,17 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
   public unPublishJustificationForm: FormGroup;
 
   $englishReportPageContent = this.pages.getPageContentSignal('report-page', 'en');
+  readonly $englishSection0 = computed(() => this.$englishReportPageContent()?.sections?.[0]);
+  readonly $englishActions = computed(() => this.$englishReportPageContent()?.actions);
   $reportPageContent = computed(() => {
     return this.pages.getPageContentSignal('report-page', this.$reportLang())();
   });
   $reportSharedContent = computed(() => {
-    return this.pages.getSharedContentSignal(this.$reportLang())();
+    return this.pages.adminContent$$.value()[this.$reportLang()]?.shared ?? null;
   });
 
   public $languageOptions = computed(() => {
-    const englishReportPageContent = this.$englishReportPageContent();
-    const contentLanguageOptions = englishReportPageContent?.sections?.[0].questions?.[1].options || [{ label: 'English', localizedLabel: 'English', value: 'en' }];
+    const contentLanguageOptions = this.$englishSection0()?.questions?.[1].options || [{ label: 'English', localizedLabel: 'English', value: 'en' }];
     const supportedLanguages = this.settings.getSettingsSignal()().supportedLanguages || ['en'];
 
     return contentLanguageOptions.filter((item) =>
@@ -200,12 +191,12 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (reset) {
       this.filterFormGroup.reset();
-      this.intialLoad ? (this.showResetFilters = false) : (this.showResetFilters = true);
+      this.initialLoad ? (this.showResetFilters = false) : (this.showResetFilters = true);
     }
 
-    if (!this.intialLoad) this.onFilter.next(this.filterFormGroup.value);
+    if (!this.initialLoad) this.onFilter.next(this.filterFormGroup.value);
 
-    this.intialLoad = false;
+    this.initialLoad = false;
   }
 
   showResetFilters = false;
@@ -260,6 +251,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
     private announcer: LiveAnnouncer,
     private adaptDataService: AdaptDataService,
     private adaptReportService: AdaptReportService,
+    private adaptDataViewService: AdaptDataViewService,
     private filterPanelService: FilterPanelService,
     private focusService: FocusService,
     private cd: ChangeDetectorRef,
@@ -302,7 +294,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.loading = true;
 
                 if (!this.preview) {
-                  if (this.intialLoad) this.applyFilterChanges(true);
+                  if (this.initialLoad) this.applyFilterChanges(true);
                   this.existingFilters = this.buildExistingFilters();
                 }
 
@@ -711,9 +703,7 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const state = this.location.getState() as any;
         if (state?.['editMode']) this.mode = PageMode.EDIT;
-
-        this.report.dataView = dataView;
-
+        this.report.dataView = this.adaptDataViewService.dataViews$$.value().find((view) => view.dataViewID === this.report.dataView);
         this.templateSubject.next(this.report.template);
         this.existingFilters = this.buildExistingFilters();
       } catch (error) {
@@ -952,7 +942,6 @@ export class ReportComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.templateSubject.next(this.report.template);
 
         // we need to load the reports again as the status of the reports can be changed back to unpublished and we need to show it on the screen
-        this.adaptReportService.loadReportList();
         this.langIndex = 0;
 
         const languages = this.$englishReportPageContent()!.sections![0].questions![1].options;

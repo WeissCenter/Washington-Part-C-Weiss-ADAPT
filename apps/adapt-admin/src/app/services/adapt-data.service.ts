@@ -255,9 +255,6 @@ export class AdaptDataService {
     return this.http.get<APIResponse<DataSet[]>>(`${environment.API_URL}dataset`).pipe(map((result) => result.data));
   }
 
-  // public getDataViews() {
-  //   return this.adaptDataViewService.getDataViews();  // this.$dataViews;
-  // }
 
   public getDataSet(dataSetID: string) {
     return this.http

@@ -1,6 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AdaptDataService } from '../../../services/adapt-data.service';
-import { AlertService } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/services/alert.service';
 import { IReportModel } from '@adapt/types';
 
 @Component({
@@ -17,13 +15,21 @@ export class ListItemReportComponent {
 
   @Output() unPublish = new EventEmitter();
   @Output() publish = new EventEmitter();
+  @Output() deleteRequested = new EventEmitter<IReportModel>();
+
+  get showDeleteAction() {
+    return this.deleteRequested.observed;
+  }
+
   get navPath() {
     return this.onLandingPage ? [this.report.reportID] : 'reports/' + [this.report.reportID];
   }
 
-  constructor(private data: AdaptDataService, private alert: AlertService) {}
-
   public publishReport(report: IReportModel) {
     this.publish.emit(report);
+  }
+
+  public requestDelete(report: IReportModel) {
+    this.deleteRequested.emit(report);
   }
 }

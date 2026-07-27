@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 export class PageAlertComponent {
   @Input() alert?: Alert;
+  @Input() headingLevel: 'h2' | 'h3' = 'h3';
 }

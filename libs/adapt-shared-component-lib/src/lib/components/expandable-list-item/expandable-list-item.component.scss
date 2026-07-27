@@ -13,8 +13,6 @@
   }
 
   &:focus-within {
-    // outline: var(--usa-focus-width) var(--usa-focus-style) var(--usa-focus-color);
-    // outline-offset: var(--usa-focus-offset);
     z-index: 100;
   }
 }
@@ -41,7 +39,6 @@
     border-radius: var(--usa-accordion-border-radius);
 
     .usa-accordion__button {
-      // outline-width: 0;
       color: var(--adapt-expandable-list-item-trigger-color);
       border: 0;
       box-shadow: none;

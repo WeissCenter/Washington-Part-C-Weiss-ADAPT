@@ -15,7 +15,7 @@
     @if ($reportContent()) {
 
       @if (showSuppressionWarning) {
-        <lib-adapt-page-alert [alert]="{type: 'warning', title: $reportContent()?.suppressionWarning!.heading, body: $reportContent()?.suppressionWarning!.description}"></lib-adapt-page-alert>
+        <lib-adapt-page-alert headingLevel="h2" [alert]="{type: 'warning', title: $reportContent()?.suppressionWarning!.heading, body: $reportContent()?.suppressionWarning!.description}"></lib-adapt-page-alert>
       }
 
 
@@ -41,7 +41,7 @@
             type="button"
             aria-haspopup="dialog"
             class="usa-button flex-column padding-2 usa-button--unstyled">
-            <i class="fal fa-share" aria-hidden="true" role="img" alt=""></i>
+            <i class="fal fa-share" aria-hidden="true"></i>
             {{$reportContent()?.actions?.share}}
           </button>
 
@@ -51,7 +51,7 @@
               (click)="toggleFilterPanel()"
               type="button"
               class="usa-button flex-column usa-button--unstyled">
-              <i class="fal fa-filter" aria-hidden="true" role="img" alt=""></i>
+              <i class="fal fa-filter" aria-hidden="true"></i>
               {{$reportContent()?.actions?.filter}}
             </button>
           }
@@ -64,7 +64,7 @@
           class="display-flex full-width border-left-05 border-error border-bottom-05 padding-x-105 gap-105 padding-y-2 bg-white"
           style="border-bottom-color: var(--usa-base-lighter)"
           role="alert">
-          <i class="fas fa-users-slash font-md" role="img" aria-hidden="true"></i>
+          <i class="fas fa-users-slash font-md" aria-hidden="true"></i>
           <div class="display-flex gap-1 flex-column">
             <h3 class="font-md text-semibold line-height-2 margin-0">Data suppression is active.</h3>
             <p class="measure-3 margin-0 font-sm line-height-3">
@@ -86,7 +86,7 @@
             class="display-flex full-width border-left-05 border-error border-bottom-05 padding-x-105 gap-105 padding-y-2 bg-white"
             style="border-bottom-color: var(--usa-base-lighter)"
             role="alert">
-            <i class="fas fa-users-slash font-md" role="img" aria-hidden="true"></i>
+            <i class="fas fa-users-slash font-md" aria-hidden="true"></i>
             <div class="display-flex gap-1 flex-column">
               <h3 class="font-md text-semibold line-height-2 margin-0">Data suppression is active.</h3>
               <p class="measure-3 margin-0 font-sm line-height-3">

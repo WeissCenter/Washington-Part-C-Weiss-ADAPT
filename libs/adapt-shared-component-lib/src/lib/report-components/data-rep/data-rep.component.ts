@@ -188,7 +188,7 @@ export class DataRepComponent implements OnInit, OnChanges {
         : (item[this.raw.chart.yAxisValue] / this.total) * 100;
       item.largest = item[this.raw.chart.yAxisValue] === largestValue;
       item.flexAmount = item[this.raw.chart.yAxisValue] / largestValue;
-      glossaryItemIds.push(this.id + 'series-item-definition-' + index);
+      glossaryItemIds.push(this.id + '-series-item-definition-' + index);
       return item;
     });
     // Sort the array from largest to smallest

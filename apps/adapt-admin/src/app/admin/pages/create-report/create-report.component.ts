@@ -8,6 +8,7 @@ import { AlertService } from '../../../../../../../libs/adapt-shared-component-l
 import { TemplateService } from '../../../services/template.service';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'adapt-create-report',
@@ -43,7 +44,7 @@ export class CreateReportComponent {
     private alert: AlertService
   ) {
 
-    this.$dataViews = this.adaptDataViewService.getDataViews();
+    this.$dataViews = toObservable(this.adaptDataViewService.dataViews$$.value);
     this.createReportForm = this.fb.group({
       name: this.fb.control('', { validators: [Validators.required] }),
       template: this.fb.control('', { validators: [Validators.required] }),

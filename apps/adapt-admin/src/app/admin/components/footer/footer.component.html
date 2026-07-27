@@ -17,7 +17,7 @@
           <a class="font-xs display-flex flex-align-center text-no-underline text-center"
             [target]="footerLink.target === 'sameTab' ? '' : '_blank'" [href]="footerLink.url">@if (footerLink.external) {<span
               class="visually-hidden">External link to </span>}{{ footerLink.label }}
-            @if (footerLink.icon) {<i aria-hidden="true" role="img" alt="" class="margin-left-05"
+            @if (footerLink.icon) {<i aria-hidden="true" class="margin-left-05"
               [ngClass]="footerLink.icon"></i>}
           </a>
         </li>

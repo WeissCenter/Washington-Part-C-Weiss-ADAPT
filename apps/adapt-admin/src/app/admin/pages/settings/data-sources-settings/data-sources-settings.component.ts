@@ -4,10 +4,6 @@ import { AdaptDataService } from '../../../../services/adapt-data.service';
 import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
 import { DataSourceModalComponent } from '../../../components/data-source-modal/data-source-modal.component';
 import { LocationStrategy } from '@angular/common';
-import {
-  PageContentText,
-  PageSectionContentText,
-} from '@adapt-apps/adapt-admin/src/app/admin/models/admin-content-text.model';
 import { PagesContentService } from '@adapt-apps/adapt-admin/src/app/auth/services/content/pages-content.service';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
@@ -36,10 +32,6 @@ export class DataSourcesSettingsComponent implements AfterViewInit {
   public search = new BehaviorSubject('');
   public $search = this.search.asObservable();
 
-  public $dataViews: Observable<DataViewModel[]>;
-  public $reports: Observable<IReportModel[]>;
-  // public $dataViews = this.data.$dataViews;
-  // public $reports = this.data.$reports;
 
   public $dataSources = this.$search.pipe(
     switchMap((query) =>
@@ -57,11 +49,7 @@ export class DataSourcesSettingsComponent implements AfterViewInit {
               private adaptDataViewService: AdaptDataViewService,
               private adaptReportService: AdaptReportService,
               private location: LocationStrategy,
-              public pagesContentService: PagesContentService) {
-
-    this.$dataViews = this.adaptDataViewService.getDataViews(); //  this.adaptDataService.$dataViews;
-    this.$reports = this.adaptReportService.getReportsListener();
-  }
+              public pagesContentService: PagesContentService) {}
 
   public onSave(dataSource: DataSource) {
     this.adaptDataService.addDataSource(dataSource);

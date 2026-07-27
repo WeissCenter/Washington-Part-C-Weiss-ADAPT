@@ -7,7 +7,7 @@ import { DataRepComparisonControlsComponent } from './data-rep-comparison-contro
   template: `
     @if (controlPanel) {
       <button #button [id]="id" [attr.aria-controls]="controlPanel.id" [attr.aria-expanded]="controlPanel.isOpen" class="usa-button flex-column usa-button--outline shadow-none width-auto align-self-start" type="button" [ngClass]="{'bg-primary text-white hover:text-white hover:bg-primary-dark': controlPanel.isOpen}" (click)="controlPanel.toggleControls()">
-        <span class="fa-columns fal" role="img" aria-hidden="true" alt=""></span>
+        <span class="fa-columns fal" aria-hidden="true"></span>
         {{content}}
       </button>
     }

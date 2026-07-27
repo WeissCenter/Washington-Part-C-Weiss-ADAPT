@@ -139,8 +139,6 @@
                 <div class="impact-body padding-3 padding-left-5 border-2px border-base-lighter radius-lg bg-white">
                   <adapt-impact-analysis
                     type="DataSource"
-                    [dataViews]="$dataViews"
-                    [reports]="$reports"
                   [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
                 </div>
               </div>
@@ -225,7 +223,7 @@
                 </li>
               </ul>
             </section>
-            <adapt-impact-analysis type="DataSource" [dataViews]="$dataViews" [reports]="$reports" [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
+            <adapt-impact-analysis type="DataSource" [id]="$any(currentDataSource!.dataSourceID)"></adapt-impact-analysis>
           </div>
         </div>
       }
@@ -242,11 +240,11 @@
       class="alert-box width-full display-flex padding-2 margin-top-2 text-white gap-2 flex-justify-center">
       @switch (connectionTestState) {
         @case (ConnectionTestState.SUCCESS) {
-          <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
+          <i aria-hidden="true" class="fas fa-bell"></i>
           {{ pageSections[1].messages!['success_connect'].message ? pageSections[1].messages!['success_connect'].message : 'Connected successfully!' }}
         }
         @case (ConnectionTestState.FAILED) {
-          <i aria-hidden="true" role="img" alt="" class="fas fa-bell"></i>
+          <i aria-hidden="true" class="fas fa-bell"></i>
           {{ pageSections[1].messages!['unable_to_connect'].message ? pageSections[1].messages!['unable_to_connect'].message : 'Unable to connect. Review settings and test it again.' }}
         }
       }

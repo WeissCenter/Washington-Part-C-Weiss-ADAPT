@@ -1,17 +1,17 @@
 import {
   Component,
+  computed,
   HostListener,
   OnDestroy,
   EventEmitter,
   OnInit,
   Output,
   ViewChild,
-  computed, effect, Signal,
+  Signal,
 } from '@angular/core';
 import { FullPageModalComponent } from '../full-page-modal/full-page-modal.component';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
-  catchError,
   combineLatest,
   debounceTime,
   filter,
@@ -44,14 +44,11 @@ import { UserService } from '../../../auth/services/user/user.service';
 import { ConfirmModalComponent } from '../../../../../../../libs/adapt-shared-component-lib/src/lib/components/confirm-modal/confirm-modal.component';
 import { LocationStrategy } from '@angular/common';
 import { PagesContentService } from '@adapt-apps/adapt-admin/src/app/auth/services/content/pages-content.service';
-import {
-  PageSectionContentText,
-  PageContentText,
-  SectionQuestionContentText,
-} from '@adapt-apps/adapt-admin/src/app/admin/models/admin-content-text.model';
+import { SectionQuestionContentText } from '@adapt-apps/adapt-admin/src/app/admin/models/admin-content-text.model';
 import { NGXLogger } from 'ngx-logger';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ValidationService } from '../../../services/validation.service';
 import { DataCollectionTemplateService } from '../../../services/data-collection-template.service';
 
@@ -91,9 +88,7 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
 
   public currentDataView?: DataViewModel;
 
-  public dataViews: Observable<DataViewModel[]>;
   public dataSources: Observable<DataSource[]>;
-  public reports: Observable<IReportModel[]>;
 
   public mode = PageMode.CREATE;
 
@@ -158,12 +153,8 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
 
   public reloadData = false;
 
-  // Input signal
-  $pageContentSignal: Signal<PageContentText|null>; // = this.pagesContentService.getPageContentSignal('data', 'en');
-  //$pageSectionsSignal: Signal<PageSectionContentText[]|undefined>;  //  = computed(() => this.$pageContentSignal()?.sections);
-  pageContent: PageContentText|null;
-  pageSections:PageSectionContentText[]|undefined;
-  pageContentLoaded = false;
+  readonly $pageContent = this.pagesContentService.getPageContentSignal('data', 'en');
+  readonly $pageSections = computed(() => this.$pageContent()?.sections);
 
 
   @HostListener('window:beforeunload', ['$event'])
@@ -190,8 +181,6 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
   ) {
 
     this.logger.debug('Inside data-view-modal component constructor');
-
-    this.initializeComponentSignals();
   }
 
   ngOnInit() {
@@ -205,9 +194,6 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
     });
 
     this.dataSources = this.adaptDataService.getDataSources();
-    this.dataViews = this.adaptDataViewService.getDataViews();
-    this.reports = this.adaptReportService.getReportsListener();
-
     this.initializeFormValueChangeListeners();
   }
 
@@ -269,7 +255,7 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
      */
     const duplicateCheckSub = this.typeFields.valueChanges.pipe(switchMap((value) =>
 
-          this.dataViews.pipe(switchMap((views) => {
+          toObservable(this.adaptDataViewService.dataViews$$.value).pipe(switchMap((views) => {
 
               //this.logger.debug('typeFields.valueChanges: typeFields: ', this.typeFields); //, views: ', views);
               const dataView = views.find((view) => {
@@ -341,59 +327,6 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
       })
     );
     this.subscriptions.push(typeChanges, sourceSub, duplicateCheckSub, justificationReasonSub, timeOutSub);
-  }
-
-  private initializeComponentSignals() {
-    this.logger.debug('Inside data-view-modal initializeComponentSignals');
-
-    this.$pageContentSignal = this.pagesContentService.getPageContentSignal('data', 'en');
-    //this.$pageSectionsSignal = computed(() => this.$pageContentSignal()?.sections);
-
-    // after we got a signal that the pageContent was loaded
-    effect(() => {
-
-      this.logger.debug('$pageContentSignal retrieved');
-      this.pageContent = this.$pageContentSignal();
-
-      this.logger.debug('pageContent: ', this.pageContent);
-
-      if (this.pageContent){
-
-        this.logger.debug('Have page content');
-
-        this.pageSections = this.pageContent.sections;
-
-        //this.logger.debug('pageSections: ', this.pageSections);
-
-        if (!this.pageContent.title){
-          this.logger.error('Invalid page title');
-        }
-
-        if (!(this.pageContent.sections && this.pageContent?.sections?.length > 0)){
-          this.logger.error('Invalid page sections');
-        }
-        else {
-          this.logger.debug('Have page sections');
-          this.pageContentLoaded = true;
-        }
-      }
-      else {
-        this.logger.debug('NO page content');
-        this.pageContentLoaded = false;
-      }
-
-    });
-
-    // after we got a signal that the pageSections was updated
-    // effect(() => {
-    //
-    //   this.logger.debug('$pageSectionsSignal retrieved');
-    //
-    //   this.pageSections = this.$pageSectionsSignal();
-    //   //this.pageContentLoaded = true;
-    //
-    //   this.logger.debug('pageSections: ', this.pageSections);
-    // });
   }
 
   public async onFileChange(index: number, file: File | null) {
@@ -713,7 +646,7 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
     // }
 
     // now add a date to the name
-    const dateStamp = ` - ${this.pageContent?.actions?.[this.source.value] ?? this.sourceValueNameMap[this.source.value]} - ${new Date().toLocaleDateString(undefined, {
+    const dateStamp = ` - ${this.$pageContent()?.actions?.[this.source.value] ?? this.sourceValueNameMap[this.source.value]} - ${new Date().toLocaleDateString(undefined, {
                           month: '2-digit',
                           day: '2-digit',
                           year: 'numeric',
@@ -833,8 +766,9 @@ export class DataViewModalComponent implements OnInit, OnDestroy, AfterContentCh
     this.saved = true;
 
     // TODO: determine logic for unchanged files (so we don't trigger unnecessary data pulls) - currently we just check if there are any files without a location which means they haven't been uploaded yet
-    // TODO: determine logic for starting the data pull based on database connection
-    if (startDataPull && this.currentDataView?.status !== DataSetQueueStatus.MISSING_DATA && this.currentDataView?.data.files.every((file) => file.location.length > 0)) {
+    const validCollectionDataView = this.currentDataView?.dataViewType === "collection" && this.currentDataView?.data.files.every((file) => file.location.length > 0);
+    const validDatabaseDataView = this.currentDataView?.dataViewType === "database"; // TODO: determine logic for valid database data view
+    if (startDataPull && this.currentDataView?.status !== DataSetQueueStatus.MISSING_DATA && (validCollectionDataView || validDatabaseDataView)) {
     const name = this.name.value;
 
       try {

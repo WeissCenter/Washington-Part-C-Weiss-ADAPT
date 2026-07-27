@@ -18,6 +18,7 @@ import { NGXLogger } from 'ngx-logger';
 import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
 import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
 import { ReportTemplateService } from '../../../services/report-template.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'adapt-report-modal',
   standalone: false,
@@ -121,7 +122,7 @@ export class ReportModalComponent implements OnInit, OnDestroy, AfterContentChec
       if (event.type === 'popstate') this.cancel();
     });
 
-    this.dataViews = this.adaptDataViewService.getDataViews().pipe(map((views) => views.filter((view) => view.status === DataSetQueueStatus.AVAILABLE)));
+    this.dataViews = toObservable(this.adaptDataViewService.dataViews$$.value).pipe(map((views) => views.filter((view) => view.status === DataSetQueueStatus.AVAILABLE)));
 
     this.logger.debug('dataViews: ', this.dataViews);
 

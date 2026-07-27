@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, concat, map, of, switchMap, tap, zip } from 'rxjs';
+import { Component, computed, effect, EventEmitter, Input, Output, Signal, signal } from '@angular/core';
+import { DataViewModel, IReportModel } from '@adapt/types';
 import { AdaptDataService } from '../../../services/adapt-data.service';
-import { DataSet, DataSource, DataViewModel, IReportModel } from '@adapt/types';
 import { PagesContentService } from '../../../auth/services/content/pages-content.service';
-import { ImpactAnalysisContentText } from '../../models/admin-content-text.model';
+import { AdaptDataViewService } from '@adapt-apps/adapt-admin/src/app/services/adapt-data-view.service';
+import { AdaptReportService } from '@adapt-apps/adapt-admin/src/app/services/adapt-report.service';
+
 
 @Component({
   selector: 'adapt-impact-analysis',
@@ -12,93 +12,67 @@ import { ImpactAnalysisContentText } from '../../models/admin-content-text.model
   templateUrl: './impact-analysis.component.html',
   styleUrls: ['./impact-analysis.component.scss'],
 })
-export class ImpactAnalysisComponent implements OnInit {
+export class ImpactAnalysisComponent {
   @Output() learnMore = new EventEmitter<string>();
 
   @Input() type: 'DataSource' | 'DataView' | 'Glossary' = 'DataSource';
   @Input() id = '';
   @Input() name = '';
-
   @Input() headingLevel: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' = 'h3';
-
-  public $content = computed(() => {
-    return this.contentService.getSharedContentSignal()()?.impactAnalysis;
-  })
-
-  public dataViewCount = 0;
-  public reportCount = 0;
-  public pageSize = 5;
-  public maxPages = 0;
-  public totalItems = 0;
-  public page = 1;
-
-  @Input() dataViews?: Observable<DataViewModel[]>;
-  @Input() reports?: Observable<IReportModel[]>;
   @Input() inAccordion = false;
 
-  public items?: Observable<any[]>;
+  public dataViews$$ = this.dataViewService.dataViews$$;
+  public reports$$ = this.reportService.reports$$;
 
-  constructor(private data: AdaptDataService, private contentService: PagesContentService) {}
+  public $content = computed(() => this.contentService.$sharedContent()?.impactAnalysis);
 
-  ngOnInit(): void {
+  public page = signal(1);
+  public pageSize = signal(5);
+
+  public items = computed(() => {
     switch (this.type) {
       case 'DataSource': {
-        if (!this.dataViews || !this.reports) return;
-
-        this.items = this.dataViews.pipe(
-          switchMap((views) => {
-            const dataViews = views.filter((view) => view?.data?.dataSource === this.id);
-
-            return zip(dataViews.map((vt) => this.getImpactAnalysisForView(vt))).pipe(
-              map((val) => {
-                (this.dataViewCount = dataViews.length),
-                  (this.reportCount = val.reduce((accum, item) => accum + item.reports.length, 0));
-
-                return val;
-              })
-            );
-          })
-        );
-
-        break;
+        if (!this.dataViews$$.value() || !this.reports$$.value()) return [];
+        const filteredViews = this.dataViews$$.value().filter((view) => view?.data?.dataSource === this.id);
+        return filteredViews.map((view) => ({
+          view,
+          reports: this.reports$$.value().filter((report) => report.dataView === view.dataViewID),
+        }));
       }
       case 'DataView': {
-        if (!this.reports) return;
-
-        this.items = this.getImpactAnalysisForViewId(this.id).pipe(
-          tap((reports: IReportModel[]) => {
-            this.reportCount = reports.length;
-            this.totalItems = reports.length;
-            this.maxPages = Math.ceil(this.totalItems / this.pageSize);
-          })
-        );
-        break;
+        if (!this.reports$$.value()) return [];
+        return this.reports$$.value().filter((report) => report.dataView === this.id);
       }
-      case 'Glossary': {
-        break;
-      }
+      case 'Glossary':
+        return [];
     }
-  }
+  });
 
-  public onPageChange(page: number){
-    this.page = page;
+  public dataViewCount = computed(() => {
+    if (this.type !== 'DataSource') return 0;
+    return (this.items() as { view: DataViewModel; reports: IReportModel[] }[]).length;
+  });
+
+  public reportCount = computed(() => {
+    if (this.type === 'DataSource') {
+      return (this.items() as { view: DataViewModel; reports: IReportModel[] }[])
+        .reduce((acc, item) => acc + item.reports.length, 0);
+    }
+    return (this.items() as IReportModel[]).length;
+  });
+
+  public totalItems = computed(() => this.items().length);
+  public maxPages = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
+
+  constructor(private data: AdaptDataService, private contentService: PagesContentService, private dataViewService: AdaptDataViewService, private reportService: AdaptReportService) {}
+
+  public onPageChange(page: number) {
+    this.page.set(page);
   }
 
   public onPageSizeChange($event: any) {
     $event.preventDefault();
     $event.stopImmediatePropagation();
-    this.pageSize = $event.target.value;
-    this.maxPages = Math.ceil(this.totalItems / this.pageSize);
-  }
-
-  public getImpactAnalysisForViewId(dataViewID: string) {
-    if (!this.reports) return of([]);
-    return this.reports.pipe(map((reports: IReportModel[]) => reports.filter((report) => report.dataView === dataViewID)));
-  }
-
-  public getImpactAnalysisForView(view: DataViewModel) {
-    return this.reports!.pipe(
-      map((reports) => ({ view, reports: reports.filter((report) => report.dataView === view.dataViewID) }))
-    );
+    this.pageSize.set(+$event.target.value);
   }
 }
